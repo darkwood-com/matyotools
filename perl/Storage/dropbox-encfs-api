@@ -1,0 +1,228 @@
+#!/usr/bin/env perl
+
+use strict;
+use Cwd;
+use Cwd 'abs_path';
+use Data::Dumper;
+use DateTime;
+use DateTime::Format::Strptime;
+use Encode;
+use Encode::Locale;
+use IO::Compress::Zip qw(zip $ZipError) ;
+use File::Basename qw(dirname basename);
+use File::Spec::Functions qw(abs2rel catfile);
+use Getopt::Std;
+use JSON;
+use Path::Class;
+use WebService::Dropbox;
+
+our $VERSION = '1.00';
+
+if ($^O eq 'darwin') {
+    require Encode::UTF8Mac;
+    $Encode::Locale::ENCODING_LOCALE_FS = 'utf-8-mac';
+}
+
+my $config_file = file( $ENV{'DROPBOX_CONF'} || ($ENV{'HOME'}, '.dropbox-api-encfs-config') );
+
+my $command = shift;
+my @args;
+for (@{[@ARGV]}) {
+    last if $_=~/^-/;
+    push @args, shift;
+}
+
+my %opts;
+getopts('ndvDshp:', \%opts);
+
+my $local_dir = dir(abs_path(cwd() . "/dropbox.local"));
+my $encfs_dir = dir(abs_path(cwd() . "/dropbox.encfs"));
+my $encfs_zip = dir(abs_path(cwd() . "/dropbox.encfs.zip"));
+my $remot_zip = "/dropbox.encfs.zip";
+
+push @args, @ARGV;
+
+if ($command eq '-v') {
+    &help('version');
+    exit(0);
+}
+
+if ($command eq 'setup' || !-f $config_file) {
+    &setup();
+}
+
+# connect dropbox
+my $config = decode_json($config_file->slurp);
+$config->{key} or die 'please set config key.';
+
+if ($command eq 'upload') {
+    &upload(@args);
+} elsif ($command eq 'download') {
+    &download(@args);
+} elsif ($command eq 'mount') {
+    &mount(@args);
+} elsif ($command eq 'unmount') {
+    &unmount(@args);
+} elsif ($command eq 'help' or (not length $command)) {
+    &help(@args);
+} else {
+    die "unknown command $command";
+}
+
+exit(0);
+
+sub help {
+    my ($command) = @_;
+    
+    my $help;
+    if ($command eq 'upload') {
+        $help = q{
+        Name
+            dropbox-api-upload - upload
+        
+        SYNOPSIS
+            dropbox-api upload
+
+        Example
+            dropbox-api upload
+        };
+    } elsif ($command eq 'download') {
+        $help = q{
+        Name
+            dropbox-api-download
+        
+        SYNOPSIS
+            dropbox-api download
+
+        Example
+            dropbox-api download
+        };
+    } elsif ($command eq 'mount') {
+        $help = q{
+        Name
+            dropbox-api-mount
+        
+        SYNOPSIS
+            dropbox-api mount
+
+        Example
+            dropbox-api mount
+        };
+    } elsif ($command eq 'unmoun') {
+        $help = q{
+        Name
+            dropbox-api-unmoun
+        
+        SYNOPSIS
+            dropbox-api unmoun
+
+        Example
+            dropbox-api unmoun
+        };
+    } elsif ($command eq 'version') {
+        $help = qq{
+        This is dropbox-api-encfs-command, version $VERSION
+        
+        Copyright 2011, Mathieu Ledru
+        
+        Released under the MIT license.
+
+        Documentation
+            this system using "dropbox-api-encfs help".
+            If you have access to the Internet, point your browser at
+            https://github.com/matyo91/dropbox-api-encfs-command,
+            the dropbox-api-encfs-command Repository.
+        };
+    } else {
+        $help = qq{
+        Usage: dropbox-api <command> [args] [options]
+
+        Available commands:
+            setup     download access key and storage
+            upload    upload file
+            download  download file
+            mount     mount encfs folder
+            unmount   mount encfs folder
+        
+        See 'dropbox-api help <command>' for more information on a specific command.
+        };
+    }
+    $help=~s|^ {8}||mg;
+    $help=~s|^\s*\n||;
+    print "\n$help\n";
+}
+
+sub setup {
+    my $config = {};
+
+    print "Please Input API Key: ";
+    chomp( my $key = <STDIN> );
+    $config->{key} = $key;
+
+    print "success! try\n";
+    print "> dropbox-api-encfs download\n";
+    print "> dropbox-api-encfs upload\n";
+
+    $config_file->openw->print(encode_json($config));
+
+    chmod 0600, $config_file;
+    
+    exit(0);
+}
+
+sub mount {
+    system("encfs", $encfs_dir, $local_dir);
+}
+
+sub unmount {
+    system("umount", $local_dir);
+}
+
+sub compress {
+    my $encfs_dir_base = basename($encfs_dir);
+    unlink($encfs_zip);
+
+    system("zip -r $encfs_zip $encfs_dir_base");
+}
+
+sub uncompress {
+    rmdir($encfs_dir);
+    system("unzip -q $encfs_zip -d .");
+}
+
+sub upload {
+    die "no $local_dir directory found\n" unless -e $local_dir;
+    die "no $encfs_dir directory found\n" unless -e $encfs_dir;
+
+    print "upload $local_dir => :dropbox/$remot_zip\n";
+
+    &unmount();
+    &compress();
+
+    system("./dropbox-api upload $encfs_zip dropbox:$remot_zip");
+}
+
+sub download {
+    print "download :dropbox/$remot_zip => $local_dir\n";
+
+    if(-e $local_dir) {
+        print "directory $local_dir alredy exist,\ndo you want to ecrase (y/n) ";
+        chomp( my $check_continue = <STDIN> );
+        die "stopped!" unless $check_continue eq "y";
+    }
+
+    system("./dropbox-api download dropbox:$remot_zip $encfs_zip");
+
+    if(-e $encfs_zip) {
+        &uncompress();
+    }
+
+    &unmount();
+
+    rmdir($local_dir);
+    mkdir($local_dir);
+
+    &mount();
+}
+
+exit(0);

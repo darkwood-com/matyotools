@@ -1,0 +1,4 @@
+RewriteEngine on
+
+RewriteCond %{REQUEST_URI} !^/basecop\.php$
+RewriteRule ^(.*) index.php [NC,L]

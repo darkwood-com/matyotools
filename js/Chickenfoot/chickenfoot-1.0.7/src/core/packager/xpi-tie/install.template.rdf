@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+  
+    <em:id>{@GUID@}</em:id>
+    <em:version>@VERSION@</em:version>
+    
+    <em:name>@EXTENSION_DISPLAY_NAME@</em:name>
+    <em:description>@DESCRIPTION@</em:description>
+    <em:creator>@EXTENSION_AUTHOR@</em:creator>
+    <em:iconURL>chrome://@EXTENSION_NAME@/content/icon.png</em:iconURL>
+    <em:homepageURL>@EXTENSION_URL@</em:homepageURL>
+    <em:updateURL>@EXTENSION_UPDATE_URL@</em:updateURL>
+    
+    <em:targetApplication>
+      <Description>
+        <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+        <em:minVersion>3.0</em:minVersion>
+        <em:maxVersion>3.6.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+    
+    <em:file>
+      <Description about="urn:mozilla:extension:file:chickenfoot-xpi-tie.jar">
+        <em:package>content/</em:package>
+      </Description>
+    </em:file>
+    
+  </Description>
+  
+</RDF>

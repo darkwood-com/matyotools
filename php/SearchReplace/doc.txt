@@ -1,0 +1,48 @@
+Utilisation de SearchReplace
+
+1) Introduction
+
+Ce module indépendant permet de faire du chercher remplacer (maléable et par expression régulière) à partir d'une entrée texte ou un fichier
+
+2) Installation
+Extraire le fichier PHP_SearchReplace sur le bureau par exemple
+
+3) Créer un script
+Il faut créer un nouveau fichier PHP n'importe où sur le disque dur (exemple test.php).
+
+a) Script de base
+
+Le contenu doit être de base
+<?
+include_once "C:\\...\\PHP_SearchReplace\\run.php";
+
+class SearchReplace extends Replace 
+{	
+	
+}
+
+run(__FILE__);
+?>
+
+NOTE : "C:\\...\\PHP_SearchReplace\\run.php" correspond au chemin absolu vers le fichier "run.php" des sources.
+
+b) Script avancé
+
+i) entrée de texte
+Il y a deux façons de définir le texte d'entrée :
+- Soit en surchargant le constructeur SearchReplace::__construct($input = "")
+public function __construct($input = "")
+{
+	parent::__construct("Texte d'entrée");
+}
+
+- Soit en créant un fichier texte d'extension ".php.input" dans le même dossier que le fichier du script (dans notre exemple, ce sera test.php.input)
+
+ii) programmer ce que l'on veut chercher et remplacer
+Il faut surcharger la fonction SearchReplace::doReplace() pour programmer ce que l'on a envie de chercher et remplacer
+
+iii) sortie
+L'execution créera un fichier texte d'extension ".php.output"dans le même dossier que le fichier du script (dans notre exemple, ce sera test.php.output)
+
+iii) exemples de test
+Des exemples d'utilisation sont fournis dans le dossier PHP_SearchReplace\test\

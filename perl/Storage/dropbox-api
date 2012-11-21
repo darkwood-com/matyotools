@@ -1,0 +1,632 @@
+#!/usr/bin/env perl
+
+use strict;
+use Cwd 'abs_path';
+use Data::Dumper;
+use DateTime;
+use DateTime::Format::Strptime;
+use Encode;
+use Encode::Locale;
+use File::Basename qw(dirname basename);
+use File::Spec::Functions qw(abs2rel catfile);
+use Getopt::Std;
+use JSON;
+use Path::Class;
+use WebService::Dropbox;
+
+our $VERSION = '1.00';
+
+if ($^O eq 'darwin') {
+    require Encode::UTF8Mac;
+    $Encode::Locale::ENCODING_LOCALE_FS = 'utf-8-mac';
+}
+
+my $config_file = file( $ENV{'DROPBOX_CONF'} || ($ENV{'HOME'}, '.dropbox-api-config') );
+
+my $command = shift;
+my @args;
+for (@{[@ARGV]}) {
+    last if $_=~/^-/;
+    push @args, shift;
+}
+
+my %opts;
+getopts('ndvDshp:', \%opts);
+
+push @args, @ARGV;
+
+my $dry      = $opts{n};
+my $delete   = $opts{d};
+my $verbose  = $opts{v};
+my $debug    = $opts{D};
+my $human    = $opts{h};
+my $printf   = $opts{p};
+my $context  = $opts{s} ? 'sandbox' : 'dropbox';
+
+if ($command eq '-v') {
+    &help('version');
+    exit(0);
+}
+
+if ($command eq 'setup' || !-f $config_file) {
+    &setup();
+}
+
+# connect dropbox
+my $config = decode_json($config_file->slurp);
+$config->{key} or die 'please set config key.';
+$config->{secret} or die 'please set config secret.';
+$config->{access_token} or die 'please set config access_token.';
+$config->{access_secret} or die 'please set config access_secret.';
+my $box = WebService::Dropbox->new($config);
+$box->root($context);
+
+# printf option
+my $strp;
+my $size = $human ? 'size' : 'bytes';
+my $format = {
+    i => 'icon',
+    b => 'bytes',
+    e => 'thumb_exists',
+    d => '_is_dir',
+    p => 'path',
+    s => '_size',
+    M => 'mime_type',
+    t => 'modified',
+    r => 'revision'
+};
+
+if ($command eq 'ls' or $command eq 'list') {
+    &list(@args);
+} elsif ($command eq 'find') {
+    &find(@args);
+} elsif ($command eq 'uid') {
+    &uid();
+} elsif ($command eq 'copy' or $command eq 'cp') {
+    &copy(@args);
+} elsif ($command eq 'move' or $command eq 'mv') {
+    &move(@args);
+} elsif ($command eq 'mkdir' or $command eq 'mkpath') {
+    &mkdir(@args);
+} elsif ($command eq 'delete' or $command eq 'rm' or $command eq 'rmtree') {
+    &delete(@args);
+} elsif ($command eq 'upload' or $command eq 'up' or $command eq 'put') {
+    &upload(@args);
+} elsif ($command eq 'download' or $command eq 'dl' or $command eq 'get') {
+    &download(@args);
+} elsif ($command eq 'sync') {
+    &sync(@args);
+} elsif ($command eq 'help' or (not length $command)) {
+    &help(@args);
+} else {
+    die "unknown command $command";
+}
+
+exit(0);
+
+sub help {
+    my ($command) = @_;
+    
+    my $help;
+    if ($command eq 'ls' or $command eq 'list') {
+        $help = q{
+        Name
+            dropbox-api-ls - list directory contents
+
+        SYNOPSIS
+            dropbox-api ls <dropbox_path> [options]
+
+        Example
+            dropbox-api ls Public
+            dropbox-api ls Public -h
+            dropbox-api ls Public -p "%d\t%s\t%TY/%Tm/%Td %TH:%TM:%TS\t%p\n"
+
+        Options
+            -h print sizes in human readable format (e.g., 1K 234M 2G)
+            -p print format.
+                %d ... is_dir ( d: dir, -: file )
+                %p ... path
+                %b ... bytes
+                %s ... size (e.g., 1K 234M 2G)
+                %i ... icon
+                %e ... thumb_exists
+                %M ... mime_type
+                %t ... modified time
+                %r ... revision
+                %Tk ... DateTime ‘strftime’ function
+        };
+    } elsif ($command eq 'find') {
+        $help = q{
+        Name
+            dropbox-api-find - walk a file hierarchy
+        
+        SYNOPSIS
+            dropbox-api find <dropbox_path> [options]
+
+        Example
+            dropbox-api find Public
+            dropbox-api find Public -h
+            dropbox-api find Public -p "%d\t%s\t%TY/%Tm/%Td %TH:%TM:%TS\t%p\n"
+
+        Options
+            -h print sizes in human readable format (e.g., 1K 234M 2G)
+            -p print format.
+                %d ... is_dir ( d: dir, -: file )
+                %p ... path
+                %b ... bytes
+                %s ... size (e.g., 1K 234M 2G)
+                %i ... icon
+                %e ... thumb_exists
+                %M ... mime_type
+                %t ... modified time
+                %r ... revision
+                %Tk ... DateTime ‘strftime’ function
+        };
+    } elsif ($command eq 'copy' or $command eq 'cp') {
+        $help = q{
+        Name
+            dropbox-api-cp - copy file or directory
+        
+        SYNOPSIS
+            dropbox-api cp <source_file> <target_file>
+
+        Example
+            dropbox-api cp Public/hoge.txt Public/foo.txt
+            dropbox-api cp Public/work Public/work_bak
+        };
+    } elsif ($command eq 'move' or $command eq 'mv') {
+        $help = q{
+        Name
+            dropbox-api-mv - move file or directory
+        
+        SYNOPSIS
+            dropbox-api mv <source_file> <target_file>
+
+        Example
+            dropbox-api mv Public/hoge.txt Public/foo.txt
+            dropbox-api mv Public/work Public/work_bak
+        };
+    } elsif ($command eq 'mkdir' or $command eq 'mkpath') {
+        $help = q{
+        Name
+            dropbox-api-mkdir - make directory (Create intermediate directories as required)
+        
+        SYNOPSIS
+            dropbox-api mkdir <directory>
+
+        Example
+            dropbox-api mkdir Public/product/chrome-extentions/foo
+        };
+    } elsif ($command eq 'uid') {
+        $help = q{
+        Name
+            dropbox-api-uid - Get your account uid
+        
+        SYNOPSIS
+            dropbox-api uid
+
+        Example
+            dropbox-api uid
+        };
+    } elsif ($command eq 'delete' or $command eq 'rm' or $command eq 'rmtree') {
+        $help = q{
+        Name
+            dropbox-api-rm - remove file or directory (Attempt to remove the file hierarchy rooted in each file argument)
+        
+        SYNOPSIS
+            dropbox-api rm <file_or_directory>
+
+        Example
+            dropbox-api rm Public/work_bak/hoge.tmp
+            dropbox-api rm Public/work_bak
+        };
+    } elsif ($command eq 'upload' or $command eq 'up' or $command eq 'put') {
+        $help = q{
+        Name
+            dropbox-api-put - upload file
+        
+        SYNOPSIS
+            dropbox-api put <file> dropbox:<dropbox_file>
+
+        Example
+            dropbox-api put README.md dropbox:/Public/product/dropbox-api/
+        };
+    } elsif ($command eq 'download' or $command eq 'dl' or $command eq 'get') {
+        $help = q{
+        Name
+            dropbox-api-get - download file
+        
+        SYNOPSIS
+            dropbox-api get dropbox:<dropbox_file> <file>
+
+        Example
+            dropbox-api get dropbox:/Public/product/dropbox-api/README.md README.md
+        };
+    } elsif ($command eq 'sync') {
+        $help = q{
+        Name
+            dropbox-api-sync - sync directory
+        
+        SYNOPSIS
+            dropbox-api sync dropbox:<source_dir> <target_dir> [options]
+            dropbox-api sync <source_dir> dropbox:<target_dir> [options]
+
+        Example
+            dropbox-api sync dropbox:/Public/product/dropbox-api/ ~/work/dropbox-api/
+            dropbox-api sync ~/work/dropbox-api/ dropbox:/Public/product/dropbox-api/ -vdn
+            dropbox-api sync ~/work/dropbox-api/ dropbox:/Public/product/dropbox-api/ -d
+        
+        Options
+            -v increase verbosity
+            -n show what would have been transferred (dry-run)
+            -d delete files that don't exist on sender
+        };
+    } elsif ($command eq 'version') {
+        $help = qq{
+        This is dropbox-api-command, version $VERSION
+        
+        Copyright 2011, Shinichiro Aska
+        
+        Released under the MIT license.
+
+        Documentation
+            this system using "dropbox-api help".
+            If you have access to the Internet, point your browser at
+            https://github.com/s-aska/dropbox-api-command,
+            the dropbox-api-command Repository.
+        };
+    } else {
+        $help = qq{
+        Usage: dropbox-api <command> [args] [options]
+
+        Available commands:
+            setup get access_key and access_secret
+            ls    list directory contents
+            find  walk a file hierarchy
+            cp    copy file or directory
+            mv    move file or directory
+            mkdir make directory (Create intermediate directories as required)
+            rm    remove file or directory (Attempt to remove the file hierarchy rooted in each file argument)
+            put   upload file
+            get   download file
+            sync  sync directory (local => dropbox or dropbox => local)
+            uid   get accound uid
+        
+        See 'dropbox-api help <command>' for more information on a specific command.
+        };
+    }
+    $help=~s|^ {8}||mg;
+    $help=~s|^\s*\n||;
+    print "\n$help\n";
+}
+
+sub setup {
+    my $config = {};
+
+    print "Please Input API Key: ";
+    chomp( my $key = <STDIN> );
+    die 'Get API Key from https://www.dropbox.com/developers' unless $key;
+    $config->{key} = $key;
+
+    print "Please Input API Secret: ";
+    chomp( my $secret = <STDIN> );
+    die 'Get API Secret from https://www.dropbox.com/developers' unless $secret;
+    $config->{secret} = $secret;
+
+    $config->{callback_url} = '';
+    my $box = WebService::Dropbox->new($config);
+    my $login_link = $box->login;
+    die $box->error if $box->error;
+    print "URL: $login_link\n";
+    print "Please Access URL and press Enter\n";
+    print "OK?";
+    <STDIN>;
+    $box->auth;
+    die $box->error if $box->error;
+    $config->{access_token} = $box->access_token;
+    $config->{access_secret} = $box->access_secret;
+    print "success! try\n";
+    print "> dropbox-api ls\n";
+    print "> dropbox-api find /\n";
+
+    $config_file->openw->print(encode_json($config));
+
+    chmod 0600, $config_file;
+    
+    exit(0);
+}
+
+sub uid {
+	my $info = $box->account_info or die $box->error;
+	print $info->{uid}, "\n";
+}
+
+sub list {
+    my $remote_base = shift;
+    my $list = $box->metadata($remote_base) or die $box->error;
+    for my $content (@{$list->{contents}}) {
+        print &_line($content);
+    }
+}
+
+sub _line {
+    my ($content) = @_;
+    $strp ||= new DateTime::Format::Strptime( pattern => '%a, %d %b %Y %T %z' );
+    my $dt;
+    if ($printf) {
+        my $line = $printf;
+        $content->{_is_dir} = $content->{is_dir} ? 'd' : '-';
+        $content->{_size} = $content->{is_dir} ? '-' : $content->{size};
+        $line=~s/\%T([^\%])/
+            $dt ||= $strp->parse_datetime($content->{modified});
+            $dt->strftime('%'.$1);
+        /egx;
+        $line=~s|\%([^\%])|$content->{$format->{$1}}|eg;
+        return encode('locale_fs', eval qq{"$line"});
+    } else {
+        return encode('locale_fs', sprintf "%s %8s %s %s\n",
+            ($content->{is_dir} ? 'd' : '-'),
+            ($content->{is_dir} ? '-' : $content->{$size}),
+            $content->{modified},
+            $content->{path});
+    }
+}
+
+sub find {
+    my $remote_base = shift;
+    $printf ||= "%p\n";
+    &_find($remote_base, sub { print &_line(shift); });
+}
+
+sub _find {
+    my ($remote_path, $callback) = @_;
+    my $list = $box->metadata($remote_path);
+    for my $content (@{$list->{contents}}) {
+        $callback->($content);
+        if ($content->{is_dir}) {
+            &_find($content->{path}, $callback);
+        }
+    }
+}
+
+sub copy {
+    my ($src, $dst) = @_;
+    my $res = $box->copy(decode('locale_fs', $src), decode('locale_fs', $dst)) or die $box->error;
+    print Dumper($res), "\n" if $verbose;
+}
+
+sub move {
+    my ($src, $dst) = @_;
+    my $res = $box->move(decode('locale_fs', $src), decode('locale_fs', $dst)) or die $box->error;
+    print Dumper($res), "\n" if $verbose;
+}
+
+sub mkdir {
+    my ($dir) = @_;
+    my $res = $box->create_folder(decode('locale_fs', $dir)) or die $box->error;
+    print Dumper($res), "\n" if $verbose;
+}
+
+sub delete {
+    my ($file_or_dir) = @_;
+    my $res = $box->delete(decode('locale_fs', $file_or_dir)) or die $box->error;
+    print Dumper($res), "\n" if $verbose;
+}
+
+sub upload {
+    my ($file, $path) = @_;
+    $path=~s|^dropbox:/||
+        or die "Usage: \n    dropbox-api upload /tmp/local.txt dropbox:/Public/some.txt";
+    my $fh = file($file)->openr or die $!;
+    $path.= basename($file) if (! length $path) or $path=~m|/$|;
+    my $res = $box->files_put(decode('locale_fs', $path), $fh, { overwrite => 1 }) or die $box->error;
+    $fh->close;
+    print Dumper($res), "\n" if $verbose;
+}
+
+sub download {
+    my ($path, $file) = @_;
+    $path=~s|^dropbox:/||
+        or die "Usage: \n    dropbox-api download dropbox:/Public/some.txt /tmp/local.txt";
+    my $fh = file($file)->openw or die $!;
+    $box->files(decode('locale_fs', $path), $fh) or die $box->error;
+    $fh->close;
+}
+
+sub sync {
+    my ($arg1, $arg2) = @_;
+    
+    my ($remote_base, $local_base, $command);
+    if ($arg1=~/^dropbox:/ and $arg2!~/^dropbox:/) {
+        ($remote_base, $local_base) = ($arg1, $arg2);
+        $command = \&sync_download;
+    } elsif ($arg1!~/^dropbox:/ and $arg2=~/^dropbox:/) {
+        ($remote_base, $local_base) = ($arg2, $arg1);
+        $command = \&sync_upload;
+    } else {
+        die "Usage: \n    dropbox-api sync dropbox:/Public/ /tmp/pub/\n" .
+                   "or    dropbox-api sync /tmp/pub/ dropbox:/Public/";
+    }
+    
+    $local_base = dir(abs_path($local_base));
+    
+    $remote_base = $remote_base;
+    
+    $remote_base=~s|^dropbox:/|/|;
+    
+    print "!! enable dry run !!\n" if $dry;
+    print "remote_base: $remote_base\n" if $verbose;
+    print "local_base: $local_base\n" if $verbose;
+    
+    $command->($remote_base, $local_base);
+}
+
+sub sync_download {
+    my ($remote_base, $local_base) = @_;
+    
+    print "** download **\n" if $verbose;
+    
+    my $strp = new DateTime::Format::Strptime( pattern => '%a, %d %b %Y %T %z' );
+    
+    my $remote_map = {};
+    
+    &_find($remote_base, sub {
+        my $content = shift;
+        my $remote_path = encode('locale_fs', $content->{path});
+        my $rel_path = abs2rel($remote_path, $remote_base);
+        $remote_map->{$rel_path}++;
+        printf "check: %s\n", $rel_path if $debug;
+        if ($content->{is_dir}) {
+            my $local_path = dir($local_base, $rel_path);
+            printf "remote: %s\n", $remote_path if $debug;
+            printf "local:  %s\n", $local_path if $debug;
+            if (!-d $local_path) {
+                $local_path->mkpath unless $dry;
+                printf "mkpath %s\n", $local_path;
+            } else {
+                printf "skip %s\n", $rel_path if $verbose;
+            }
+        } else {
+            my $local_path = file($local_base, $rel_path);
+            my $remote_epoch = $strp->parse_datetime($content->{modified})->epoch;
+            my $local_epoch = -f $local_path ? $local_path->stat->mtime : '-';
+            my $remote_size = $content->{bytes};
+            my $local_size = -f $local_path ? $local_path->stat->size : '-';
+            printf "remote: %10s %10s %s\n",
+                $remote_epoch, $remote_size, $remote_path if $debug;
+            printf "local:  %10s %10s %s\n",
+                $local_epoch, $local_size, $local_path if $debug;
+            
+            if ((!-f $local_path) or
+                ($remote_size != $local_size) or
+                ($remote_epoch > $local_epoch)) {
+                printf "download %s\n", $local_path;
+                printf "mkpath %s\n", $local_path->dir unless -d $local_path->dir;
+                return if $dry;
+                $local_path->dir->mkpath unless -d $local_path->dir;
+                my $local_path_tmp = $local_path . '.dropbox-api.tmp';
+                $box->files($content->{path}, file($local_path_tmp)->openw);
+                unless (rename($local_path_tmp, $local_path)) {
+                    unlink($local_path_tmp);
+                    warn "rename failure " . $local_path_tmp;
+                }
+            } else {
+                printf "skip %s\n", $rel_path if $verbose;
+            }
+        }
+    });
+    
+    return unless $delete;
+    
+    print "** delete **\n" if $verbose;
+    
+    my @deletes;
+    $local_base->recurse(
+        preorder => 0,
+        depthfirst => 1,
+        callback => sub {
+            my $local_path = shift;
+            next if $local_path eq $local_base;
+            my $rel_path = abs2rel($local_path, $local_base);
+            if (exists $remote_map->{$rel_path}) {
+                printf "skip $rel_path\n" if $verbose;
+            } elsif (-f $local_path) {
+                printf "remove $rel_path\n";
+                push @deletes, $local_path;
+            } elsif (-d $local_path) {
+                printf "rmtree $rel_path\n";
+                push @deletes, $local_path;
+            }
+        }
+    );
+    
+    return if $dry;
+    
+    for my $local_path (@deletes) {
+        if (-f $local_path) {
+            $local_path->remove;
+        } elsif (-d $local_path) {
+            $local_path->rmtree;
+        }
+    }
+}
+
+sub sync_upload {
+    my ($remote_base, $local_base) = @_;
+    
+    print "** upload **\n" if $verbose;
+    
+    my $strp = new DateTime::Format::Strptime( pattern => '%a, %d %b %Y %T %z' );
+    
+    my $remote_map = {};
+    
+    &_find($remote_base, sub {
+        my $content = shift;
+        delete $content->{thumb_exists};
+        $content->{is_dir} = $content->{is_dir} ? 1 : 0;
+        my $remote_path = encode('locale_fs', $content->{path});
+        my $rel_path = abs2rel($remote_path, $remote_base);
+        $remote_map->{$rel_path} = $content;
+        printf "find: %s\n", $rel_path if $debug;
+    });
+    my @makedirs;
+    $local_base->recurse(
+        preorder => 0,
+        depthfirst => 1,
+        callback => sub {
+            my $local_path = shift;
+            next if $local_path eq $local_base;
+            my $rel_path = abs2rel($local_path, $local_base);
+            my $remote_path = file($remote_base, $rel_path);
+            my $rel_path_uri = $rel_path;
+            my $content = delete $remote_map->{$rel_path_uri};
+            if ($content) {
+                return unless -f $local_path;
+                my $remote_epoch = $strp->parse_datetime($content->{modified})->epoch;
+                my $local_epoch = -f $local_path ? $local_path->stat->mtime : '-';
+                my $remote_size = $content->{bytes};
+                my $local_size = -f $local_path ? $local_path->stat->size : '-';
+                printf "remote: %10s %10s %s\n",
+                    $remote_epoch, $remote_size, $remote_path if $debug;
+                printf "local:  %10s %10s %s\n",
+                    $local_epoch, $local_size, $local_path if $debug;
+                if (($remote_size != $local_size) or
+                    ($remote_epoch < $local_epoch)) {
+                    printf "upload $rel_path $remote_path\n";
+                    $box->files_put(decode('locale_fs', $remote_path->dir . '/' . $local_path->basename),
+                        $local_path->openr, { overwrite => 1 }) unless $dry;
+                    push @makedirs, $rel_path;
+                } else {
+                    printf "skip $rel_path\n" if $verbose;
+                }
+            } elsif (-f $local_path) {
+                printf "upload $rel_path $remote_path\n";
+                $box->files_put(decode('locale_fs', $remote_path->dir . '/' . $local_path->basename),
+                    $local_path->openr, { overwrite => 1 }) unless $dry;
+                push @makedirs, $rel_path;
+            } elsif (-d $local_path) {
+                return if grep { $_=~/^\Q$rel_path/ } @makedirs;
+                printf "mktree $rel_path $remote_path\n";
+                $box->create_folder(decode('locale_fs', $remote_path)) unless $dry;
+                push @makedirs, $rel_path;
+            } else {
+                printf "unknown $rel_path\n";
+            }
+        }
+    );
+    
+    return unless $delete;
+    
+    print "** delete **\n" if $verbose;
+    
+    my @deletes;
+    for my $rel_path ( keys %$remote_map ) {
+        next if grep { $rel_path=~/^\Q$_/ } @deletes;
+        print "delete $rel_path\n";
+        my $remote_path = catfile($remote_base, $rel_path);
+        $box->delete($remote_path) unless $dry;
+        push @deletes, $rel_path;
+    }
+}
+
+exit(0);

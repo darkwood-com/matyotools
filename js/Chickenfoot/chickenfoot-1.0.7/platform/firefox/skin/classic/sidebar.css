@@ -1,0 +1,38 @@
+
+.disablableToolbarButton {
+  -moz-image-region: rect(0 24px 24px 0) !important;
+}
+.disablableToolbarButton[disabled="true"] {
+  -moz-image-region: rect(0 48px 24px 24px) !important;
+}
+
+
+tabpanels {
+  background-color: white;
+  border: 1px solid #C0C0C0;
+  -moz-border-colors: rgb(113,111,100);
+}
+
+vbox { border: 1px solid #C0C0C0; }
+
+toolbar { outline: 1px solid #C0C0C0; }
+
+#CF_TRIGGERS_PANE[ignoreAllTriggers="true"] {
+  color: rgb(150,150,150);
+}
+
+#CF_TRIGGERS_PANE[ignoreAllTriggers="false"] {
+   color: rgb(0,0,0);
+}
+treechildren::-moz-tree-checkbox
+{
+  list-style-image: none;
+}
+treechildren::-moz-tree-checkbox(checked)
+{
+  list-style-image: url("chrome://chickenfoot/skin/check.png");
+}
+treechildren::-moz-tree-checkbox(disabled)
+{
+  list-style-image: url("chrome://global/skin/checkbox/cbox-check-dis.gif");
+}

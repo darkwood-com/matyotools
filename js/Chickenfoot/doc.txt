@@ -1,0 +1,93 @@
+Utilisation de ChickenFoot sur délia :
+
+1) Introduction
+
+Chickenfoot est une extension Firefox, développée par le Massachusetts Institute of Technology qui permet d’écrire des scripts afin d’automatiser la navigation internet. En clair, elle ajoute la possibilité de faire des macros avec Firefox.
+
+2) Installation de ChickenFoot
+Téléchagez la dernière release disponible sur :
+http://groups.csail.mit.edu/uid/chickenfoot/install.html
+
+3) Utilisation rapide de ChickenFoot
+http://groups.csail.mit.edu/uid/chickenfoot/quickstart.html
+
+3) Première utilisation de ChickenFoot sur délia
+a) environnement
+Décompresser l'archive  les scripts d'execution du fichier Chickenfoot.rar sur le bureau par exemple
+
+Après avoir installé ChickenFoot, faites apparaître la barre lattérale :
+Menu -> Affichage -> Panneau Lattéral -> ChickenFoot
+Ou faites apparaître directement en appuyant sur F8
+
+Allez sur un site qui contient délia, par exemple www.monsite.fr
+
+b) creation du script
+Créez un nouveau script et tapez les lignes suivantes :
+Le script va consister à créer les nouveaux champs d'un formulaire "Test Drive" dans le crm.
+Au préalable, il faut créer le formulaire "Test Drive" dans les follows up.
+
+//----------BEGIN------------
+
+// ==UserScript==
+// @name run
+// @when Pages Match
+// @includes *
+// ==/UserScript==
+
+include("C:\\...\\Chickenfoot\\run.js")
+
+//main
+var db = new Delia.DataBase("crm_followup", "Test Drive");
+db.newField("test", "TEST");
+
+//-----------END-------------
+
+NOTE : "C:\\...\\Chickenfoot\\run.js" correspond au chemin absolu vers le fichier "run.js" des sources.
+
+c) execution du script
+vous pouvez aller n'importe où dans le site www.monsite.fr, mais uniquement sur www.monsite.fr, car le script se base entièrement sur l'url de base du site internet.
+
+Cliquez sur la flèche verte (ou Alt+R) pour executer le script.
+Vous n'avez plus qu'à regarder les clics se faire à votre place!
+
+4) Pour aller plus loin...
+Voici les fonctionnalités disponible :
+
+/**
+ * @post go to delia page
+ * @param String sPage is the page name
+ */
+Delia.Delia -> go(sPage)
+
+/**
+ * @post click on menu rubrick that name contains sName
+ * @param String sName is the rubrick name
+ */
+Delia.Delia -> menu(sName)
+
+/**
+ * @post click on tab that name contains sName
+ * @param String sName is the tab name
+ */
+Delia.Delia -> tab(sName)
+
+/**
+ * @post click on toolbar button that name contains sName
+ * @param String sName is the toolbar button name
+ */
+Delia.Delia -> toolbar(sName)
+
+/**
+ * @post click on element in the list that name contains sName
+ * @param String sColumn is the name of the column
+ * @param String sName in the column of the list
+ */
+Delia.Delia -> list(sColumn, sName)
+
+/**
+ * @post enter sValue on text input, with label that contains sName
+ * @param sName
+ * @param sValue
+ * @param sType (optional)[default = FIELD.TEXT, FIELD.RADIO, INPUT.SELECT, INPUT.CHECKBOX]
+ */
+Delia.Delia -> input(sName, sValue, sType)

@@ -1,0 +1,291 @@
+#!/usr/bin/env perl
+
+use strict;
+use Cwd;
+use Cwd 'abs_path';
+use Data::Dumper;
+use DateTime;
+use DateTime::Format::Strptime;
+use Encode;
+use Encode::Locale;
+use IO::Compress::Zip qw(zip $ZipError) ;
+use File::Basename qw(dirname basename);
+use File::Spec::Functions qw(abs2rel catfile);
+use File::stat qw(stat);
+use Getopt::Std;
+use JSON;
+use Path::Class;
+
+our $VERSION = '1.00';
+
+if ($^O eq 'darwin') {
+    require Encode::UTF8Mac;
+    $Encode::Locale::ENCODING_LOCALE_FS = 'utf-8-mac';
+}
+
+my $config_path = $ENV{'FTP_CONF'} || $ENV{'HOME'};
+my $config_file = file( $config_path, ".ftp-encfs-api-config" );
+
+my $command = shift;
+my @args;
+for (@{[@ARGV]}) {
+    last if $_=~/^-/;
+    push @args, shift;
+}
+
+my %opts;
+getopts('ndvDshp:', \%opts);
+
+push @args, @ARGV;
+
+if ($command eq '-v') {
+    &help('version');
+    exit(0);
+}
+
+if ($command eq 'setup' || !-f $config_file) {
+    &setup();
+}
+
+# connect ftp
+my $config = decode_json($config_file->slurp);
+$config->{local_dir} or die 'please set local directory path.';
+$config->{encfs_dir} or die 'please set encfs directory path.';
+$config->{remot_dir} or die 'please set remote directory path.';
+$config->{encfs_key} or die 'please set encfs password.';
+$config->{ftp_user}  or die 'please set ftp user.';
+$config->{ftp_pwd}   or die 'please set ftp password.';
+$config->{ftp_host}  or die 'please set ftp host.';
+
+my $local_dir = $config->{local_dir};
+my $encfs_dir = $config->{encfs_dir};
+my $remot_dir = $config->{remot_dir};
+my $encfs_key = $config->{encfs_key};
+my $ftp_user  = $config->{ftp_user};
+my $ftp_pwd   = $config->{ftp_pwd};
+my $ftp_host  = $config->{ftp_host};
+
+if ($command eq 'help' or (not length $command)) {
+	&help(@args);
+} elsif ($command eq 'upload') {
+    &upload(@args);
+} elsif ($command eq 'download') {
+    &download(@args);
+} elsif ($command eq 'mount') {
+    &mount(@args);
+} elsif ($command eq 'unmount') {
+    &unmount(@args);
+} else {
+    die "unknown command $command";
+}
+
+exit(0);
+
+sub help {
+    my ($command) = @_;
+    
+    my $help;
+    if ($command eq 'upload') {
+        $help = q{
+        Name
+            ftp-api-upload - upload
+        
+        SYNOPSIS
+            ftp-api upload
+
+        Example
+            ftp-api upload
+        };
+    } elsif ($command eq 'download') {
+        $help = q{
+        Name
+            ftp-api-download
+        
+        SYNOPSIS
+            ftp-api download
+
+        Example
+            ftp-api download
+        };
+    } elsif ($command eq 'mount') {
+        $help = q{
+        Name
+            ftp-api-mount
+        
+        SYNOPSIS
+            ftp-api mount
+
+        Example
+            ftp-api mount
+        };
+    } elsif ($command eq 'unmount') {
+        $help = q{
+        Name
+            ftp-api-unmount
+        
+        SYNOPSIS
+            ftp-api unmount
+
+        Example
+            ftp-api unmount
+        };
+    } elsif ($command eq 'version') {
+        $help = qq{
+        This is ftp-api-encfs-command, version $VERSION
+        
+        Copyright 2011, Mathieu Ledru
+        
+        Released under the MIT license.
+
+        Documentation
+            this system using "ftp-api-encfs help".
+            If you have access to the Internet, point your browser at
+            https://github.com/matyo91/ftp-api-encfs-command,
+            the ftp-api-encfs-command Repository.
+        };
+    } else {
+        $help = qq{
+        Usage: ftp-encfs-api <command> [args] [options]
+
+        Available commands:
+            setup     download access key and storage
+            upload    upload file
+            download  download file
+            mount     mount encfs folder
+            unmount   mount encfs folder
+        
+        See 'ftp-api help <command>' for more information on a specific command.
+        };
+    }
+    $help=~s|^ {8}||mg;
+    $help=~s|^\s*\n||;
+    print "\n$help\n";
+}
+
+sub setup {
+	print "Create new configuration at : " . $config_file->absolute . "\n";
+	
+    my $config = {};
+
+	print "Please Input local directory path: ";
+    chomp( my $key = <STDIN> );
+    $config->{local_dir} = file($key)->absolute->stringify;
+    
+    print "Please Input encfs directory path: ";
+    chomp( my $key = <STDIN> );
+    $config->{encfs_dir} = file($key)->absolute->stringify;
+    
+    print "Please Input remote directory path: ";
+    chomp( my $key = <STDIN> );
+    $config->{remot_dir} = $key;
+    
+    print "Please Input encfs password: ";
+    chomp( my $key = <STDIN> );
+    $config->{encfs_key} = $key;
+
+    print "Please Input ftp user: ";
+    chomp( my $user = <STDIN> );
+    $config->{ftp_user} = $user;
+
+    print "Please Input ftp password: ";
+    chomp( my $pwd = <STDIN> );
+    $config->{ftp_pwd} = $pwd;
+
+    print "Please Input ftp host: ";
+    chomp( my $host = <STDIN> );
+    $config->{ftp_host} = $host;
+	
+    print "success! try\n";
+    print "> ftp-api-encfs download\n";
+    print "> ftp-api-encfs upload\n";
+
+    $config_file->openw->print(encode_json($config));
+
+    chmod 0600, $config_file;
+    
+    exit(0);
+}
+
+sub getFileSize
+{
+    my $file = shift;
+    my $size = stat($file)->size || die "stat($file): $!\n";
+
+    if ($size > 1099511627776)  #   TiB: 1024 GiB
+    {
+        return sprintf("%.2f TiB", $size / 1099511627776);
+    }
+    elsif ($size > 1073741824)  #   GiB: 1024 MiB
+    {
+        return sprintf("%.2f GiB", $size / 1073741824);
+    }
+    elsif ($size > 1048576)     #   MiB: 1024 KiB
+    {
+        return sprintf("%.2f MiB", $size / 1048576);
+    }
+    elsif ($size > 1024)        #   KiB: 1024 B
+    {
+        return sprintf("%.2f KiB", $size / 1024);
+    }
+    else                        #   bytes
+    {
+        return sprintf("%.2f bytes", $size);
+    }
+}
+
+sub mount {
+    print "mount $encfs_dir => $local_dir\n";
+
+    if(!-e $encfs_dir) {
+        print "please set encfs password : $encfs_key\n";
+        system("encfs $encfs_dir $local_dir");
+    } else {
+        system("echo '$encfs_key' | encfs -S $encfs_dir $local_dir");
+    }
+}
+
+sub unmount {
+    print "unmount $local_dir\n";
+
+    system("umount $local_dir");
+}
+
+sub upload {
+    die "no $local_dir directory found\n" unless -e $local_dir;
+    die "no $encfs_dir directory found\n" unless -e $encfs_dir;
+
+    &unmount();
+
+    print "upload $encfs_dir => :ftp/$remot_dir\n";
+    printf "upload size: %s\n", getFileSize($encfs_dir);
+
+    system(sprintf('lftp ftp://%s:%s@%s -e "mirror -e -R %s %s; quit"', $ftp_user, $ftp_pwd, $ftp_host, $encfs_dir, $remot_dir));
+}
+
+sub download {
+    if(-e $local_dir || -e $encfs_dir) {
+        #print "do you want to ecrase local directories (y/n) ";
+        #chomp( my $check_continue = <STDIN> );
+        #die "stopped!" unless $check_continue eq "y";
+
+        if(-e $local_dir) {
+            &unmount();
+            rmdir($local_dir);
+        }
+
+        if(-e $encfs_dir) {
+            rmdir($encfs_dir);
+        }
+    }
+    
+    print "download :ftp/$remot_dir => $encfs_dir\n";
+
+    system(sprintf('lftp ftp://%s:%s@%s -e "mirror -e %s %s; quit"', $ftp_user, $ftp_pwd, $ftp_host, $remot_dir, $encfs_dir));
+
+    if(-e $encfs_dir) {
+        mkdir($local_dir);
+        &mount();
+    }
+}
+
+exit(0);

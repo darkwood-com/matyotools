@@ -1,0 +1,17 @@
+Utilisation de Basecamp
+
+1) Introduction
+
+Ce module permet d'utiliser l'api de basecamp en ligne de commande ou via un navigateur
+
+2) Installation
+
+Il faut remplir les paramètres dans le fichier config.php
+
+- ligne de commande :
+Executer directement le binaire bin/basecamp
+
+- Navigateur :
+Configurer apache et faire pointer l'hôte vers le dossier Basecamp.
+
+3) Utilisation

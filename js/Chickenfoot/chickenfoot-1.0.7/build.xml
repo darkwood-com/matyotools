@@ -1,0 +1,688 @@
+<project name="chickenfoot" default="build" basedir=".">
+
+    <!-- user must define firefox.properties -->
+    <property file="build.properties" />
+    <property file="firefox.properties" />
+    
+    <property name="fennec.propertiesfile"      value="fennec.properties" />
+    <property file="${fennec.propertiesfile}" />
+    
+	  <property name="srcdir"         value="src" />
+	
+    <property name="java.src.dir"        value="${srcdir}/core/java" />
+    <property name="java.bin.dir"        value="${basedir}/build/java" />
+
+    <property name="firefox.platform.dir"      value="${basedir}/platform/firefox" />
+    <property name="fennec.platform.dir"       value="${basedir}/platform/fennec" />
+  
+    <property name="setup.dir"      value="${srcdir}/chickenscratch/setup" />
+    <property name="libraries.dir"  value="${srcdir}/chickenscratch/libraries" />
+    <property name="tests.dir"      value="${srcdir}${file.separator}tests" />
+    <property name="core.dir"       value="${srcdir}/core" />
+    <property name="firefox.ui.dir" value="${srcdir}/ui/firefox" />
+    <property name="fennec.ui.dir"  value="${srcdir}/ui/fennec" />
+	
+    <property name="locale.dir"     value="${firefox.platform.dir}/locale" />
+    <property name="skin.dir"       value="${firefox.platform.dir}/skin" />
+    <property name="fennec.locale.dir"     value="${fennec.platform.dir}/locale" />
+    <property name="fennec.skin.dir"       value="${fennec.platform.dir}/skin" />
+  
+    <property name="html.dir"       value="${basedir}${file.separator}web" />      
+
+    <property name="build.dir"      value="${basedir}${file.separator}build" />
+    <property name="jar.dir"        value="${build.dir}/jar" />
+    <property name="xpi.dir"        value="${build.dir}${file.separator}xpi" />
+    <property name="export.dir"     value="${xpi.dir}/export" />
+    
+    <property name="fennec.build.dir"      value="${basedir}${file.separator}platform${file.separator}fennec${file.separator}build" />
+    <property name="fennec.xpi.dir"        value="${fennec.build.dir}${file.separator}xpi" />
+    <property name="fennec.export.dir"     value="${fennec.xpi.dir}/export" />
+
+    <property name="xpi.name"    value="${ant.project.name}-${version.value}.xpi" />
+
+    <property name="source.zip.name"    value="${ant.project.name}-source-${version.value}.zip" />
+    
+    <property name="xpidl.dir" value="${basedir}/xpidl" />
+
+    <property name="webbuild.dir" value="${build.dir}/web" />
+
+	<property name="mccoy.dir" value="${firefox.platform.dir}/mccoy" />
+	<property name="mccoy.profile.dir" value="${firefox.platform.dir}/mccoy-profile" />
+	
+    <property name="chickenfoot.guid" value="896b34a4-c83f-4ea7-8ef0-51ed7220ac94" />
+    <property name="extension.dir" value="${firefox.profile.dir}/extensions/{${chickenfoot.guid}}" />
+    <property name="fennec.extension.dir"        value="${fennec.profile.dir}/extensions/{${chickenfoot.guid}}" />
+
+    <property name="version.pattern" value="&lt;version/&gt;" />
+
+    <filterset id="chickenfootMacros">
+      <filter token="CHICKENFOOT_CONTRACT_ID" value="@uid.csail.mit.edu/Chickenfoot/;1" />
+      <filter token="CHICKENFOOT_GUID" value="7a2ad1d0-29a8-4e2a-97bd-ad6324c0a753" />
+      <filter token="CHICKEN_BYPASS_GUID" value="f8940eee-2e3b-4682-a5d1-71ca80aeeeee" />
+      <filter token="CHICKENFOOT_COMMAND_LINE_HANDLER_GUID" value="e2f9f917-a54e-4e9c-83c3-174fa65ecd25" />
+      <filter token="EXTENSION_NAME" value="chickenfoot" />
+      <filter token="IS_EXPORTED_XPI" value="false" />
+      <filter token="GUID" value="${chickenfoot.guid}" />
+    </filterset>
+
+
+    <target name="build"
+            depends="xpi"
+            description="Builds the extension." />
+    
+    <target name="install"
+            depends="xpi"
+            description="Installs XPI file in Firefox.">
+        <fail>
+            <condition>
+                <not>
+                    <available file="${basedir}/firefox.properties" />
+                </not>
+            </condition>
+            .
+            The install target requies you to create 
+            firefox.properties.  Use firefox-default.properties 
+            as a template, and customize it for your Firefox installation.
+        </fail>
+        <exec executable="${firefox.dir}${firefox.executable}">
+            <env key="MOZ_NO_REMOTE" value="1"/>
+            <arg value="-P" />
+            <arg value="${firefox.profile}" />
+            <arg value="file://${build.dir}/${xpi.name}" />
+        </exec>
+    </target>
+
+    <target name="run"
+            depends="install,run-chickenfoot-profile"
+            description="Runs Firefox after installing the XPI file.">
+    </target>
+
+    <target name="run-no-install"
+            depends="xpi-dir,point-firefox-to-xpi-dir,run-chickenfoot-profile"
+            description="Runs Firefox by pointing it directly at build/xpi.">
+    </target>
+
+    <target name="run-tests-no-install"
+            depends="xpi-dir,point-firefox-to-xpi-dir,run-tests-chickenfoot-profile,check-test-results"
+            description="Runs test suite in the style of run-no-install.">
+    </target>
+    
+    <target name="run-tests-release"
+            depends="create-new-firefox-profile"
+            description="Runs test suite on the release XPI file.">
+        <antcall inheritall="false">
+            <param name="new.firefox.profile" value="${new.firefox.profile}" />
+            <param name="new.firefox.profile.dir" value="${new.firefox.profile.dir}" />
+            <param name="firefox.profile" value="${new.firefox.profile}" />
+            <param name="firefox.profile.dir" value="${new.firefox.profile.dir}" />
+            <target name="download-and-install-release" />
+            <target name="run-tests-chickenfoot-profile" />
+            <target name="delete-new-firefox-profile" />
+            <target name="check-test-results" />
+        </antcall>
+    </target>
+    
+    <target name="download-and-install-release">
+        <fail unless="firefox.profile">
+            .
+            The download-and-install-release target requires a Firefox profile.
+        </fail>
+        <tempfile property="release.xpi" prefix="chickenfoot" suffix=".xpi" />
+        <get src="http://groups.csail.mit.edu/uid/chickenfoot/chickenfoot.xpi"
+             dest="${release.xpi}" />
+        <echo>
+            Firefox is running and will prompt you to install the extension.
+            Please: 1. Click Install
+                    2. Quit Firefox when installation is complete
+        </echo>
+        <exec executable="${firefox.dir}${firefox.executable}">
+            <env key="MOZ_NO_REMOTE" value="1"/>
+            <arg value="-P" />
+            <arg value="${firefox.profile}" />
+            <arg value="file://${release.xpi}" />
+        </exec>
+        <delete file="${release.xpi}" />
+    </target>
+    
+    <target name="create-new-firefox-profile">
+        <fail unless="firefox-properties-has-profile-dir">
+            .
+            Creating a new Firefox profile requires you to fill in
+            firefox.properties, even though the profile referenced
+            there will not be used.
+        </fail>
+        <pathconvert property="firefox.profiles-ini">
+            <path>
+                <fileset dir="${firefox.profile.dir}${file.separator}..${file.separator}..">
+                    <include name="**/profiles.ini" />
+                </fileset>
+            </path>
+        </pathconvert>
+        <copy file="${firefox.profiles-ini}" tofile="${firefox.profiles-ini}.bak" />
+        <tstamp>
+            <format property="new.firefox.profile.time" pattern="yyyyMMdd-HHmmss" />
+        </tstamp>
+        <property name="new.firefox.profile"
+                  value="chickenfoot-temp-${new.firefox.profile.time}" />
+        <tempfile property="new.firefox.profile.dir" destdir="${firefox.profile.dir}${file.separator}.." />
+        <exec executable="${firefox.dir}${firefox.executable}">
+            <env key="MOZ_NO_REMOTE" value="1" />
+            <arg value="-CreateProfile" />
+            <arg value="${new.firefox.profile} ${new.firefox.profile.dir}" />
+        </exec>
+    </target>
+    
+    <target name="delete-new-firefox-profile">
+        <fail unless="new.firefox.profile.dir">
+            .
+            No new Firefox profile to delete.
+        </fail>
+        <pathconvert property="firefox.profiles-ini">
+            <path>
+                <fileset dir="${firefox.profile.dir}${file.separator}..${file.separator}..">
+                    <include name="**/profiles.ini" />
+                </fileset>
+            </path>
+        </pathconvert>
+        <move file="${firefox.profiles-ini}.bak" tofile="${firefox.profiles-ini}" />
+        <delete dir="${new.firefox.profile.dir}" />
+    </target>
+
+    <condition property="firefox-already-points-to-xpi-dir">
+       <available file="${extension.dir}" type="file"/>
+    </condition>
+    
+    <target name="point-firefox-to-xpi-dir"
+            unless="firefox-already-points-to-xpi-dir">
+        <echo message="Deleting old Chickenfoot and redirecting it to ${xpi.dir}"/>
+        <delete dir="${extension.dir}"/>
+        <echo message="${xpi.dir}" file="${extension.dir}"/>
+    </target>
+
+    <condition property="firefox-properties-has-profile-dir">
+        <and>
+          <available file="${basedir}/firefox.properties" />
+          <isset property="firefox.profile.dir" />
+        </and>
+    </condition>
+                
+    <target name="run-chickenfoot-profile">
+        <fail unless="firefox-properties-has-profile-dir">
+            .
+            The run-no-install target requies you to create 
+            firefox.properties.  Use firefox-default.properties 
+            as a template, and customize it for your Firefox installation.
+        </fail>
+      <exec executable="${firefox.dir}${firefox.executable}">
+        <env key="MOZ_NO_REMOTE" value="1"/>
+        <arg value="-P" />
+        <arg value="${firefox.profile}" />
+      </exec>
+    </target>
+
+    <target name="run-tests-chickenfoot-profile">
+        <fail unless="firefox-properties-has-profile-dir">
+            .
+            This testing target requies firefox.properties.
+        </fail>
+        <tempfile property="tests.output" prefix="tests.output" suffix=".txt" />
+        <exec executable="${firefox.dir}${firefox.executable}">
+          <env key="MOZ_NO_REMOTE" value="1"/>
+          <arg value="-P" />
+          <arg value="${firefox.profile}" />
+          <arg value="-cf-run" />
+          <arg value="${tests.dir}${file.separator}allTestsCfRunner.js" />
+          <arg value="${tests.dir}${file.separator}allTests.js" />
+          <arg value="${tests.output}" />
+        </exec>
+    </target>
+    
+    <target name="check-test-results">
+        <fail>
+            <condition><not><available file="${tests.output}" /></not></condition>
+            .
+            Tests did not run.
+        </fail>
+        <loadfile property="tests.result" srcfile="${tests.output}" />
+        <condition property="tests.failure">
+            <!-- contains string="${tests.result}" substring="FAIL" / -->
+            <!-- use isfileselected instead in case we want fancier conditions -->
+            <isfileselected file="${tests.output}">
+                <or>
+                    <contains text="FAIL" />
+                    <not><contains text="succeeded" /></not>
+                </or>
+            </isfileselected>
+        </condition>
+        <delete file="${tests.output}" />
+        <echo level="info">
+            .
+            ${tests.result}
+        </echo>
+        <fail if="tests.failure">
+            .
+            One or more tests FAILED, or the tests did not run.
+            Please review the test output above.
+        </fail>
+    </target>
+  
+    <target name="clean"
+            description="Removes all generated files.">
+        <delete dir="${build.dir}" />
+    </target>
+
+    <target name="clean-lite"
+            description="Removes all generated files except Java classes and jars.">
+       <delete dir="${jar.dir}" />
+       <delete includeemptydirs="true">
+           <fileset dir="${xpi.dir}" excludes="java/${ant.project.name}-java.jar" />
+       </delete>
+       <delete file="${build.dir}/${ant.project.name}.xpi" />
+    </target>
+  
+    <target name="java"
+            description="Compiles the Chickenfoot Java code.">
+        <mkdir dir="${java.bin.dir}" />
+        <javac srcdir="${java.src.dir}"
+               destdir="${java.bin.dir}"
+               target="1.5"
+               source="1.5">
+        </javac>
+        <mkdir dir="${xpi.dir}" />
+        <mkdir dir="${xpi.dir}/java" />
+        <jar destfile="${xpi.dir}/java/${ant.project.name}-java.jar" update="true">
+            <fileset dir="${java.bin.dir}" />
+        </jar>        
+    </target>
+
+   <!-- order is significant, so a filelist is used -->
+   <filelist id="doctype"
+             dir="${srcdir}/goog"
+             files="base.js
+               array.js
+               tagname.js
+               size.js
+               coordinate.js
+               box.js
+               rect.js
+               classes.js
+               disposable.js
+               event.js
+               string.js
+               useragent.js
+               product.js
+               selection.js
+               browserevent.js
+               listener.js
+               object.js
+               dom.js
+               style.js
+               structs.js
+               iter.js
+               map.js
+               set.js
+               simplepool.js
+               events.js
+               eventhandler.js
+               eventtarget.js
+               keycodes.js
+               keyhandler.js" />
+
+    <target name="jar"
+            description="Creates a JAR of the resources for the extension.">
+        <!-- setup -->
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${jar.dir}" />
+        <!-- content folder -->
+        <mkdir dir="${jar.dir}/content" />   
+        <concat destfile="${jar.dir}/content/sidebar.js" fixlastline="yes">
+            <filelist refid="doctype" />
+            <fileset dir="${firefox.ui.dir}">
+                <include name="*.js" />
+                <exclude name="chickenscratch.js" />
+            </fileset>
+            <fileset dir="${core.dir}">
+                <include name="util/instanceof.js" />
+                <include name="dom/treeWalker.js" />
+            </fileset>
+        </concat>
+        <copy todir="${jar.dir}/content" overwrite="true">
+            <fileset dir="${firefox.ui.dir}"
+                     includes="*.xul,*.html,chickenscratch.js" />
+            <filterset refid="chickenfootMacros" />
+        </copy>
+
+        <!-- libraries folder -->
+        <mkdir dir="${jar.dir}/content/libraries" />
+        <copy todir="${jar.dir}/content/libraries" overwrite="true">
+          <fileset dir="${libraries.dir}" />
+        </copy>
+        <!-- TODO(mbolin): Expose Doctype code via libraries.
+        <mkdir dir="${jar.dir}/content/libraries/goog" />
+        <copy todir="${jar.dir}/content/libraries/goog" overwrite="true">
+          <fileset dir="${srcdir}/goog" />
+        </copy>
+        <replaceregexp flags="g"
+                       match="goog\.require\(['&quot;]([\w\.]+)['&quot;]\);"
+                       replace="include('\1');">
+          <fileset dir="${jar.dir}/content/libraries/goog" includes="*.js" />
+        </replaceregexp>
+        -->
+
+        <!-- skin folder -->
+        <mkdir dir="${jar.dir}/skin" />
+        <copy todir="${jar.dir}/skin" overwrite="true">
+            <fileset dir="${skin.dir}" />
+        </copy>
+        <!-- locale folder -->
+        <mkdir dir="${jar.dir}/locale" />
+        <copy todir="${jar.dir}/locale" overwrite="true">
+            <fileset dir="${locale.dir}" />
+        </copy>
+        <!-- create the JAR -->
+        <mkdir dir="${xpi.dir}" />
+        <mkdir dir="${xpi.dir}/chrome" />
+        <jar basedir="${jar.dir}"
+             destfile="${xpi.dir}/chrome/${ant.project.name}.jar"
+             update="true" />
+    </target>
+
+    <target name="xpi-dir"
+            depends="java, jar"
+            description="Generates the build/xpi directory.">     
+
+        <!-- components folder (XPCOM) -->
+        <mkdir dir="${xpi.dir}" />
+        <mkdir dir="${xpi.dir}/components" />
+
+        <!-- Javascript XPCOM components -->
+        <concat destfile="${export.dir}/Chickenfoot.js" fixlastline="yes">
+            <filelist refid="doctype" />
+            <fileset dir="${core.dir}">
+              <include name="firefox/Chickenfoot.js" />
+            </fileset>   
+            <fileset dir="${core.dir}">
+              <include name="**/*.js" />
+              <exclude name="firefox/Chickenfoot.js" />
+              <exclude name="firefox/Chicken-bypass.js" />
+              <exclude name="firefox/ChickenfootCommandLineHandler.js" />
+              <exclude name="packager/xpi-tie/*.js" />
+            </fileset>   
+        </concat>
+        <copy todir="${export.dir}" overwrite="true">
+          <fileset dir="${core.dir}/firefox">
+            <include name="Chicken-bypass.js"/>
+            <include name="ChickenfootCommandLineHandler.js"/>
+          </fileset>
+        </copy>
+        <copy todir="${xpi.dir}/components/" overwrite="true">
+          <fileset dir="${export.dir}">
+            <include name="Chickenfoot.js" />
+            <include name="Chicken-bypass.js"/>
+            <include name="ChickenfootCommandLineHandler.js"/>
+          </fileset>
+          <filterset refid="chickenfootMacros" />
+        </copy>
+      
+        <!-- export folder -->
+        <mkdir dir="${export.dir}" />
+        <copy todir="${export.dir}" overwrite="true">
+          <fileset dir="${srcdir}/core/packager/xpi-tie" />
+          <fileset dir="${firefox.ui.dir}">
+            <include name="chickenscratch.xul" />
+            <include name="chickenscratch.js" />
+          </fileset>
+        </copy>
+      
+        <!-- libraries folder -->
+        <copy todir="${xpi.dir}/libraries" overwrite="true">
+          <fileset dir="${libraries.dir}" />
+        </copy>
+
+        <!-- setup folder -->
+        <mkdir dir="${xpi.dir}/setup" />
+        <copy todir="${xpi.dir}/setup" overwrite="true">
+            <fileset dir="${setup.dir}" />
+        </copy>
+
+    	<!-- chrome manifest -->
+        <copy todir="${xpi.dir}" overwrite="true">
+            <fileset dir="${firefox.platform.dir}"
+                     includes="chrome.manifest" />
+            <filterset refid="chickenfootMacros" />
+        </copy>
+    	
+        <!-- copy install.rdf file, filling in version number -->      
+        <copy file="${firefox.platform.dir}/install.template.rdf"               
+            tofile="${xpi.dir}/install.rdf"
+            overwrite="true" />
+        <replaceregexp match="${version.pattern}"
+                       flags="g"
+                       replace="${version.value}" >
+          <fileset dir="${xpi.dir}">
+              <include name="install.rdf" />
+          </fileset>
+        </replaceregexp>
+
+    </target>
+    
+    <target name="xpi"
+            depends="xpi-dir"
+            description="Generates the XPI file.">     
+        <!-- create XPI -->
+        <zip basedir="${xpi.dir}"
+             destfile="${build.dir}/${xpi.name}"             
+             update="true" />
+    </target>
+
+    <target name="zip"
+            description="Packages the project as a zip file.">
+        <mkdir dir="${build.dir}" />
+        <zip destfile="${build.dir}/${source.zip.name}">
+            <zipfileset prefix="${ant.project.name}-${version.value}"
+                        dir="${basedir}"
+                        >
+                <!-- must use build literally because ${build.dir} fails for some reason -->   
+                <exclude name="build/**" />
+                <exclude name="web/**" />
+                <exclude name="${mccoy.dir}/**" />
+                <exclude name="${mccoy.profile.dir}/**" />
+            </zipfileset>   
+        </zip>
+    </target>
+
+    <target name="release"
+            depends="build,zip"
+            description="Builds the HTML component of the website.">
+        <!-- add the latest XPI to the releases dir -->
+        <copy todir="${html.dir}/releases" overwrite="true">
+          <fileset file="${build.dir}/${xpi.name}"/>
+          <fileset file="${build.dir}/${source.zip.name}"/>
+        </copy>
+        <!-- include images from XUL, some of which are handy -->
+        <copy todir="${html.dir}/images" overwrite="true">
+          <fileset dir="${skin.dir}/classic">
+              <include name="*.png"/>
+              <include name="*.gif"/>
+              <include name="*.jpg"/>
+          </fileset>
+        </copy>
+        <!-- create a libraries directory -->
+        <copy todir="${html.dir}/libraries" overwrite="true">
+          <fileset dir="${libraries.dir}" />
+        </copy>
+        <!-- copy update.rdf file, filling in version number -->      
+        <copy file="${firefox.platform.dir}/update.template.rdf"               
+            tofile="${html.dir}/update.rdf"
+            overwrite="true" />
+        <replaceregexp match="${version.pattern}"
+                       flags="g"
+                       replace="${version.value}" >
+          <fileset dir="${html.dir}">
+              <include name="update.rdf" />
+          </fileset>
+        </replaceregexp>
+        <!-- sign update.rdf file using McCoy -->      
+        <copy todir="${firefox.profile.dir}${file.separator}..${file.separator}..${file.separator}..${file.separator}McCoy" 
+              overwrite="true">
+            <fileset dir="${mccoy.profile.dir}" />
+        </copy>
+        <exec executable="${mccoy.dir}/mccoy">
+            <arg value="-command"/>
+            <arg value="update"/>
+            <arg value="-updateRDF"/>
+            <arg value="${html.dir}${file.separator}update.rdf"/>
+            <arg value="-key"/>
+            <arg value="chickenfoot"/>
+            <arg value="-xpi"/>
+            <arg value="${html.dir}${file.separator}releases${file.separator}${xpi.name}"/>
+        </exec>
+    </target>
+
+    <target name="update-rss-feed"
+            description="Updates RSS feed on the Chickenfoot home page">
+        <!-- update new-release RSS feed from blog -->
+        <echo message="Fetching new-release RSS feed from blog..."/>
+        <exec executable="wget">
+            <arg value="http://groups.csail.mit.edu/uid/chickenfoot/blog/feed?category=New+Release" />
+            <arg value="-O" />
+            <arg value="${html.dir}/release-notes.xml" />
+        </exec>
+    </target>
+
+    <target name="download-stats"
+            description="Displays download statistics for Chickenfoot."
+            >
+      <exec executable="ssh">
+          <arg value="pink-panther.csail.mit.edu" />
+          <arg value="cd /var/log/apache ; echo -n 'last week: '; grep -c chickenfoot.xpi groups-access.log.1 ; echo -n 'so far this week: ' ; grep -c chickenfoot.xpi groups-access.log"/>
+      </exec>
+    </target>
+    
+    <!-- FENNEC BUILD RULES -->
+    
+    <target name="fennec-xpi-dir"
+            depends=""
+            description="Generates the Fennec build/xpi directory.">
+        <mkdir dir="${fennec.build.dir}" />     
+        <mkdir dir="${fennec.xpi.dir}" />
+        <!-- content folder -->
+        <mkdir dir="${fennec.xpi.dir}/content" />
+        <copy todir="${fennec.export.dir}" overwrite="true">
+            <fileset dir="${core.dir}">
+                <!-- <exclude name="util/accessors.js" /> -->
+                <exclude name="firefox/ChickenfootCommandLineHandler.js" />
+                <!-- <exclude name="firefox/Chickenfoot.js" /> -->
+                <exclude name="firefox/Chicken-bypass.js" />
+                <exclude name="packager/xpi-tie/*.js" />
+                
+                <include name="**/*.js" />
+            </fileset>
+            <filterset refid="chickenfootMacros" />
+        </copy>
+        <concat destfile="${fennec.xpi.dir}/content/overlay.js" fixlastline="yes">
+            <filelist refid="doctype" />
+            <fileset dir="${fennec.ui.dir}">
+                <include name="*.js" />
+            </fileset>
+        </concat>
+        <concat destfile="${fennec.xpi.dir}/components/Chickenfoot.js" fixlastline="yes">
+            <filelist refid="doctype" />
+            <fileset dir="${fennec.export.dir}">
+                <include name="**/*.js" />
+            </fileset>
+        </concat>
+        <copy todir="${fennec.xpi.dir}/components" overwrite="true">
+            <fileset dir="${core.dir}/firefox">
+                <include name="Chicken-bypass.js"/>
+                <include name="ChickenfootCommandLineHandler.js"/>
+            </fileset>
+            <filterset refid="chickenfootMacros" />
+        </copy>
+        <copy todir="${fennec.xpi.dir}/content" overwrite="true">
+            <fileset dir="${fennec.ui.dir}"
+                     includes="*.xul" />
+            <fileset dir="${firefox.ui.dir}">
+                <include name="chickenscratch.xul"/>
+                <include name="chickenscratch.js"/>
+            </fileset>
+            <filterset refid="chickenfootMacros" />
+        </copy>
+        <!-- skin folder -->
+        <mkdir dir="${fennec.xpi.dir}/skin" />
+        <copy todir="${fennec.xpi.dir}/skin" overwrite="true">
+            <fileset dir="${fennec.skin.dir}" />
+        </copy>
+        <!-- locale folder -->
+        <mkdir dir="${fennec.xpi.dir}/locale" />
+        <copy todir="${fennec.xpi.dir}/locale" overwrite="true">
+            <fileset dir="${fennec.locale.dir}" />
+        </copy>
+        <!-- copy install.rdf file, filling in version number -->      
+        <copy file="${fennec.platform.dir}/install.template.rdf"               
+            tofile="${fennec.xpi.dir}/install.rdf"
+            overwrite="true" />
+        <replaceregexp match="${version.pattern}"
+                       flags="g"
+                       replace="${version.value}" >
+          <fileset dir="${fennec.xpi.dir}">
+              <include name="install.rdf" />
+          </fileset>
+        </replaceregexp>
+        <!-- chrome.manifest -->
+        <copy file="${fennec.platform.dir}/chrome.manifest"               
+            tofile="${fennec.xpi.dir}/chrome.manifest"
+            overwrite="true" />
+        <!-- setup folder -->
+        <mkdir dir="${fennec.xpi.dir}/setup" />
+        <copy todir="${fennec.xpi.dir}/setup" overwrite="true">
+            <fileset dir="${setup.dir}" />
+        </copy>
+    </target>
+    
+    <target name="run-fennec-no-install"
+            depends="fennec-xpi-dir,point-fennec-to-xpi-dir,run-fennec"
+            description="Runs Fennec by pointing it directly at build/xpi.">
+    </target>
+    
+    <condition property="fennec-already-points-to-xpi-dir">
+       <available file="${fennec.extension.dir}" type="file"/>
+    </condition>
+    
+    <target name="point-fennec-to-xpi-dir"
+            unless="fennec-already-points-to-xpi-dir">
+        <echo message="Deleting old Chickenfoot and redirecting it to ${xpi.dir}"/>
+        <delete dir="${fennec.extension.dir}"/>
+        <echo message="${fennec.xpi.dir}" file="${fennec.extension.dir}"/>
+    </target>
+    
+    <condition property="fennec-properties-has-profile-dir">
+        <and>
+          <available file="${fennec.propertiesfile}" />
+          <isset property="fennec.profile.dir" />
+        </and>
+    </condition>
+    
+    <target name="run-fennec">
+        <fail unless="fennec-properties-has-profile-dir">
+            .
+            The run-fennec-no-install target requies you to create 
+            fennec.properties.  Use fennec-default.properties 
+            as a template, and customize it for your Fennec installation.
+        </fail>
+      <exec executable="${fennec.dir}${fennec.executable}">
+          <arg value="-jsconsole"/>
+      </exec>
+    </target>
+
+    <target name="fennec-build"
+            depends="run-fennec-no-install"
+            description="Builds the fennec chickenfoot extension.">
+    </target>
+    
+    <target name="fennec-clean"
+            description="Removes all generated files.">
+        <delete dir="${fennec.build.dir}" />
+    </target>
+  
+</project>

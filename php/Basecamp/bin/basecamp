@@ -1,0 +1,4 @@
+#set :test_var, "test"
+
+php "/Library/WebServer/my/basecamp/index.php" $*
+
