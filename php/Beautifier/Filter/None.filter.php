@@ -1,5 +1,5 @@
 <?php
-final class PHP_Beautifier_Filter_None extends PHP_Beautifier_Filter
+class PHP_Beautifier_Filter_None extends PHP_Beautifier_Filter
 {
     protected $sDescription = 'None Filter for PHP_Beautifier';
     function __call($sMethod, $aArgs)
