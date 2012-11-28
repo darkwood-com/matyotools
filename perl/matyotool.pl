@@ -57,6 +57,24 @@ BASH
 	system <<BASH;
 	sshfs $vars{user}\@$vars{host}:$vars{hostdir} $vars{localdir} -o volname=$vars{user}\@$vars{host} && echo "mounted $vars{host}:/ on $vars{localdir}" || echo "could not mount $vars{host} on $vars{localdir}"
 BASH
+} elsif($prog eq 'svn') {
+	if(-e '.svn') {
+		my @args1 = @args;
+		my $prog1 = shift(@args1);
+	
+		if($prog1 eq 'add') {
+			my %opts1 = ();
+			GetOptionsFromArray(\@args1, \%opts1, 'unversioned');
+			
+			if($opts1{unversioned}) {
+				system <<BASH;
+				svn st | grep ^\? | awk {'print "svn add "\$2'} | sh
+BASH
+			}
+		}
+	} else {
+		print "svn: warning: '.' is not a working copy\n";
+	}
 } else {
 	pod2usage(-verbose => 1) && exit
 }
