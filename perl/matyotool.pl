@@ -1,4 +1,4 @@
-#! /usr/bin/perl
+#!/usr/bin/perl
 # Copyright (C) 2012 Mathieu Ledru [http://www.darkwood.fr]
 #
 # This program is free software: you can redistribute it and/or modify
@@ -16,58 +16,57 @@
 
 use strict;
 use warnings;
-use Getopt::Long;
+use Getopt::Long qw(GetOptionsFromArray);
 use Pod::Usage;
+use File::Path qw(make_path);
 
 my $VERSION = '1.0';
-my $site        = 'http://www.wunderground.com/members/signup.php';
-my $opt_debug   = 0;
-my ($opt_help, $opt_man, $opt_versions);
+my @args = @ARGV;
+my $prog = shift(@args);
 
+if($prog eq 'mount') {
+	my %opts = ();
+	GetOptionsFromArray(\@args, \%opts, 'root');
+	
+	my %vars = (
+		'user'		=> 'by',
+		'host'		=> 'lamp',
+		'hostdir'	=> '/var/www',
+		'localdir'	=> '/Volumes/lamp',
+	);
 
-GetOptions(
-  'debug=i'   => \$opt_debug,
-  'help!'     => \$opt_help,
-  'man!'      => \$opt_man,
-  'versions!' => \$opt_versions,
-) or pod2usage(-verbose => 1) && exit;
-
-pod2usage(-verbose => 1) && exit if ($opt_debug !~ /^[01]$/);
-pod2usage(-verbose => 1) && exit if defined $opt_help;
-pod2usage(-verbose => 2) && exit if defined $opt_man;
-# Check this last to avoid parsing options as Places,
-#   and so don't override $opt_man verbose level
-my @places  = @ARGV;
-pod2usage(-verbose => 1) && exit unless @places;
-
-
-print "\n", my $time = localtime, "\n$site\n\n";
-
-
-
-BEGIN{
-  # allow to run from cron:
-  # but doesn't work 8^(
-  $ENV{HTTP_PROXY} = 'http://proxy:port/'; 
+	if($opts{root}) {
+		%vars = (
+			'user'		=> 'root',
+			'host'		=> 'lamp',
+			'hostdir'	=> '/',
+			'localdir'	=> '/Volumes/root_lamp',
+		);
+	}
+	
+	if(-e $vars{localdir}) {
+		system <<BASH;
+		if mount | grep $vars{localdir} ; then
+			umount $vars{localdir} && sleep 1s;
+		fi
+BASH
+	} else {
+		make_path($vars{localdir});
+	}
+	
+	system <<BASH;
+	sshfs $vars{user}\@$vars{host}:$vars{hostdir} $vars{localdir} -o volname=$vars{user}\@$vars{host} && echo "mounted $vars{host}:/ on $vars{localdir}" || echo "could not mount $vars{host} on $vars{localdir}"
+BASH
+} else {
+	pod2usage(-verbose => 1) && exit
 }
 
-
-END{
-  if(defined $opt_versions){
-    print
-      "\nModules, Perl, OS, Program info:\n",
-      "  Pod::Usage            $Pod::Usage::VERSION\n",
-      "  Getopt::Long          $Getopt::Long::VERSION\n",
-      "  strict                $strict::VERSION\n",
-      "  Perl                  $]\n",
-      "  OS                    $^O\n",
-      "  wunderg.pl            $VERSION\n",
-      "  $0\n",
-      "  $site\n",
-      "\n\n";
-  }
-}
-
+=pod
+my %opts = ();
+GetOptions(\%opts, 'help|?', 'man');
+pod2usage(-verbose => 1) && exit if defined $opts{help};
+pod2usage(-verbose => 2) && exit if defined $opts{man};
+=cut
 
 =head1 NAME
 
