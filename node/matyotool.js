@@ -20,8 +20,28 @@
 var fs = require('fs-extra');
 var execSync = require('exec-sync');
 
-String.prototype.replaceAll = function() {
-	return arguments[0];
+/**
+* https://github.com/thomasfr/node-simple-replace
+*/
+String.prototype.replaceAll = function(objectHash) {
+	var placeholerDefaultValueRegex = /([^:-]+)+:-(.*)+/;
+    var placeholderRegex = /(?:\{([^}]+)+\})+?/g;
+    var defaultValueMatches;
+    var placeholderReplace = function (placeholder, configVar) {
+        if (typeof objectHash[configVar] !== 'undefined') {
+            return objectHash[configVar];
+        } else if (!configVar.match(placeholerDefaultValueRegex)) {
+            return placeholder;
+        } else {
+            defaultValueMatches = configVar.match(placeholerDefaultValueRegex);
+            if (typeof objectHash[defaultValueMatches[1]] !== 'undefined') {
+                return objectHash[defaultValueMatches[1]];
+            } else {
+                return defaultValueMatches[2];
+            }
+        }
+    };
+    return this.replace(placeholderRegex, placeholderReplace);
 };
 
 var VERSION = '1.0';
@@ -43,19 +63,17 @@ if(true) {
 }
 
 if(fs.existsSync(conf['localdir'])) {
-	console.log([
-		'if mount | grep $1 ; then',
-			'umount $1 && sleep 1s;',
+	execSync([
+		'if mount | grep {localdir} ; then',
+			'umount {localdir} && sleep 1s;',
 		'fi',
-	].join("\n").replaceAll(conf['localdir']));
+	].join("\n").replaceAll(conf));
 } else {
 	fs.mkdirsSync(conf['localdir']);
 }
 
-/*
 execSync([
-	'sshfs $user@$host:$hostdir $localdir -o volname=$user@$host',
-	' && echo "mounted $user@$host:$hostdir on $localdir"',
-	' || echo "could not mount $user@$host:$hostdir on $localdir"',
-].join());
-*/
+	'sshfs {user}@{host}:{hostdir} {localdir} -o volname={user}@{host}',
+	' && echo "mounted {user}@{host}:{hostdir} on {localdir}"',
+	' || echo "could not mount {user}@{host}:{hostdir} on {localdir}"',
+].join('').replaceAll(conf));
