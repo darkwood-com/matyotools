@@ -19,6 +19,7 @@
 
 var fs = require('fs-extra');
 var execSync = require('exec-sync');
+var program = require('commander');
 
 /**
 * https://github.com/thomasfr/node-simple-replace
@@ -46,34 +47,50 @@ String.prototype.replaceAll = function(objectHash) {
 
 var VERSION = '1.0';
 
-var conf = {
-	'user'		:'by',
-	'host'		:'lamp',
-	'hostdir'	:'/var/www',
-	'localdir'	:'/Volumes/lamp',
-};
+var args = process.argv.slice(2);
+var prog = args.shift();
 
-if(true) {
-	conf = {
-		'user'		: 'root',
-		'host'		: 'lamp',
-		'hostdir'	: '/',
-		'localdir'	: '/Volumes/root_lamp',
-	};
+switch(prog) {
+    case 'mount':
+        (function(args) {
+            program
+                .version('0.0.1')
+                .parse(args);
+
+            var conf = {
+                'user'		:'by',
+                'host'		:'lamp',
+                'hostdir'	:'/var/www',
+                'localdir'	:'/Volumes/lamp'
+            };
+
+            if(1 == 1) {
+                conf = {
+                    'user'		:'root',
+                    'host'		:'lamp',
+                    'hostdir'	:'/',
+                    'localdir'	:'/Volumes/root_lamp'
+                };
+            }
+
+            if(fs.existsSync(conf['localdir'])) {
+                execSync([
+                    'if mount | grep {localdir} ; then',
+                    'umount {localdir} && sleep 1s;',
+                    'fi'
+                ].join("\n").replaceAll(conf));
+            } else {
+                fs.mkdirsSync(conf['localdir']);
+            }
+
+            execSync([
+                'sshfs {user}@{host}:{hostdir} {localdir} -o volname={user}@{host}',
+                ' && echo "mounted {user}@{host}:{hostdir} on {localdir}"',
+                ' || echo "could not mount {user}@{host}:{hostdir} on {localdir}"'
+            ].join('').replaceAll(conf));
+        })(args);
+        break;
+    case 'svn':
+
+        break;
 }
-
-if(fs.existsSync(conf['localdir'])) {
-	execSync([
-		'if mount | grep {localdir} ; then',
-			'umount {localdir} && sleep 1s;',
-		'fi',
-	].join("\n").replaceAll(conf));
-} else {
-	fs.mkdirsSync(conf['localdir']);
-}
-
-execSync([
-	'sshfs {user}@{host}:{hostdir} {localdir} -o volname={user}@{host}',
-	' && echo "mounted {user}@{host}:{hostdir} on {localdir}"',
-	' || echo "could not mount {user}@{host}:{hostdir} on {localdir}"',
-].join('').replaceAll(conf));
