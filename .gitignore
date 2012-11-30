@@ -5,3 +5,6 @@
 # PhpStorm
 .idea
 
+# Beautifier
+php/Beautifier/test.beautified.php
+php/Beautifier/test.beautifier.log
