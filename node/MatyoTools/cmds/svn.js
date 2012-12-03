@@ -1,3 +1,0 @@
-MatyoTools.svn = function(argv) {
-
-};

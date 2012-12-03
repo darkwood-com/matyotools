@@ -1,5 +1,3 @@
-#! /usr/bin/env node
-
 /**
  * Copyright (C) Mathieu Ledru [http://www.darkwood.fr]
  *
@@ -17,16 +15,4 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var MatyoTools = MatyoTools || { VERSION: '1.0' };
-
-var argv = process.argv;
-var prog = argv.splice(2,1).shift();
-
-switch(prog) {
-    case 'mount':
-        MatyoTools.mount(argv);
-        break;
-    case 'svn':
-        MatyoTools.svn(argv);
-        break;
-}
+define({ VERSION: '1.0' });
