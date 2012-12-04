@@ -8,6 +8,9 @@ define(['matyotools'], function(matyotools) {
                 case 'mount':
                     matyotools.exec.childs.mount(argv);
                     break;
+                case 'selfupdate':
+                    matyotools.exec.childs.selfupdate(argv);
+                    break;
                 case 'svn':
                     matyotools.exec.childs.svn.call(argv);
                     break;

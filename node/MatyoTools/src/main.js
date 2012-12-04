@@ -25,6 +25,7 @@ requirejs([
     "matyotools",
     "exec",
     "exec/mount",
+    "exec/selfupdate",
     "exec/svn",
     "exec/svn/add"
 ], function(matyotools) {
