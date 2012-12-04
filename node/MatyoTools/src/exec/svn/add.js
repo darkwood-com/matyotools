@@ -12,7 +12,7 @@ define(['matyotools', 'exec/svn'], function(matyotools) {
                 .parse(argv);
 
             if(program.unversioned) {
-                console.log(execSync('svn st | grep ^\? | awk {\'print "svn add "\$2\'} | sh'));
+                console.log(execSync('svn st | grep ^\\? | awk {\'print "svn add "\\$2\'} | sh'));
             }
         } else {
             console.log("svn: warning: '.' is not a working copy");
