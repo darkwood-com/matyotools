@@ -36,8 +36,25 @@
  */
 
 define('matyotools',{ VERSION: '1.0' });
-define('exec/mount',['matyotools'], function(matyotools) {
-    matyotools.mount = function(argv) {
+define('exec',['matyotools'], function(matyotools) {
+    matyotools.exec = {
+        childs: {},
+        call: function(argv) {
+            var prog = argv.splice(2,1).shift();
+
+            switch(prog) {
+                case 'mount':
+                    matyotools.exec.childs.mount(argv);
+                    break;
+                case 'svn':
+                    matyotools.exec.childs.svn.call(argv);
+                    break;
+            }
+        }
+    };
+});
+define('exec/mount',['matyotools', 'exec'], function(matyotools) {
+    matyotools.exec.childs.mount = function(argv) {
         var fs = require('fs-extra');
         var execSync = require('exec-sync');
         var program = require('commander');
@@ -68,7 +85,8 @@ define('exec/mount',['matyotools'], function(matyotools) {
 
         program
             .version('0.0.1')
-            .option('-p, --peppers', 'Add peppers')
+            .description('mount by@lamp')
+            .option('-r, --root', 'mount root@lamp')
             .parse(argv);
 
         var conf = {
@@ -78,7 +96,7 @@ define('exec/mount',['matyotools'], function(matyotools) {
             'localdir'	:'/Volumes/lamp'
         };
 
-        if(1 == 1) {
+        if(program.root) {
             conf = {
                 'user'		:'root',
                 'host'		:'lamp',
@@ -104,41 +122,40 @@ define('exec/mount',['matyotools'], function(matyotools) {
         ].join('').replaceAll(conf)));
     };
 });
-define('exec/svn',['matyotools'], function(matyotools) {
-    matyotools.svn = function(argv) {
+define('exec/svn',['matyotools', 'exec'], function(matyotools) {
+    matyotools.exec.childs.svn = {
+        childs: {},
+        call: function(argv) {
+            var prog = argv.splice(2,1).shift();
 
+            switch(prog) {
+                case 'add':
+                    matyotools.exec.childs.svn.childs.add(argv);
+                    break;
+            }
+        }
     };
 });
-/**
- * Copyright (C) Mathieu Ledru [http://www.darkwood.fr]
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+define('exec/svn/add',['matyotools', 'exec/svn'], function(matyotools) {
+    matyotools.exec.childs.svn.childs.add = function(argv) {
+        var fs = require('fs-extra');
 
-define('exec',['matyotools', 'exec/mount', 'exec/svn'], function(matyotools) {
-    matyotools.exec = function(argv) {
-        var prog = argv.splice(2,1).shift();
+        if(fs.existsSync('.svn')) {
+            var program = require('commander');
+            var execSync = require('exec-sync');
 
-        switch(prog) {
-            case 'mount':
-                matyotools.mount(argv);
-                break;
-            case 'svn':
-                matyotools.svn(argv);
-                break;
+            program
+                .version('0.0.1')
+                .option('-u, --unversioned', 'add unversionned files')
+                .parse(argv);
+
+            if(program.unversioned) {
+                console.log(execSync('svn st | grep ^\\? | awk {\'print "svn add "\\$2\'} | sh'));
+            }
+        } else {
+            console.log("svn: warning: '.' is not a working copy");
         }
-    }
+    };
 });
 /**
  * Copyright (C) Mathieu Ledru [http://www.darkwood.fr]
@@ -160,19 +177,20 @@ define('exec',['matyotools', 'exec/mount', 'exec/svn'], function(matyotools) {
 var requirejs = require('requirejs');
 
 requirejs.config({
-    paths: [
-        "matyotools.js",
-        "exec.js"
-    ],
-
     nodeRequire: require
 });
 
-requirejs(['matyotools', 'exec'], function(matyotools) {
+requirejs([
+    "matyotools",
+    "exec",
+    "exec/mount",
+    "exec/svn",
+    "exec/svn/add"
+], function(matyotools) {
     var argv = process.argv;
 
-    matyotools.exec(argv);
+    matyotools.exec.call(argv);
 });
 
-define("matyotools_dev", function(){});
+define("main", function(){});
 }(require('requirejs').define));
