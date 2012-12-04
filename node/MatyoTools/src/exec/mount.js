@@ -1,5 +1,5 @@
-define(['matyotools'], function(matyotools) {
-    matyotools.mount = function(argv) {
+define(['matyotools', 'exec'], function(matyotools) {
+    matyotools.exec.childs.mount = function(argv) {
         var fs = require('fs-extra');
         var execSync = require('exec-sync');
         var program = require('commander');
@@ -30,7 +30,8 @@ define(['matyotools'], function(matyotools) {
 
         program
             .version('0.0.1')
-            .option('-p, --peppers', 'Add peppers')
+            .description('mount by@lamp')
+            .option('-r, --root', 'mount root@lamp')
             .parse(argv);
 
         var conf = {
@@ -40,7 +41,7 @@ define(['matyotools'], function(matyotools) {
             'localdir'	:'/Volumes/lamp'
         };
 
-        if(1 == 1) {
+        if(program.root) {
             conf = {
                 'user'		:'root',
                 'host'		:'lamp',

@@ -18,16 +18,19 @@
 var requirejs = require('requirejs');
 
 requirejs.config({
-    paths: [
-        "matyotools.js",
-        "exec.js"
+    deps: [
+        'matyotools',
+        'exec',
+        'exec/mount',
+        'exec/svn',
+        'exec/svn/add'
     ],
 
     nodeRequire: require
 });
 
-requirejs(['matyotools', 'exec'], function(matyotools) {
+requirejs(['matyotools'], function(matyotools) {
     var argv = process.argv;
 
-    matyotools.exec(argv);
+    matyotools.exec.call(argv);
 });
