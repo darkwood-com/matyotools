@@ -12,7 +12,7 @@ $b->setInputFile($file.'.php');
 $b->setOutputFile(dirname(__FILE__).'/'.$file.'.beautified.php');
 $b->startLog(dirname(__FILE__).'/'.$file.'.beautifier.log');
 
-$b->addFilterDirectory(dirname(__FILE__) . '/Filter');
+$b->addFilterDirectory(dirname(__FILE__) . '/Matyo_Beautifier/Beautifier/Filter');
 $b->addFilter('None');
 $b->addFilter('Namespace');
 
