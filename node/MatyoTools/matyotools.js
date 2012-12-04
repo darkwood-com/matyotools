@@ -46,6 +46,9 @@ define('exec',['matyotools'], function(matyotools) {
                 case 'mount':
                     matyotools.exec.childs.mount(argv);
                     break;
+                case 'selfupdate':
+                    matyotools.exec.childs.selfupdate(argv);
+                    break;
                 case 'svn':
                     matyotools.exec.childs.svn.call(argv);
                     break;
@@ -122,6 +125,21 @@ define('exec/mount',['matyotools', 'exec'], function(matyotools) {
         ].join('').replaceAll(conf)));
     };
 });
+define('exec/selfupdate',['matyotools', 'exec'], function(matyotools) {
+    matyotools.exec.childs.selfupdate = function(argv) {
+        var https = require('https');
+        var fs = require('fs');
+
+        var url = "https://raw.github.com/matyo91/MatyoTools/master/node/MatyoTools/matyotools.js";
+        var file = argv[1];
+
+        https.get(url, function(res) {
+            res.on('data', function(data) {
+                fs.writeFile(file, data);
+            });
+        })
+    };
+});
 define('exec/svn',['matyotools', 'exec'], function(matyotools) {
     matyotools.exec.childs.svn = {
         childs: {},
@@ -184,6 +202,7 @@ requirejs([
     "matyotools",
     "exec",
     "exec/mount",
+    "exec/selfupdate",
     "exec/svn",
     "exec/svn/add"
 ], function(matyotools) {
