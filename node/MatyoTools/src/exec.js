@@ -1,4 +1,4 @@
-define(['matyotools'], function(matyotools) {
+define(['matyotools', 'conf'], function(matyotools) {
     matyotools.exec = {
         childs: {},
         call: function(argv) {
@@ -10,6 +10,9 @@ define(['matyotools'], function(matyotools) {
                     break;
                 case 'selfupdate':
                     matyotools.exec.childs.selfupdate(argv);
+                    break;
+                case 'ssh':
+                    matyotools.exec.childs.ssh.call(argv);
                     break;
                 case 'svn':
                     matyotools.exec.childs.svn.call(argv);
