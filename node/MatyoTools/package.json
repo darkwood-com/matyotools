@@ -11,6 +11,7 @@
         "requirejs":"*",
         "commander":"*",
         "fs-extra":"*",
+        "path-extra":"*",
         "exec-sync":"~0.1.5"
     },
     "devDependencies":{
