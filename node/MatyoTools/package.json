@@ -1,0 +1,21 @@
+{
+    "name":"matyotools",
+    "version":"0.1.0",
+    "engines":{
+        "node":">=0.6.0"
+    },
+    "scripts":{
+        "build":"grunt build"
+    },
+    "dependencies":{
+        "requirejs":"*",
+        "commander":"*",
+        "fs-extra":"*",
+        "exec-sync":"~0.1.5"
+    },
+    "devDependencies":{
+        "grunt":"0.4.x",
+        "grunt-cli":"~0.1.6",
+        "grunt-contrib-requirejs":"0.3.x"
+    }
+}

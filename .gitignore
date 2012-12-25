@@ -8,3 +8,6 @@
 # Beautifier
 php/Beautifier/test.beautified.php
 php/Beautifier/test.beautifier.log
+
+# Matyotools
+node/Matyotools/node_modules
