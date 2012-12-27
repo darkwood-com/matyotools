@@ -9,10 +9,26 @@ module.exports = function (grunt) {
                     optimize:'none',
                     name: "main",
                     paths:{
-                        requireLib:"../node_modules/grunt-contrib-requirejs/node_modules/requirejs/require"
+                        requireLib:"../node_modules/requirejs/require"
                     },
                     include:['requireLib'],
                     out:'matyotools.js'
+                }
+            },
+            matyotools_bin:{
+                options:{
+                    baseUrl: "src",
+                    optimize:'none',
+                    name: "main",
+                    paths:{
+                        requireLib:"../node_modules/requirejs/require"
+                    },
+                    include:['requireLib'],
+                    out:'bin/matyotools.js',
+                    wrap: {
+                        start: "#!/usr/bin/env node",
+                        end: ""
+                    }
                 }
             }
         }
