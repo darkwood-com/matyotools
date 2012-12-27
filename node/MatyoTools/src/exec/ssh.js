@@ -11,6 +11,9 @@ define(['matyotools', 'exec'], function(matyotools) {
                 case 'list':
                     matyotools.exec.childs.ssh.childs.list(argv);
                     break;
+                case 'get':
+                    matyotools.exec.childs.ssh.childs.get(argv);
+                    break;
             }
         }
     };

@@ -6,6 +6,7 @@ requirejs([
     "exec/ssh",
     "exec/ssh/add",
     "exec/ssh/list",
+    "exec/ssh/get",
     "exec/svn",
     "exec/svn/add"
 ], function(matyotools) {
