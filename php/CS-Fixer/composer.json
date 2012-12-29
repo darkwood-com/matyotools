@@ -1,0 +1,24 @@
+{
+    "name": "matyo91/matyo-cs-fixer",
+    "type": "application",
+    "description": "A script to automatically fix Symfony Coding Standard",
+    "license": "MIT",
+    "require": {
+        "fabpot/php-cs-fixer": "*"
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url":  "https://github.com/fabpot/PHP-CS-Fixer.git"
+        }
+    ],
+    "autoload": {
+        "psr-0": { "Symfony\\CS": "." }
+    },
+    "bin": ["php-cs-fixer"],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
+        }
+    }
+}
