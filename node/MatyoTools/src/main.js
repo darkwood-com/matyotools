@@ -5,8 +5,9 @@ requirejs([
     "exec/selfupdate",
     "exec/ssh",
     "exec/ssh/add",
-    "exec/ssh/list",
     "exec/ssh/get",
+    "exec/ssh/go",
+    "exec/ssh/list",
     "exec/svn",
     "exec/svn/add"
 ], function(matyotools) {

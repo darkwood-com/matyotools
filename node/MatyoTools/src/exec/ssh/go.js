@@ -1,6 +1,5 @@
-define(['matyotools', 'exec'], function(matyotools) {
-    matyotools.exec.childs.mount = function(argv) {
-        var fs = require('fs-extra');
+define(['matyotools', 'exec/ssh'], function(matyotools) {
+    matyotools.exec.childs.ssh.childs.go = function(argv) {
         var execSync = require('exec-sync');
         var program = require('commander');
 
@@ -48,23 +47,7 @@ define(['matyotools', 'exec'], function(matyotools) {
                 && ssh[name].user
                 && ssh[name].host
                 && ssh[name].path) {
-                ssh[name].localdir = ('/Volumes/{user}@{host}').replaceAll(ssh[name]);
-
-                if(fs.existsSync(ssh[name].localdir)) {
-                    execSync([
-                        'if mount | grep {localdir} ; then',
-                        'umount {localdir} && sleep 1s;',
-                        'fi'
-                    ].join("\n").replaceAll(ssh[name]));
-                } else {
-                    fs.mkdirsSync(ssh[name].localdir);
-                }
-
-                console.log(execSync([
-                    'sshfs {user}@{host}:{path} {localdir} -o volname={user}@{host}',
-                    ' && echo "mounted {user}@{host}:{path} on {localdir}"',
-                    ' || echo "could not mount {user}@{host}:{path} on {localdir}"'
-                ].join('').replaceAll(ssh[name])));
+                console.log(('ssh {user}@{host}').replaceAll(ssh[name]));
             } else {
                 program.help();
             }
