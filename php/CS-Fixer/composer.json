@@ -1,10 +1,10 @@
 {
-    "name": "matyo91/matyo-cs-fixer",
+    "name": "matyo91/php-cs-fixer",
     "type": "application",
     "description": "A script to automatically fix Symfony Coding Standard",
     "license": "MIT",
     "require": {
-        "fabpot/php-cs-fixer": "*"
+        "fabpot/php-cs-fixer": "dev-master"
     },
     "repositories": [
         {

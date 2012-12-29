@@ -1,13 +1,13 @@
 {
-    "hash": "5e97d39b4bbe055990d601b942fdf0fd",
+    "hash": "b1752faa907d9ba9fe398403821659ba",
     "packages": [
         {
             "name": "fabpot/php-cs-fixer",
-            "version": "v0.1.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fabpot/PHP-CS-Fixer.git",
-                "reference": "v0.1.0"
+                "reference": "d5d75bdb6911e921fb508124ac15999b365c287e"
             },
             "require": {
                 "php": ">=5.3.3",
@@ -177,7 +177,7 @@
 
     ],
     "minimum-stability": "stable",
-    "stability-flags": [
-
-    ]
+    "stability-flags": {
+        "fabpot/php-cs-fixer": 20
+    }
 }
