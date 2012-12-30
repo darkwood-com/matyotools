@@ -20,6 +20,11 @@ Tools for programming
   - **MatyoTools** : I store all of my every-day commands into matyotools.js script.
 
 * PHP
+  - **Basecamp** : This allow use  [basecamp api](http://developer.37signals.com/basecamp/) in command line mode rather than spending more daily time on the web interface.
+
+  - **Beautifier** : Extends [PHP_Beautifier](http://pear.php.net/package/PHP_Beautifier/) to format and beautify code.
+
+  - **CS-Fixer** : Extends [PHP-CS-Fixer](http://cs.sensiolabs.org/) to format and beautify code.
+
   - **SearchReplace** : This tool allows search and replace from input to output (file or stream). You can override the classes to customise your replacement rules.
 
-  - **Basecamp** : This allow use  [basecamp api](http://developer.37signals.com/basecamp/) in command line mode rather than spending more daily time on the web interface.
