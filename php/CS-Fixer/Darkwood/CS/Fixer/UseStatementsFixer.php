@@ -13,23 +13,67 @@ class UseStatementsFixer implements FixerInterface
             return $content;
         }
 
-        // [Structure] remove unused use statements
-        preg_match_all('/^use (?P<class>[^\s;]+)(?:\s+as\s+(?P<alias>.*))?;/m', $content, $matches, PREG_SET_ORDER);
-        foreach ($matches as $match) {
-            if (isset($match['alias'])) {
-                $short = $match['alias'];
-            } else {
-                $parts = explode('\\', $match['class']);
-                $short = array_pop($parts);
-            }
+        $useTree = array();
 
-            preg_match_all('/\b'.preg_quote($short, '/').'\b/i', str_replace($match[0]."\n", '', $content), $m);
-            if (!count($m[0])) {
+        // [Structure] remove unused use statements
+        if(preg_match_all('/^use (?P<class>[^\s;]+)(?:\s+as\s+(?P<alias>.*))?;/m', $content, $matches, PREG_OFFSET_CAPTURE))
+        {
+            foreach ($matches[0] as $mi => $match) {
+                $use = &$useTree;
+                $class = $matches['class'][$mi][0];
+                $parts = explode('\\', $class);
+                foreach($parts as $i => $part)
+                {
+                    $part = trim($part);
+                    if(!isset($use[$part]))
+                    {
+                        $alias = isset($matches['alias'][$mi][0]) ? $matches['alias'][$mi][0] : null;
+                        $use[$part] = array(
+                            'parts' => array(),
+                            'alias' => $alias,
+                            'final' => !is_null($alias),
+                        );
+                    }
+
+                    if($use[$part]['final'] === false && count($parts) - 1 == $i)
+                    {
+                        $use[$part]['final'] = true;
+                    }
+
+                    $use = &$use[$part]['parts'];
+                }
+
                 $content = str_replace($match[0]."\n", '', $content);
             }
+
+            $uses = $this->useParse($useTree);
+
+            $offset = $matches[0][0][1];
+            $content = substr($content, 0, $offset).implode("\n", $uses)."\n".substr($content, $offset);
         }
 
         return $content;
+    }
+
+    private function useParse($useTree, $parts = '')
+    {
+        $uses = array();
+
+        ksort($useTree);
+        foreach($useTree as $use => $tree)
+        {
+            $use = $parts.$use;
+            if($tree['final']) {
+                $uses[] = 'use ' . $use . (is_null($tree['alias']) ? '' : ' as '.$tree['alias']).';';
+            }
+            $useChildren = $this->useParse($tree['parts'], $use.'\\');
+            foreach($useChildren as $useChild)
+            {
+                $uses[] = $useChild;
+            }
+        }
+
+        return $uses;
     }
 
     public function getLevel()
