@@ -16,29 +16,29 @@ class UseStatementsFixer implements FixerInterface
         $useTree = array();
 
         // [Structure] remove unused use statements
-        if(preg_match_all('/^use (?P<class>[^\s;]+)(?:\s+as\s+(?P<alias>.*))?;/m', $content, $matches, PREG_OFFSET_CAPTURE))
-        {
+        if (preg_match_all('/^use (?P<class>[^\s;]+)(?:\s+as\s+(?P<alias>.*))?;/m', $content, $matches, PREG_OFFSET_CAPTURE)) {
             foreach ($matches[0] as $mi => $match) {
                 $use = &$useTree;
                 $class = $matches['class'][$mi][0];
                 $parts = explode('\\', $class);
-                foreach($parts as $i => $part)
-                {
+                foreach ($parts as $i => $part) {
                     $part = trim($part);
-                    if(!isset($use[$part]))
-                    {
-                        $alias = isset($matches['alias'][$mi][0]) ? $matches['alias'][$mi][0] : null;
+
+                    if (!isset($use[$part])) {
                         $use[$part] = array(
                             'parts' => array(),
-                            'alias' => $alias,
-                            'final' => !is_null($alias),
+                            'final' => false,
+                            'alias' => null,
                         );
                     }
 
-                    if($use[$part]['final'] === false && count($parts) - 1 == $i)
-                    {
-                        $use[$part]['final'] = true;
+                    $final = $use[$part]['final'] || (count($parts) - 1 == $i);
+                    if(is_null($use[$part]['alias'])) {
+                        $alias = $final && isset($matches['alias'][$mi][0]) ? $matches['alias'][$mi][0] : null;
                     }
+
+                    $use[$part]['final'] = $final;
+                    $use[$part]['alias'] = $alias;
 
                     $use = &$use[$part]['parts'];
                 }
@@ -60,15 +60,13 @@ class UseStatementsFixer implements FixerInterface
         $uses = array();
 
         ksort($useTree);
-        foreach($useTree as $use => $tree)
-        {
+        foreach ($useTree as $use => $tree) {
             $use = $parts.$use;
-            if($tree['final']) {
+            if ($tree['final']) {
                 $uses[] = 'use ' . $use . (is_null($tree['alias']) ? '' : ' as '.$tree['alias']).';';
             }
             $useChildren = $this->useParse($tree['parts'], $use.'\\');
-            foreach($useChildren as $useChild)
-            {
+            foreach ($useChildren as $useChild) {
                 $uses[] = $useChild;
             }
         }
