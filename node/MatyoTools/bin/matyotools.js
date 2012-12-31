@@ -2111,41 +2111,45 @@ define('exec/mount',['matyotools', 'exec'], function(matyotools) {
 
         program
             .version('0.0.1')
-            .description('mount by@lamp')
-            .option('-r, --root', 'mount root@lamp')
+            .description('mount {name}')
+            .option('-l, --list', 'display mount list')
             .parse(argv);
 
-        var conf = {
-            'user'		:'by',
-            'host'		:'lamp',
-            'hostdir'	:'/var/www',
-            'localdir'	:'/Volumes/lamp'
-        };
+        var ssh = matyotools.conf.get('ssh') || {};
 
-        if(program.root) {
-            conf = {
-                'user'		:'root',
-                'host'		:'lamp',
-                'hostdir'	:'/',
-                'localdir'	:'/Volumes/root_lamp'
-            };
-        }
-
-        if(fs.existsSync(conf['localdir'])) {
-            execSync([
-                'if mount | grep {localdir} ; then',
-                'umount {localdir} && sleep 1s;',
-                'fi'
-            ].join("\n").replaceAll(conf));
+        if(program.list) {
+            for(var name in ssh)
+            {
+                console.log(('{name} -> {user}@{host}:{path}').replaceAll(ssh[name]));
+            }
         } else {
-            fs.mkdirsSync(conf['localdir']);
-        }
+            var name = argv.splice(2,1).shift();
 
-        console.log(execSync([
-            'sshfs {user}@{host}:{hostdir} {localdir} -o volname={user}@{host}',
-            ' && echo "mounted {user}@{host}:{hostdir} on {localdir}"',
-            ' || echo "could not mount {user}@{host}:{hostdir} on {localdir}"'
-        ].join('').replaceAll(conf)));
+            if(name && ssh[name]
+                && ssh[name].user
+                && ssh[name].host
+                && ssh[name].path) {
+                ssh[name].localdir = ('/Volumes/{user}@{host}').replaceAll(ssh[name]);
+
+                if(fs.existsSync(ssh[name].localdir)) {
+                    execSync([
+                        'if mount | grep {localdir} ; then',
+                        'umount {localdir} && sleep 1s;',
+                        'fi'
+                    ].join("\n").replaceAll(ssh[name]));
+                } else {
+                    fs.mkdirsSync(ssh[name].localdir);
+                }
+
+                console.log(execSync([
+                    'sshfs {user}@{host}:{path} {localdir} -o volname={user}@{host}',
+                    ' && echo "mounted {user}@{host}:{path} on {localdir}"',
+                    ' || echo "could not mount {user}@{host}:{path} on {localdir}"'
+                ].join('').replaceAll(ssh[name])));
+            } else {
+                program.help();
+            }
+        }
     };
 });
 define('exec/selfupdate',['matyotools', 'exec'], function(matyotools) {
@@ -2164,38 +2168,43 @@ define('exec/selfupdate',['matyotools', 'exec'], function(matyotools) {
     };
 });
 define('exec/ssh',['matyotools', 'exec'], function(matyotools) {
+    var _ = require('underscore');
+
     matyotools.exec.childs.ssh = {
         childs: {},
         call: function(argv) {
             var prog = argv.splice(2,1).shift();
 
-            switch(prog) {
-                case 'add':
-                    matyotools.exec.childs.ssh.childs.add(argv);
-                    break;
-                case 'list':
-                    matyotools.exec.childs.ssh.childs.list(argv);
-                    break;
+            var children = ['add','list','get','go'];
+            if(_.contains(children, prog)) {
+                matyotools.exec.childs.ssh.childs[prog](argv);
+            } else {
+                argv.push(prog);
+                matyotools.exec.childs.ssh.childs.go(argv);
             }
         }
     };
 });
 define('exec/ssh/add',['matyotools', 'exec/ssh'], function(matyotools) {
     matyotools.exec.childs.ssh.childs.add = function(argv) {
+        var util = require('util');
         var program = require('commander');
 
+        console.log(util.format("{name} -> ssh {user}@{host}:{path} -p {password}"));
         program.prompt({
             name: 'Name: ',
-            host: 'Host: ',
             user: 'User: ',
-            pass: 'Password: '
+            host: 'Host: ',
+            pass: 'Password: ',
+            path: 'Path: (/) '
         }, function(opts){
             var ssh = matyotools.conf.get('ssh') || {};
 
             ssh[opts['name']] = {
-                host: opts['host'],
                 user: opts['user'],
-                pass: opts['pass']
+                host: opts['host'],
+                pass: opts['pass'],
+                path: opts['path']
             };
 
             matyotools.conf.put('ssh', ssh);
@@ -2204,13 +2213,84 @@ define('exec/ssh/add',['matyotools', 'exec/ssh'], function(matyotools) {
         });
     };
 });
+define('exec/ssh/get',['matyotools', 'exec/ssh'], function(matyotools) {
+    matyotools.exec.childs.ssh.childs.get = function(argv) {
+        var util = require('util');
+        
+        var ssh = matyotools.conf.get('ssh') || {};
+
+        var name = argv.splice(2,1).shift();
+        if(ssh[name]) {
+            name = ssh[name];
+            console.log(util.format('ssh %s@%s:%s', name['user'], name['host'], name['pass']))
+        } else {
+            console.log(util.format('name %s not found', name));
+        }
+    };
+});
+define('exec/ssh/go',['matyotools', 'exec/ssh'], function(matyotools) {
+    matyotools.exec.childs.ssh.childs.go = function(argv) {
+        var execSync = require('exec-sync');
+        var program = require('commander');
+
+        /**
+         * https://github.com/thomasfr/node-simple-replace
+         */
+        String.prototype.replaceAll = function(objectHash) {
+            var placeholerDefaultValueRegex = /([^:-]+)+:-(.*)+/;
+            var placeholderRegex = /(?:\{([^}]+)+\})+?/g;
+            var defaultValueMatches;
+            var placeholderReplace = function (placeholder, configVar) {
+                if (typeof objectHash[configVar] !== 'undefined') {
+                    return objectHash[configVar];
+                } else if (!configVar.match(placeholerDefaultValueRegex)) {
+                    return placeholder;
+                } else {
+                    defaultValueMatches = configVar.match(placeholerDefaultValueRegex);
+                    if (typeof objectHash[defaultValueMatches[1]] !== 'undefined') {
+                        return objectHash[defaultValueMatches[1]];
+                    } else {
+                        return defaultValueMatches[2];
+                    }
+                }
+            };
+            return this.replace(placeholderRegex, placeholderReplace);
+        };
+
+        program
+            .version('0.0.1')
+            .description('mount {name}')
+            .option('-l, --list', 'display mount list')
+            .parse(argv);
+
+        var ssh = matyotools.conf.get('ssh') || {};
+
+        if(program.list) {
+            for(var name in ssh)
+            {
+                console.log(('{name} -> {user}@{host}:{path}').replaceAll(ssh[name]));
+            }
+        } else {
+            var name = argv.splice(2,1).shift();
+
+            if(name && ssh[name]
+                && ssh[name].user
+                && ssh[name].host
+                && ssh[name].path) {
+                console.log(('ssh {user}@{host}').replaceAll(ssh[name]));
+            } else {
+                program.help();
+            }
+        }
+    };
+});
 define('exec/ssh/list',['matyotools', 'exec/ssh'], function(matyotools) {
     matyotools.exec.childs.ssh.childs.list = function(argv) {
         var ssh = matyotools.conf.get('ssh') || {};
 
-        for(var host in ssh)
+        for(var name in ssh)
         {
-            console.log(host);
+            console.log(name);
         }
     };
 });
@@ -2256,6 +2336,8 @@ requirejs([
     "exec/selfupdate",
     "exec/ssh",
     "exec/ssh/add",
+    "exec/ssh/get",
+    "exec/ssh/go",
     "exec/ssh/list",
     "exec/svn",
     "exec/svn/add"
