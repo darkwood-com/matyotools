@@ -33,7 +33,7 @@ class UseStatementsFixer implements FixerInterface
                     }
 
                     $final = $use[$part]['final'] || (count($parts) - 1 == $i);
-                    if(is_null($use[$part]['alias'])) {
+                    if (is_null($use[$part]['alias'])) {
                         $alias = $final && isset($matches['alias'][$mi][0]) ? $matches['alias'][$mi][0] : null;
                     }
 
