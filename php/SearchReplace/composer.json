@@ -1,0 +1,25 @@
+{
+    "name": "darkwood/search-replace",
+    "type": "library",
+    "description": "Library emulating the PHP internal reflection using just the tokenized source code.",
+    "keywords": ["library", "tokenizer", "reflection"],
+    "homepage": "http://andrewsville.github.com/PHP-Token-Reflection/",
+    "license": "BSD-3",
+
+    "authors": [
+        {
+            "name": "Mathieu Ledru",
+            "homepage": "http://www.darkwood.fr/"
+        }
+    ],
+
+    "require": {
+        "php": ">=5.3.0",
+        "ext-tokenizer": "*",
+        "andrewsville/php-token-reflection": "dev-master"
+    },
+
+    "autoload": {
+        "psr-0": { "": "src/" }
+    }
+}

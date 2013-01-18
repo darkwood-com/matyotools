@@ -17,3 +17,4 @@ php/CS-Fixer/vendor
 
 # SearchReplace
 php/SearchReplace/tests
+php/SearchReplace/vendor

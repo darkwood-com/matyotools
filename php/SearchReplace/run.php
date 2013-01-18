@@ -1,9 +1,5 @@
 <?php
-/**
- * Execute Search and Replace process
- *
- * @author Mathieu LEDRU <ml@les-argonautes.com>
- */
+require 'vendor/autoload.php';
 
 require_once "src/rule.php";
 require_once "src/regexp.php";
@@ -33,7 +29,6 @@ function run($file) {
 		$argc = 2;
 		$argv[1] = "C:\\Documents and Settings\\Mathieu\\Mes documents\\work\\Tests\\fields_sr.php";
 		
-		// On récupère le nom du fichier
 		if ($argc != 2)
 		{
 			die("Syntaxe: SearchReplace <nom_fichier>\n");
