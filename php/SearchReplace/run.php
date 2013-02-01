@@ -43,11 +43,15 @@ function run($file) {
 	
 	try
 	{
+        $dir = __DIR__;
+        $filename = basename($file, '.php');
+
 		//input
-		$inputFile = $file.".input";
+		$inputFile = $dir.'/tests/'.$filename.".input.txt";
 		$inputText = "";
-		if(file_exists($inputFile))
-		{
+        if(isset($_POST['input'])) {
+            $inputText = $_POST['input'];
+        } else if (file_exists($inputFile)) {
 			$inputText = file_get_contents_utf8($inputFile);
 		}
 		
@@ -57,8 +61,24 @@ function run($file) {
 		$outputText = $sr->doReplace();
 		
 		//output
-		$outputFile = $file.".output";
+		$outputFile = $dir.'/tests/'.$filename.".output.txt";
 		file_put_contents($outputFile, $outputText);
+
+
+        echo '
+        <html>
+            <head>
+
+            </head>
+            <body>
+            <form method="POST">
+            <textarea cols="60" rows="80" name="input">'.$inputText.'</textarea>
+            <textarea cols="60" rows="80" name="output">'.$outputText.'</textarea>
+            <br /><input type="submit" />
+            </form>
+            </body>
+        </html>
+        ';
 	}
 	catch (Exception $e)
 	{
