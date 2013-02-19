@@ -8,6 +8,11 @@ use TokenReflection\Broker;
  */
 class SearchReplace extends Replace 
 {
+    private function camelize($value, $lcfirst = true)
+    {
+        return preg_replace("/([_-\s]?([a-z0-9]+))/e", "ucwords('\\2')", $value);
+    }
+
     public function doReplace()
     {
         $output = parent::doReplace();
@@ -31,7 +36,7 @@ class SearchReplace extends Replace
                     '/**',
                     ' * @return'.$type,
                     ' */',
-                    'public function get'.ucfirst($propertyName).'()',
+                    'public function get'.$this->camelize($propertyName).'()',
                     '{',
                     '    return $this->'.$propertyName.';',
                     '}',
@@ -40,15 +45,13 @@ class SearchReplace extends Replace
                     ' * @param'.$type.' $'.$propertyName,
                     ' * @return '.$class->getName(),
                     ' */',
-                    'public function set'.ucfirst($propertyName).'($'.$propertyName.')',
+                    'public function set'.$this->camelize($propertyName).'($'.$propertyName.')',
                     '{',
                     '    $this->'.$propertyName.' = $'.$propertyName.';',
                     '',
                     '    return $this;',
                     '}',
                 );
-
-                $i = 0;
             }
         }
 
