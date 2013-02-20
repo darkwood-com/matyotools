@@ -1,0 +1,7 @@
+parameters:
+#    matyotools_timesheet.example.class: Matyotools\TimesheetBundle\Example
+
+services:
+#    matyotools_timesheet.example:
+#        class: %matyotools_timesheet.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

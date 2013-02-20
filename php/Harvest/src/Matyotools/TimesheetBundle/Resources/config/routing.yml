@@ -1,0 +1,3 @@
+matyotools_timesheet_homepage:
+    pattern:  /
+    defaults: { _controller: MatyotoolsTimesheetBundle:Default:index }

@@ -26,5 +26,7 @@ Tools for programming
 
   - **CS-Fixer** : Extends [PHP-CS-Fixer](http://cs.sensiolabs.org/) to format and beautify code.
 
+  - **Harvest** : This allow use  [harverst api](http://www.getharvest.com/api) to fill and send approval of weeks, rather than spending time to record daily tasks.
+
   - **SearchReplace** : This tool allows search and replace from input to output (file or stream). You can override the classes to customise your replacement rules.
 
