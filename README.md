@@ -13,6 +13,9 @@ Tools for programming
 
 *Some util tools that i developped for my developpement purpose*
 
+* Bash
+  - **git-sftp** : Allows to push or pull git repository to a remote git directory stored on sftp server
+
 * Javascript
   - **Chickenfoot** : Based on [Chickenfoot](http://groups.csail.mit.edu/uid/chickenfoot/), it allow me to avoid boring task for recursive click when browsing on Firefox (only). Chickenfoot automaticaly click for you and save time!
 
