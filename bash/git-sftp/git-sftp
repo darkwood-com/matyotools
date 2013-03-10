@@ -83,6 +83,12 @@ ACTIONS
 	. pull
 		Pull git from remote git directory.
 
+	. mount
+		Mount remote git directory on desktop.
+
+	. unmount
+		Unmount remote git directory from desktop.
+
 	. help
 		Shows this help screen.
 
@@ -279,6 +285,12 @@ handle_action() {
 		pull)
 			action_pull
 			;;
+		mount)
+			action_mount
+			;;
+		unmount)
+			action_unmount
+			;;
 		*)
 			print_error_and_die "Action unknown." $ERROR_MISSING_ARGUMENTS
 			;;
@@ -334,6 +346,16 @@ action_pull() {
 	remote_unmount
 }
 
+action_mount() {
+	set_remotes
+	remote_mount
+}
+
+action_unmount() {
+	set_remotes
+	remote_mount
+}
+
 # ------------------------------------------------------------
 # Main
 # ------------------------------------------------------------
@@ -351,7 +373,7 @@ fi
 while test $# != 0
 do
 	case "$1" in
-		push|pull)
+		push|pull|mount|unmount)
 			ACTION="$1"
 			;;
 		-h|--h|--he|--hel|--help|help)
