@@ -1,6 +1,5 @@
 define(['matyotools', 'exec/ssh'], function(matyotools) {
     matyotools.exec.childs.ssh.childs.go = function(argv) {
-        var execSync = require('exec-sync');
         var program = require('commander');
 
         /**

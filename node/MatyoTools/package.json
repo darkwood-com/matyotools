@@ -12,7 +12,7 @@
     "commander": "*",
     "fs-extra": "*",
     "path-extra": "*",
-    "exec-sync": "~0.1.5",
+    "execSync": "*",
     "underscore": "~1.4.3"
   },
   "devDependencies": {

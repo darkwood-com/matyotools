@@ -24,7 +24,7 @@ module.exports = function (grunt) {
                         requireLib:"../node_modules/requirejs/require"
                     },
                     include:['requireLib'],
-                    out:'bin/matyotools.js',
+                    out:'bin/matyotools',
                     wrap: {
                         start: "#!/usr/bin/env node",
                         end: ""
