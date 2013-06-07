@@ -38,3 +38,11 @@ Tools for programming
 
   - **SearchReplace** : This tool allows search and replace from input to output (file or stream). You can override the classes to customise your replacement rules.
 
+* Vagrant
+
+Server ready (Wheezy box provisioned with LNPP : Linux, Nginx, Percona and PHP using Puppet) for testing.
+Put in /etc/hosts :
+
+44.44.44.44 phpinfo.tools.darkwood
+44.44.44.44 phpmyadmin.tools.darkwood
+44.44.44.44 searchreplace.matyotools.darkwood
