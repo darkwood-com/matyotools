@@ -11,4 +11,11 @@ class provision::nginx::vhosts
     index    => "index.php",
     template => "${nginx_dir}/default.conf.erb"
   }
+
+  nginx::vhost { "searchreplace.matyotools.darkwood":
+      root     => "${sites_dir}/php/SearchReplace",
+      file     => "darkwood.matyotools.searchreplace",
+      index    => "index.php",
+      template => "${nginx_dir}/darkwood.matyotools.searchreplace.conf.erb"
+    }
 }
