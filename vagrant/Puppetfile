@@ -13,3 +13,6 @@ mod "nginx",
 
 mod "percona",
     :git => "git://github.com/arioch/puppet-percona.git"
+
+mod "composer",
+    :git => "git://github.com/willdurand/puppet-composer.git"

@@ -3,12 +3,14 @@
 #
 class provision
 {
+  # php
   include provision::params
   include apt, php, php::fpm
 
   include provision::php::modules
   include provision::php::pools
 
+  # nginx
   class { "nginx":
     ensure        => present,
     default_vhost => "default"
@@ -16,6 +18,7 @@ class provision
 
   include provision::nginx::vhosts
 
+  # percona
   include provision::percona::config
 
   class { "percona":
@@ -28,6 +31,14 @@ class provision
   include provision::percona::databases
   include provision::percona::rights
 
+  # composer
+  class { 'composer':
+    command_name => 'composer',
+    target_dir   => '/usr/local/bin',
+    auto_update  => true
+  }
+
+  # phpmyadmin
   package { "phpmyadmin":
     ensure  => installed,
     require => Package["php5-cgi"]

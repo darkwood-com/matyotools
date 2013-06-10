@@ -32,8 +32,16 @@ GIT
   specs:
     php (1.1.0)
 
+GIT
+  remote: git://github.com/willdurand/puppet-composer.git
+  ref: master
+  sha: fd602dbed24bde0f013540b2e1ad9c09e7530c75
+  specs:
+    composer (0.0.4)
+
 DEPENDENCIES
   apt (>= 0)
+  composer (>= 0)
   nginx (>= 0)
   percona (>= 0)
   php (>= 0)
