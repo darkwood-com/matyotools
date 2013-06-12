@@ -45,7 +45,7 @@ Server ready (Wheezy box provisioned with LNPP : Linux, Nginx, Percona and PHP u
 Put in /etc/hosts :
 
 ```
-44.44.44.44 phpinfo.tools.darkwood
-44.44.44.44 phpmyadmin.tools.darkwood
-44.44.44.44 searchreplace.matyotools.darkwood
+44.44.44.44 phpinfo.matyotools.dev
+44.44.44.44 phpmyadmin.matyotools.dev
+44.44.44.44 searchreplace.matyotools.dev
 ```
