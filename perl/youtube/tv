@@ -1,0 +1,4 @@
+#!/bin/bash
+
+#spion since 1 month
+./youtube-dl --dateafter now-1months http://www.youtube.com/user/LeZAPdeSpi0nOfficiel/videos
