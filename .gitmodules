@@ -1,3 +1,6 @@
 [submodule "php/Beautifier/PHP_Beautifier"]
 	path = php/Beautifier/PHP_Beautifier
 	url = https://github.com/clbustos/PHP_Beautifier.git
+[submodule "node/tv.js"]
+	path = node/tv.js
+	url = https://github.com/SamyPesse/tv.js.git
