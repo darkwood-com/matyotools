@@ -1,4 +1,4 @@
 #!/bin/bash
 
 #spion since 1 month
-./youtube-dl --dateafter now-1months http://www.youtube.com/user/LeZAPdeSpi0nOfficiel/videos
+./youtube-dl --dateafter now-1months -o "dl/%(upload_date)s.%(title)s.%(ext)s" --restrict-filenames http://www.youtube.com/user/LeZAPdeSpi0nOfficiel/videos
