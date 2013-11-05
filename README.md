@@ -23,8 +23,6 @@ Tools for programming
   - **MatyoTools** : I store all of my every-day commands into matyotools.js script.
 
 * Perl
-  - **Storage** : Variant scripts for sync storage over Drobox and Ftp with Encfs
-
   - **Youtube-dl** : Script for downloading videos from the internet to the disk
 
 * PHP
@@ -37,6 +35,9 @@ Tools for programming
   - **Harvest** : This allow use  [harverst api](http://www.getharvest.com/api) to fill and send approval of weeks, rather than spending time to record daily tasks.
 
   - **SearchReplace** : This tool allows search and replace from input to output (file or stream). You can override the classes to customise your replacement rules.
+
+* Python
+  - **Youtube-dl** : Script for downloading videos from the internet to the disk
 
 * Vagrant
 

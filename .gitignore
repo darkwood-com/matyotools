@@ -15,7 +15,7 @@ vagrant/modules
 node/MatyoTools/node_modules
 
 # Youtube
-perl/youtube/dl
+python/youtube/dl
 
 # Beautifier
 php/Beautifier/test.beautified.php
