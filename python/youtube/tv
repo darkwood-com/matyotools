@@ -1,4 +1,12 @@
-#!/bin/bash
+#!/usr/bin/python
 
-#spion since 1 month
-./youtube-dl --dateafter now-1months -o "dl/%(upload_date)s.%(title)s.%(ext)s" --restrict-filenames http://www.youtube.com/user/LeZAPdeSpi0nOfficiel/videos
+import os
+
+urls = [
+	'http://www.canalplus.fr/c-divertissement/c-le-petit-journal/pid6515-l-emission.html', #le petit journal
+	'http://www.youtube.com/user/LeZAPdeSpi0nOfficiel/videos', #le zap de spion
+]
+
+for url in urls:
+	cmd = './youtube-dl --dateafter now-1months -o "dl/%(upload_date)s.%(title)s.%(ext)s" --restrict-filenames ' + url
+	os.system(cmd);
