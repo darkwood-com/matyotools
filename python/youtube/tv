@@ -26,7 +26,16 @@ urls = [
 ]
 
 for url in urls:
-	cmd = './youtube-dl --dateafter now-1week -o "dl/%(upload_date)s.%(title)s.%(ext)s" --restrict-filenames --playlist-end 20 ' + url
+	cmd = ' '.join([
+		'./youtube-dl',
+		#'--get-url',
+		#'--get-title',
+		'--dateafter now-1week',
+		'-o "dl/%(upload_date)s.%(title)s.%(ext)s"',
+		'--restrict-filenames',
+		'--playlist-end 20',
+		url
+	])
 	os.system(cmd);
 
 #clean dl folder : delete older videos for space
