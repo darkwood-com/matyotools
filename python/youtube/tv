@@ -24,6 +24,7 @@ urls = [
 	'http://www.youtube.com/user/jvcom/videos',                                                             #jvc
 	'http://www.youtube.com/user/jvcomchroniques/videos',                                                   #jcv chroniques
 ]
+
 _dir = os.path.dirname(os.path.abspath(__file__))
 youtubeDL = _dir + '/youtube-dl'
 folder = _dir + '/dl'
