@@ -22,8 +22,8 @@ urls = [
 	'http://www.youtube.com/user/MrAntoineDaniel/videos',                                                   #mr antoine daniel
 	'http://www.youtube.com/user/smoshfrance/videos',                                                       #smosh france
 	'http://www.youtube.com/user/LivelyLadder/videos',                                                      #lively ladder
-	'http://www.youtube.com/user/jvcom/videos',                                                             #jvc
-	'http://www.youtube.com/user/jvcomchroniques/videos',                                                   #jcv chroniques
+#	'http://www.youtube.com/user/jvcom/videos',                                                             #jvc
+#	'http://www.youtube.com/user/jvcomchroniques/videos',                                                   #jcv chroniques
 ]
 
 # script paths
