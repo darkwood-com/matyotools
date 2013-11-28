@@ -1,15 +1,12 @@
-youtube-dl
-----------
+[youtube-dl](http://rg3.github.com/youtube-dl/documentation.html)
+-----------------------------------------------------------------
 
-http://rg3.github.com/youtube-dl/documentation.html
+**usage**
 
-** usage **
-youtube-dl http://www.youtube.com/watch?v=foobar
+    $ youtube-dl http://www.youtube.com/watch?v=foobar
 
-Mac OS X - launchd
-------------------
-
-Create Launchd Jobs : [apple developer link](https://developer.apple.com/library/mac/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html)
+Mac OS X [Launchd](https://developer.apple.com/library/mac/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html)
+---------------------------------------------------------------------------------------------------------------------------------------------
 
     $ touch /usr/local/bin/tv
     
@@ -41,3 +38,9 @@ Create Launchd Jobs : [apple developer link](https://developer.apple.com/library
     </plist>
     
 More info for configure launchd plist : [apple developer link](https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man5/launchd.plist.5.html)
+
+Linux [Contab](http://fr.wikipedia.org/wiki/Crontab)
+----------------------------------------------------
+
+    $ crontab -e
+    19 30 * * * /usr/local/bin/tv
