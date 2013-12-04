@@ -11,7 +11,7 @@ Mac OS X [Launchd](https://developer.apple.com/library/mac/documentation/MacOSX/
     $ touch /usr/local/bin/tv
     
     #!/bin/bash
-    ~/path/to/youtube/tv >> ~/Library/Logs/TV/`date +\%Y_\%m_\%d_\%H_\%M`.log
+    ~/path/to/youtube/tv | while IFS= read -r line; do echo "$(date +'%Y-%m-%d %H:%M:%S') $line"; done >> ~/Library/Logs/TV/`date +\%Y_\%m_\%d_\%H_\%M`.log
     
     $ chmod a+x /usr/local/bin/tv
     
