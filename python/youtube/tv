@@ -8,6 +8,15 @@ from dateutil.relativedelta import *
 
 # url list to download
 urls = [
+	'http://www.youtube.com/user/PomfEtThud/videos',                                                        #pomf et thud
+	'http://www.youtube.com/user/NormanFaitDesVideos/videos',                                               #norman
+	'http://www.youtube.com/user/joueurdugrenier/videos',                                                   #joueur du grenier
+	'http://www.youtube.com/user/MrAntoineDaniel/videos',                                                   #mr antoine daniel
+	'http://www.youtube.com/user/smoshfrance/videos',                                                       #smosh france
+	'http://www.youtube.com/user/LivelyLadder/videos',                                                      #lively ladder
+	'http://www.youtube.com/user/LeZAPdeSpi0nOfficiel/videos',                                              #le zap de spion
+#	'http://www.youtube.com/user/jvcom/videos',                                                             #jvc
+#	'http://www.youtube.com/user/jvcomchroniques/videos',                                                   #jcv chroniques
 	'http://www.canalplus.fr/c-divertissement/c-le-petit-journal/pid6515-l-emission.html',                  #le petit journal
 #	'http://www.canalplus.fr/c-divertissement/c-le-grand-journal/pid5411-le-grand-journal-l-emission.html', #le grand journal
 	'http://www.canalplus.fr/c-divertissement/pid1784-c-les-guignols.html',                                 #les gigniols
@@ -15,15 +24,6 @@ urls = [
 	'http://www.canalplus.fr/c-infos-documentaires/pid3356-c-effet-papillon.html',                          #l'effet papillon
 	'http://www.canalplus.fr/c-infos-documentaires/pid4583-c-ms-l-oeil-de-links.html',                      #l'oeil de links
 	'http://www.canalplus.fr/c-infos-documentaires/pid1830-c-zapping.html',                                 #le zapping
-	'http://www.youtube.com/user/LeZAPdeSpi0nOfficiel/videos',                                              #le zap de spion
-	'http://www.youtube.com/user/PomfEtThud/videos',                                                        #pomf et thud
-	'http://www.youtube.com/user/NormanFaitDesVideos/videos',                                               #norman
-	'http://www.youtube.com/user/joueurdugrenier/videos',                                                   #joueur du grenier
-	'http://www.youtube.com/user/MrAntoineDaniel/videos',                                                   #mr antoine daniel
-	'http://www.youtube.com/user/smoshfrance/videos',                                                       #smosh france
-	'http://www.youtube.com/user/LivelyLadder/videos',                                                      #lively ladder
-#	'http://www.youtube.com/user/jvcom/videos',                                                             #jvc
-#	'http://www.youtube.com/user/jvcomchroniques/videos',                                                   #jcv chroniques
 ]
 
 # script paths
