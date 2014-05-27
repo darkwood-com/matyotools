@@ -1,0 +1,3 @@
+MatyotoolsTimesheetBundle:
+    resource: "@MatyotoolsTimesheetBundle/Resources/config/routing.yml"
+    prefix:   /

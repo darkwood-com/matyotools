@@ -67,3 +67,9 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+mattvick_harvest_app:
+  user: %harvest_user%
+  password: %harvest_password%
+  account: %harvest_account%
+

@@ -13,3 +13,7 @@ parameters:
 
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    harvest_user: 'user'
+    harvest_password: 'password'
+    harvest_account: 'account'
