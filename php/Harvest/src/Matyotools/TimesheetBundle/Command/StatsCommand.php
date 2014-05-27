@@ -23,6 +23,6 @@ class StatsCommand extends ContainerAwareCommand
 
         /** @var \Matyotools\TimesheetBundle\Services\HarvestService $api */
         $api = $container->get('matyotools_timesheet.harvest');
-        $api->running();
+        $api->stats();
     }
 }

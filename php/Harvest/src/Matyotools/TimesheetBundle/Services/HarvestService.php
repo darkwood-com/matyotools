@@ -39,9 +39,7 @@ class HarvestService
 
     public function truncate()
     {
-        $projects = $this->api->getDailyActivity();
-
-
+        $days = $this->getDays();
         $i = 0;
     }
 
@@ -57,7 +55,7 @@ class HarvestService
 
     public function stats()
     {
-        echo 'd';
+        echo 'Stats';
     }
 
     /**
