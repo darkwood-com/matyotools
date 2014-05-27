@@ -12,8 +12,8 @@ class TruncateCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('harvest:stats')
-            ->setDescription('Stats harvet timeheet')
+            ->setName('harvest:truncate')
+            ->setDescription('Truncate harvest timesheet')
         ;
     }
 

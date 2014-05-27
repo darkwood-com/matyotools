@@ -13,7 +13,7 @@ class RunningCommand extends ContainerAwareCommand
     {
         $this
             ->setName('harvest:running')
-            ->setDescription('Truncate harvet timeheet')
+            ->setDescription('Truncate harvest timesheet')
         ;
     }
 

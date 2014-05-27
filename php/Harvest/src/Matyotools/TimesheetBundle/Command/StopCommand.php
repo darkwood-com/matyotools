@@ -13,7 +13,7 @@ class StopCommand extends ContainerAwareCommand
     {
         $this
             ->setName('harvest:stop')
-            ->setDescription('Truncate harvet timeheet')
+            ->setDescription('Stop harvest timesheet')
         ;
     }
 

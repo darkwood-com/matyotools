@@ -12,8 +12,8 @@ class StatsCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('harvest:stop')
-            ->setDescription('Stop harvet timeheet')
+            ->setName('harvest:stats')
+            ->setDescription('Stats harvest timesheet')
         ;
     }
 
