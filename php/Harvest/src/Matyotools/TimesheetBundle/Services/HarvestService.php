@@ -51,11 +51,15 @@ class HarvestService
     {
         $days = $this->getDays();
 
+        $running = array();
+
         foreach($days as $day) {
             $timer = $day->get('timer-started-at');
             if(!is_null($timer)) {
-
+                $running[] = $day;
             }
         }
+
+        return $running;
     }
 }
