@@ -8,6 +8,7 @@ puphpet/files/dot/ssh/id_rsa
 puphpet/files/dot/ssh/id_rsa.pem
 puphpet/files/dot/ssh/id_rsa.ppk
 puphpet/files/dot/ssh/id_rsa.pub
+puphpet/puppet/modules
 
 # PhpStorm
 .idea
