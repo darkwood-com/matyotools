@@ -25,6 +25,7 @@ class RunningCommand extends ContainerAwareCommand
         $api = $container->get('matyotools_timesheet.harvest');
         $days = $api->running();
 
+        $output->write("Running timers\n");
         $output->write($api->display($days));
     }
 }

@@ -17,3 +17,7 @@ parameters:
     harvest_user: 'user'
     harvest_password: 'password'
     harvest_account: 'account'
+
+    #truncate params
+    harvest_truncate_max:  7.50
+    harvest_truncate_rand: 0.50

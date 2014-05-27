@@ -10,7 +10,7 @@ class DefaultController extends Controller
     {
         /** @var \Matyotools\TimesheetBundle\Services\HarvestService $api */
         $api = $this->get('matyotools_timesheet.harvest');
-        $days = $api->running();
+        $days = $api->truncate();
 
         echo implode($api->display($days), "\n");
 

@@ -14,8 +14,10 @@ class HarvestService
     protected $account;
     protected $ssl;
     protected $mode;
+    protected $truncateMax;
+    protected $truncateRand;
 
-    public function __construct(\Mattvick\HarvestAppBundle\Services\HarvestApp $api, $user, $password, $account, $ssl, $mode)
+    public function __construct(\Mattvick\HarvestAppBundle\Services\HarvestApp $api, $user, $password, $account, $ssl, $mode, $truncateMax, $truncateRand)
     {
         $this->api = $api->getApi();
         $this->user = $user;
@@ -23,6 +25,8 @@ class HarvestService
         $this->account = $account;
         $this->ssl = $ssl;
         $this->mode = $mode;
+        $this->truncateMax = $truncateMax;
+        $this->truncateRand = $truncateRand;
     }
 
     /**
@@ -39,8 +43,31 @@ class HarvestService
 
     public function truncate()
     {
+        $truncated = array();
+
         $days = $this->getDays();
-        $i = 0;
+
+        $totalHours = 0;
+        foreach($days as $day) {
+            $hours = floatval($day->get('hours'));
+            $totalHours += $hours;
+
+            if(!is_null($totalHours) && $totalHours > $this->truncateMax) {
+                //truncate this entry
+                $hours = $hours - ($totalHours - $this->truncateMax);
+                $rand = mt_rand(($hours - $this->truncateRand) * 100, $hours * 100) / 100;
+                $day->set('hours', max(0, $rand));
+                $this->api->updateEntry($day);
+                $truncated[] = $day;
+
+                $totalHours = null;
+            } else if(is_null($totalHours)) {
+                //delete tracking when more hour than truncateMax
+                $this->api->deleteEntry($day->get('id'));
+            }
+        }
+
+        return $truncated;
     }
 
     public function stop()
