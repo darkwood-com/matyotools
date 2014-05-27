@@ -4,4 +4,4 @@ parameters:
 services:
     matyotools_timesheet.harvest:
         class: %matyotools_timesheet.harvest.class%
-        arguments: [@harvest_app]
+        arguments: [@harvest_app,%mattvick_harvest_app.user%,%mattvick_harvest_app.password%,%mattvick_harvest_app.account%,%mattvick_harvest_app.ssl%,%mattvick_harvest_app.mode%]
