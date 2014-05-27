@@ -47,7 +47,12 @@ class HarvestService
 
     public function stop()
     {
+        $running = $this->running();
 
+        foreach($running as $run)
+        {
+            $this->api->toggleTimer($run->get('id'));
+        }
     }
 
     public function stats()
@@ -89,7 +94,7 @@ class HarvestService
 
         if($data instanceof \Harvest_DayEntry) {
             $day = new \DateTime($data->get('created-at'));
-            $lines[] = $this->getUrl('time/day/'.$day->format('Y').'/'.$day->format('n').'/'.$day->format('j').'/'.$data->get('user-id'));
+            $lines[] = $this->getUrl('time/day/'.$day->format('Y').'/'.$day->format('m').'/'.$day->format('d').'/'.$data->get('user-id')) . "\t\t" . $data->get('hours').'H';
         } else if(is_array($data)) {
             foreach($data as $d) {
                 $ll = $this->display($d);

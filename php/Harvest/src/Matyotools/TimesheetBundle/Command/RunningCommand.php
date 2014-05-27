@@ -25,6 +25,6 @@ class RunningCommand extends ContainerAwareCommand
         $api = $container->get('matyotools_timesheet.harvest');
         $days = $api->running();
 
-        echo implode($api->display($days), "\n");
+        $output->write($api->display($days));
     }
 }

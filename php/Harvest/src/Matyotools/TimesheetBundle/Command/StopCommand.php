@@ -7,13 +7,13 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class StatsCommand extends ContainerAwareCommand
+class StopCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
         $this
             ->setName('harvest:stop')
-            ->setDescription('Stop harvet timeheet')
+            ->setDescription('Truncate harvet timeheet')
         ;
     }
 
@@ -23,6 +23,8 @@ class StatsCommand extends ContainerAwareCommand
 
         /** @var \Matyotools\TimesheetBundle\Services\HarvestService $api */
         $api = $container->get('matyotools_timesheet.harvest');
-        $api->running();
+        $api->stop();
+
+        $output->write('Stopped running timers');
     }
 }
