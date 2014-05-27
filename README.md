@@ -49,4 +49,5 @@ Put in /etc/hosts :
 44.44.44.44 phpinfo.matyotools.dev
 44.44.44.44 phpmyadmin.matyotools.dev
 44.44.44.44 searchreplace.matyotools.dev
+44.44.44.44 harvest.matyotools.dev
 ```
