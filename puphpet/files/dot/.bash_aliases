@@ -50,3 +50,10 @@ alias rm='rm -i'
 alias mv='mv -iv'
 alias grep='grep --color=auto -in'
 alias ..='cd ..'
+
+# git
+alias gs='git status'
+alias gd='git diff'
+alias gc='git commit -a -m'
+alias gpull='git pull'
+alias gpush='git push'
