@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2c0295f7b959d7cc894ee1a78d4f3b41",
+    "hash": "786bff74b62695cea2e5f7c0f8a13a5e",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -802,6 +802,60 @@
             "time": "2013-07-19 00:03:27"
         },
         {
+            "name": "mattvick/harvest-app-bundle",
+            "version": "dev-master",
+            "target-dir": "Mattvick/HarvestAppBundle",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mattvick/MattvickHarvestAppBundle.git",
+                "reference": "c8e379a4a4c675e934c273231219854202a1f2a1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mattvick/MattvickHarvestAppBundle/zipball/c8e379a4a4c675e934c273231219854202a1f2a1",
+                "reference": "c8e379a4a4c675e934c273231219854202a1f2a1",
+                "shasum": ""
+            },
+            "require": {
+                "mdbitz/hapi": "*",
+                "php": ">=5.3.2",
+                "symfony/framework-bundle": "2.*"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-0": {
+                    "Mattvick\\HarvestAppBundle": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matthew Vickery",
+                    "email": "vickery.matthew@gmail.com"
+                }
+            ],
+            "description": "Symfony2 wrapper around HaPi Harvest API client for app usage",
+            "keywords": [
+                "Harvest",
+                "api"
+            ],
+            "time": "2012-10-13 14:17:29"
+        },
+        {
+            "name": "mdbitz/hapi",
+            "version": "1.1.1",
+            "dist": {
+                "type": "zip",
+                "url": "http://labs.mdbitz.com/wp-content/uploads/2010/10/HaPi-1.1.1.zip",
+                "reference": null,
+                "shasum": null
+            },
+            "type": "library"
+        },
+        {
             "name": "monolog/monolog",
             "version": "1.9.1",
             "source": {
@@ -1571,7 +1625,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "mattvick/harvest-app-bundle": 20
+    },
     "platform": {
         "php": ">=5.3.3"
     },
