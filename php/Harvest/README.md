@@ -22,13 +22,11 @@ to create a new project is to use it.
 If you don't have Composer yet, download it following the instructions on
 http://getcomposer.org/ or just run the following command:
 
-    curl -s https://getcomposer.org/installer | php
+    curl -s http://getcomposer.org/installer | php
 
 Then, use the `create-project` command to generate a new Symfony application:
 
-    php composer.phar create-project symfony/framework-standard-edition path/to/install 2.1.x-dev
-
-For an exact version, replace 2.1.x-dev with the latest Symfony version (e.g. 2.1.1).
+    php composer.phar create-project symfony/framework-standard-edition path/to/install
 
 Composer will install Symfony and all its dependencies under the
 `path/to/install` directory.
@@ -53,6 +51,9 @@ configured for Symfony.
 Execute the `check.php` script from the command line:
 
     php app/check.php
+
+The script returns a status code of `0` if all mandatory requirements are met,
+`1` otherwise.
 
 Access the `config.php` script from a browser:
 
@@ -93,16 +94,14 @@ playing with it, you can remove it by following these steps:
 
   * delete the `src/Acme` directory;
 
-  * remove the routing entries referencing AcmeBundle in
-    `app/config/routing_dev.yml`;
+  * remove the routing entry referencing AcmeDemoBundle in `app/config/routing_dev.yml`;
 
-  * remove the AcmeBundle from the registered bundles in `app/AppKernel.php`;
+  * remove the AcmeDemoBundle from the registered bundles in `app/AppKernel.php`;
 
   * remove the `web/bundles/acmedemo` directory;
 
-  * remove the `security.providers`, `security.firewalls.login` and
-    `security.firewalls.secured_area` entries in the `security.yml` file or
-    tweak the security configuration to fit your needs.
+  * empty the `security.yml` file or tweak the security configuration to fit
+    your needs.
 
 What's inside?
 ---------------
@@ -139,38 +138,33 @@ It comes pre-configured with the following bundles:
   * [**AsseticBundle**][12] - Adds support for Assetic, an asset processing
     library
 
-  * [**JMSSecurityExtraBundle**][13] - Allows security to be added via
-    annotations
-
-  * [**JMSDiExtraBundle**][14] - Adds more powerful dependency injection
-    features
-
   * **WebProfilerBundle** (in dev/test env) - Adds profiling functionality and
     the web debug toolbar
 
   * **SensioDistributionBundle** (in dev/test env) - Adds functionality for
     configuring and working with Symfony distributions
 
-  * [**SensioGeneratorBundle**][15] (in dev/test env) - Adds code generation
+  * [**SensioGeneratorBundle**][13] (in dev/test env) - Adds code generation
     capabilities
 
   * **AcmeDemoBundle** (in dev/test env) - A demo bundle with some example
     code
 
+All libraries and bundles included in the Symfony Standard Edition are
+released under the MIT or BSD license.
+
 Enjoy!
 
-[1]:  http://symfony.com/doc/2.1/book/installation.html
+[1]:  http://symfony.com/doc/2.4/book/installation.html
 [2]:  http://getcomposer.org/
 [3]:  http://symfony.com/download
-[4]:  http://symfony.com/doc/2.1/quick_tour/the_big_picture.html
-[5]:  http://symfony.com/doc/2.1/index.html
-[6]:  http://symfony.com/doc/2.1/bundles/SensioFrameworkExtraBundle/index.html
-[7]:  http://symfony.com/doc/2.1/book/doctrine.html
-[8]:  http://symfony.com/doc/2.1/book/templating.html
-[9]:  http://symfony.com/doc/2.1/book/security.html
-[10]: http://symfony.com/doc/2.1/cookbook/email.html
-[11]: http://symfony.com/doc/2.1/cookbook/logging/monolog.html
-[12]: http://symfony.com/doc/2.1/cookbook/assetic/asset_management.html
-[13]: http://jmsyst.com/bundles/JMSSecurityExtraBundle/master
-[14]: http://jmsyst.com/bundles/JMSDiExtraBundle/master
-[15]: http://symfony.com/doc/2.1/bundles/SensioGeneratorBundle/index.html
+[4]:  http://symfony.com/doc/2.4/quick_tour/the_big_picture.html
+[5]:  http://symfony.com/doc/2.4/index.html
+[6]:  http://symfony.com/doc/2.4/bundles/SensioFrameworkExtraBundle/index.html
+[7]:  http://symfony.com/doc/2.4/book/doctrine.html
+[8]:  http://symfony.com/doc/2.4/book/templating.html
+[9]:  http://symfony.com/doc/2.4/book/security.html
+[10]: http://symfony.com/doc/2.4/cookbook/email.html
+[11]: http://symfony.com/doc/2.4/cookbook/logging/monolog.html
+[12]: http://symfony.com/doc/2.4/cookbook/assetic/asset_management.html
+[13]: http://symfony.com/doc/2.4/bundles/SensioGeneratorBundle/index.html

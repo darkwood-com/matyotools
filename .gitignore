@@ -33,7 +33,7 @@ php/Harvest/app/config/parameters.yml
 php/Harvest/app/cache/*
 php/Harvest/app/logs/*
 php/Harvest/build/
-php/Harvest/vendor
+php/Harvest/vendor/
 
 # SearchReplace
 php/SearchReplace/tests
