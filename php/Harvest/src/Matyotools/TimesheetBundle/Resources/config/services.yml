@@ -1,7 +1,7 @@
 parameters:
-#    matyotools_timesheet.example.class: Matyotools\TimesheetBundle\Example
+    matyotools_timesheet.harvest.class: Matyotools\TimesheetBundle\Services\HarvestService
 
 services:
-#    matyotools_timesheet.example:
-#        class: %matyotools_timesheet.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    matyotools_timesheet.harvest:
+        class: %matyotools_timesheet.harvest.class%
+        arguments: [@harvest_app]

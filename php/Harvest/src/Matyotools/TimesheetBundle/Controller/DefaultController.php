@@ -8,12 +8,9 @@ class DefaultController extends Controller
 {
     public function indexAction()
     {
-        /**
-         * @var \HarvestAPI $api
-         */
-        $api = $this->get('harvest_app')->getApi();
-        $projects = $api->getDailyActivity();
-
+        /** @var \Matyotools\TimesheetBundle\Services\HarvestService $api */
+        $api = $this->get('matyotools_timesheet.harvest');
+        $api->running();
 
         return $this->render('MatyotoolsTimesheetBundle:Default:index.html.twig', array());
     }
