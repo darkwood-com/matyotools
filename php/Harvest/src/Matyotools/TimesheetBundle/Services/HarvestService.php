@@ -29,16 +29,48 @@ class HarvestService
         $this->truncateRand = $truncateRand;
     }
 
+    public function getMyUserId()
+    {
+        $daily = $this->api->getDailyActivity();
+        /** @var \Harvest_DailyActivity $activity */
+        $activity = $daily->get('data');
+        /** @var \Harvest_DayEntry[] $days */
+        $days = $activity->get('day_entries');
+        foreach($days as $day)
+        {
+            return $day->get('user-id');
+        }
+
+        return null;
+    }
+
     /**
      * @return \Harvest_DayEntry[]
      */
     public function getDays()
     {
-        $daily = $this->api->getDailyActivity();
+        $user_id = $this->getMyUserId();
 
-        /** @var \Harvest_DailyActivity $activity */
-        $activity = $daily->get('data');
-        return $activity->get('day_entries');
+        $to = new \DateTime();
+        $from = new \DateTime("-60 day"); //since 60 days
+        $range = new \Harvest_Range($from, $to);
+        $entries = $this->api->getUserEntries($user_id, $range);
+
+        return $entries->get('data');
+    }
+
+    /**
+     * @param \Harvest_DayEntry[] $days
+     */
+    public function groupByDays($days)
+    {
+        $group = array();
+        foreach($days as $day)
+        {
+            $group[$day->get('spent-at')][] = $day;
+        }
+
+        return $group;
     }
 
     public function truncate()
@@ -46,24 +78,29 @@ class HarvestService
         $truncated = array();
 
         $days = $this->getDays();
+        $group = $this->groupByDays($days);
 
-        $totalHours = 0;
-        foreach($days as $day) {
-            $hours = floatval($day->get('hours'));
-            $totalHours += $hours;
+        foreach($group as $days)
+        {
+            $totalHours = 0;
+            foreach($days as $day) {
+                /** @var \Harvest_DayEntry $day */
+                $hours = floatval($day->get('hours'));
+                $totalHours += $hours;
 
-            if(!is_null($totalHours) && $totalHours > $this->truncateMax) {
-                //truncate this entry
-                $hours = $hours - ($totalHours - $this->truncateMax);
-                $rand = mt_rand(($hours - $this->truncateRand) * 100, $hours * 100) / 100;
-                $day->set('hours', max(0, $rand));
-                $this->api->updateEntry($day);
-                $truncated[] = $day;
+                if(!is_null($totalHours) && $totalHours > $this->truncateMax) {
+                    //truncate this entry
+                    $hours = $hours - ($totalHours - $this->truncateMax);
+                    $rand = mt_rand(max(0, ($hours - $this->truncateRand) * 100), $hours * 100) / 100;
+                    $day->set('hours', $rand);
+                    $this->api->updateEntry($day);
+                    $truncated[] = $day;
 
-                $totalHours = null;
-            } else if(is_null($totalHours)) {
-                //delete tracking when more hour than truncateMax
-                $this->api->deleteEntry($day->get('id'));
+                    $totalHours = null;
+                } else if(is_null($totalHours)) {
+                    //delete tracking when more hour than truncateMax
+                    $this->api->deleteEntry($day->get('id'));
+                }
             }
         }
 
@@ -82,7 +119,26 @@ class HarvestService
 
     public function stats()
     {
-        echo 'Stats';
+        $days = $this->getDays();
+        $group = $this->groupByDays($days);
+
+        foreach($group as $i => $days)
+        {
+            $group[$i] = array_reduce($days, function($carry, $item) {
+                /** @var \Harvest_DayEntry $carry */
+                /** @var \Harvest_DayEntry $item */
+                if(is_null($carry)) {
+                    return $item;
+                } else if(!is_null($item)) {
+                    $carry->set('hours', $carry->get('hours') + $item->get('hours'));
+                    return $carry;
+                }
+
+                return $carry;
+            });
+        }
+
+        return $group;
     }
 
     /**
@@ -96,7 +152,7 @@ class HarvestService
 
         foreach($days as $day) {
             $timer = $day->get('timer-started-at');
-            if(!is_null($timer)) {
+            if(!empty($timer)) {
                 $running[] = $day;
             }
         }

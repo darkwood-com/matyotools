@@ -25,7 +25,7 @@ class TruncateCommand extends ContainerAwareCommand
         $api = $container->get('matyotools_timesheet.harvest');
         $days = $api->truncate();
 
-        $output->write("Truncated timers\n");
-        $output->write($api->display($days));
+        $output->writeln("Truncated timers");
+        $output->writeln($api->display($days));
     }
 }

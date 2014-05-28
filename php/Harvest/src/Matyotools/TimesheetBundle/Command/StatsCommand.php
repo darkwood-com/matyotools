@@ -23,6 +23,9 @@ class StatsCommand extends ContainerAwareCommand
 
         /** @var \Matyotools\TimesheetBundle\Services\HarvestService $api */
         $api = $container->get('matyotools_timesheet.harvest');
-        $api->stats();
+        $days = $api->stats();
+
+        $output->writeln("Stats timers");
+        $output->writeln($api->display($days));
     }
 }

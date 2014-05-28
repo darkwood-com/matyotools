@@ -12,8 +12,6 @@ class DefaultController extends Controller
         $api = $this->get('matyotools_timesheet.harvest');
         $days = $api->stats();
 
-        echo implode($api->display($days), "\n");
-
         return $this->render('MatyotoolsTimesheetBundle:Default:index.html.twig', array());
     }
 }
