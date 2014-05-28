@@ -115,6 +115,8 @@ class HarvestService
         {
             $this->api->toggleTimer($run->get('id'));
         }
+
+        return $running;
     }
 
     public function stats()

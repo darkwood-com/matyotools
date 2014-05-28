@@ -23,8 +23,9 @@ class StopCommand extends ContainerAwareCommand
 
         /** @var \Matyotools\TimesheetBundle\Services\HarvestService $api */
         $api = $container->get('matyotools_timesheet.harvest');
-        $api->stop();
+        $days = $api->stop();
 
         $output->writeln("Stopped running timers");
+        $output->writeln($api->display($days));
     }
 }
