@@ -26,6 +26,6 @@ class RunningCommand extends ContainerAwareCommand
         $days = $api->running();
 
         $output->writeln("Running timers");
-        $output->writeln($api->display($days));
+        $output->writeln($api->display($days, $output));
     }
 }

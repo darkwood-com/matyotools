@@ -26,6 +26,6 @@ class StatsCommand extends ContainerAwareCommand
         $days = $api->stats();
 
         $output->writeln("Stats timers");
-        $output->writeln($api->display($days));
+        $output->writeln($api->display($days, $output));
     }
 }

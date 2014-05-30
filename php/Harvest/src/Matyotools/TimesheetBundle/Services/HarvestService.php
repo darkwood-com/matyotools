@@ -2,6 +2,9 @@
 
 namespace Matyotools\TimesheetBundle\Services;
 
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
+use Symfony\Component\Console\Output\OutputInterface;
+
 class HarvestService
 {
     /**
@@ -171,16 +174,29 @@ class HarvestService
         return $http . $this->account . ".harvestapp.com/" . $url;
     }
 
-    public function display($data)
+    public function display($data, OutputInterface $output)
     {
+        $output->getFormatter()->setStyle('ok', new OutputFormatterStyle('green'));
+        $output->getFormatter()->setStyle('less', new OutputFormatterStyle('yellow'));
+        $output->getFormatter()->setStyle('more', new OutputFormatterStyle('red'));
+
         $lines = array();
 
         if($data instanceof \Harvest_DayEntry) {
             $day = new \DateTime($data->get('created-at'));
-            $lines[] = $this->getUrl('time/day/'.$day->format('Y').'/'.$day->format('m').'/'.$day->format('d').'/'.$data->get('user-id')) . "\t\t" . $data->get('hours').'H';
+
+            $hours = $data->get('hours');
+            if($hours < $this->truncateMax - $this->truncateRand) $hours = '<less>'.$hours.'H</less>';
+            else if($hours <= $this->truncateMax) $hours = '<ok>'.$hours.'H</ok>';
+            else $hours = '<more>'.$hours.'H</more>';
+
+            $lines[] = implode("\t\t", array(
+                $this->getUrl('time/day/'.$day->format('Y').'/'.$day->format('m').'/'.$day->format('d').'/'.$data->get('user-id')),
+                $hours,
+            ));
         } else if(is_array($data)) {
             foreach($data as $d) {
-                $ll = $this->display($d);
+                $ll = $this->display($d, $output);
                 foreach($ll as $l) {
                     $lines[] = $l;
                 }

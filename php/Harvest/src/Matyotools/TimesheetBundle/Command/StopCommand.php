@@ -26,6 +26,6 @@ class StopCommand extends ContainerAwareCommand
         $days = $api->stop();
 
         $output->writeln("Stopped running timers");
-        $output->writeln($api->display($days));
+        $output->writeln($api->display($days, $output));
     }
 }

@@ -26,6 +26,6 @@ class TruncateCommand extends ContainerAwareCommand
         $days = $api->truncate();
 
         $output->writeln("Truncated timers");
-        $output->writeln($api->display($days));
+        $output->writeln($api->display($days, $output));
     }
 }
