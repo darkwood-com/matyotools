@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# convert movies for iphone 4
+read -d '' JS <<"JAVASCRIPT"
+var path = require("path"), file = process.argv[1];
+command = [
+    'mv "',
+    file,
+    '" "',
+    path.dirname(file),
+    "/",
+    path.basename(file)
+    .toLowerCase()
+    .replace("iphone","")
+    .replace("volume-up","")
+    .replace("french","")
+    .replace(/2013|2014/g,"")
+    .replace(/avi|mkv|mp4/g,"")
+    .replace(/720p|x264|hdtv|bluray/g,"")
+    .replace(/(-|_)/g,".")
+    .replace(/\\.+/g,".").replace(/^\\.+/g,"").replace(/\\.+$/g,""),
+    path.extname(file),
+    '"'
+]
+console.log(command.join(""));
+JAVASCRIPT
+
+MOVIES=.
+find "$MOVIES" \( -name "*.avi" -o -name "*.mkv" -o -name "*.mp4" \) -exec node -e "$JS" {} \;
