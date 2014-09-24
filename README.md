@@ -16,6 +16,7 @@ Tools for programming
 * Bash
   - **ffmpeg** : Scripts that use https://www.ffmpeg.org/ for batch video conversion
   - **git-sftp** : Allows to push or pull git repository to a remote git directory stored on sftp server
+  - **vagrant** : Scripts for [vagrant](http://www.vagrantup.com/) development usage
 
 * Javascript
   - **Chickenfoot** : Based on [Chickenfoot](http://groups.csail.mit.edu/uid/chickenfoot/), it allow me to avoid boring task for recursive click when browsing on Firefox (only). Chickenfoot automaticaly click for you and save time!
