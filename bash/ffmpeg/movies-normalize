@@ -14,9 +14,9 @@ command = [
     .replace(/iphone|volume-up/g,"")
     .replace(/french/g,"")
     .replace(/2013|2014/g,"")
-    .replace(/avi|mkv|mp4/g,"")
-    .replace(/720p|x264|hdtv|bluray/g,"")
-    .replace(/-|_/g,".")
+    .replace(/avi|mkv|mp4|xvid/g,"")
+    .replace(/720p|x264|hdtv|bluray|ld|bdrip/g,"")
+    .replace(/ |-|_/g,".")
     .replace(/\\.+/g,".").replace(/^\\.+/g,"").replace(/\\.+$/g,""),
     path.extname(file),
     '"'
