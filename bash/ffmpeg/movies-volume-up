@@ -2,4 +2,4 @@
 
 # convert movies for iphone 4
 MOVIES=.
-find "$MOVIES" \( -name "*.avi" -o -name "*.mkv" -o -name "*.mp4" \) -exec sh -c 'ffmpeg -i "$0" -vcodec copy -af "volume=-+20dB" "${0%.*}.volume-up.${0##*.}"' {} \;
+find "$MOVIES" \( -name "*.avi" -o -name "*.mkv" -o -name "*.mp4" \) -exec sh -c 'ffmpeg -i "$0" -vcodec copy -af "volume=-+10dB" "${0%.*}.volume-up.${0##*.}"' {} \;
