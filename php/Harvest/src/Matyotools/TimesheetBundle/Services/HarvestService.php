@@ -2,13 +2,19 @@
 
 namespace Matyotools\TimesheetBundle\Services;
 
+use Harvest\Model\Range;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use \Matyotools\HarvestAppBundle\Services\HarvestApp;
+use \Harvest\HarvestAPI;
+use \Harvest\Model\DayEntry;
+use \Harvest\Model\DailyActivity;
 
 class HarvestService
 {
     /**
-     * @var \HarvestAPI
+     * @var HarvestAPI
      */
     protected $api;
 
@@ -20,7 +26,7 @@ class HarvestService
     protected $truncateMax;
     protected $truncateRand;
 
-    public function __construct(\Mattvick\HarvestAppBundle\Services\HarvestApp $api, $user, $password, $account, $ssl, $mode, $truncateMax, $truncateRand)
+    public function __construct(HarvestApp $api, $user, $password, $account, $ssl, $mode, $truncateMax, $truncateRand)
     {
         $this->api = $api->getApi();
         $this->user = $user;
@@ -35,10 +41,11 @@ class HarvestService
     public function getMyUserId()
     {
         $daily = $this->api->getDailyActivity();
-        /** @var \Harvest_DailyActivity $activity */
+        /** @var DailyActivity $activity */
         $activity = $daily->get('data');
-        /** @var \Harvest_DayEntry[] $days */
+        /** @var DayEntry[] $days */
         $days = $activity->get('day_entries');
+
         foreach($days as $day)
         {
             return $day->get('user-id');
@@ -48,7 +55,7 @@ class HarvestService
     }
 
     /**
-     * @return \Harvest_DayEntry[]
+     * @return DayEntry[]
      */
     public function getDays()
     {
@@ -56,14 +63,14 @@ class HarvestService
 
         $to = new \DateTime();
         $from = new \DateTime("-60 day"); //since 60 days
-        $range = new \Harvest_Range($from, $to);
+        $range = new Range($from->format( "Ymd" ), $to->format( "Ymd" ));
         $entries = $this->api->getUserEntries($user_id, $range);
 
-        return $entries->get('data');
+        return $entries->isSuccess() ? $entries->get('data') : array();
     }
 
     /**
-     * @param \Harvest_DayEntry[] $days
+     * @param DayEntry[] $days
      */
     public function groupByDays($days)
     {
@@ -87,7 +94,7 @@ class HarvestService
         {
             $totalHours = 0;
             foreach($days as $day) {
-                /** @var \Harvest_DayEntry $day */
+                /** @var DayEntry $day */
                 $hours = floatval($day->get('hours'));
                 $totalHours += $hours;
 
@@ -130,8 +137,8 @@ class HarvestService
         foreach($group as $i => $days)
         {
             $group[$i] = array_reduce($days, function($carry, $item) {
-                /** @var \Harvest_DayEntry $carry */
-                /** @var \Harvest_DayEntry $item */
+                /** @var DayEntry $carry */
+                /** @var DayEntry $item */
                 if(is_null($carry)) {
                     return $item;
                 } else if(!is_null($item)) {
@@ -147,7 +154,7 @@ class HarvestService
     }
 
     /**
-     * @return \Harvest_DayEntry[]
+     * @return DayEntry[]
      */
     public function running()
     {
@@ -182,7 +189,7 @@ class HarvestService
 
         $lines = array();
 
-        if($data instanceof \Harvest_DayEntry) {
+        if($data instanceof DayEntry) {
             $day = new \DateTime($data->get('created-at'));
 
             $hours = $data->get('hours');
