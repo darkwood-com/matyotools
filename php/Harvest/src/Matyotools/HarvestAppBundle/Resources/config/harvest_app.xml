@@ -15,7 +15,7 @@
         <parameter key="matyotools_harvest_app.ssl">null</parameter>
         <parameter key="matyotools_harvest_app.mode">null</parameter>
     </parameters>
-    
+
     <services>
         <service id="harvest_app" class="%matyotools_harvest_app.service.class%">
             <argument type="service" id="matyotools_harvest_app.api"/>

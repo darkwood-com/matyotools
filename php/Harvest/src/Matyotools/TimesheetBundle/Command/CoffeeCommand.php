@@ -2,7 +2,6 @@
 
 namespace Matyotools\TimesheetBundle\Command;
 
-use Doctrine\ORM\Query\ResultSetMapping;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,7 +21,7 @@ class CoffeeCommand extends ContainerAwareCommand
     {
         $cmd = null;
 
-        switch($command) {
+        switch ($command) {
             case 'running':
                 $cmd = new RunningCommand();
                 break;
@@ -40,7 +39,7 @@ class CoffeeCommand extends ContainerAwareCommand
                 break;
         }
 
-        if(!is_null($cmd)) {
+        if (!is_null($cmd)) {
             $cmd->setContainer($this->getContainer());
             $cmd->run($input, $output);
         }

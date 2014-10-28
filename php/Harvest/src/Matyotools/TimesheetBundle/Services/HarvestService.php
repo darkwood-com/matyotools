@@ -46,8 +46,7 @@ class HarvestService
         /** @var DayEntry[] $days */
         $days = $activity->get('day_entries');
 
-        foreach($days as $day)
-        {
+        foreach ($days as $day) {
             return $day->get('user-id');
         }
 
@@ -75,8 +74,7 @@ class HarvestService
     public function groupByDays($days)
     {
         $group = array();
-        foreach($days as $day)
-        {
+        foreach ($days as $day) {
             $group[$day->get('spent-at')][] = $day;
         }
 
@@ -90,15 +88,14 @@ class HarvestService
         $days = $this->getDays();
         $group = $this->groupByDays($days);
 
-        foreach($group as $days)
-        {
+        foreach ($group as $days) {
             $totalHours = 0;
-            foreach($days as $day) {
+            foreach ($days as $day) {
                 /** @var DayEntry $day */
                 $hours = floatval($day->get('hours'));
                 $totalHours += $hours;
 
-                if(!is_null($totalHours) && $totalHours > $this->truncateMax) {
+                if (!is_null($totalHours) && $totalHours > $this->truncateMax) {
                     //truncate this entry
                     $hours = $hours - ($totalHours - $this->truncateMax);
                     $rand = mt_rand(max(0, ($hours - $this->truncateRand) * 100), $hours * 100) / 100;
@@ -107,7 +104,7 @@ class HarvestService
                     $truncated[] = $day;
 
                     $totalHours = null;
-                } else if(is_null($totalHours)) {
+                } elseif (is_null($totalHours)) {
                     //delete tracking when more hour than truncateMax
                     $this->api->deleteEntry($day->get('id'));
                 }
@@ -121,8 +118,7 @@ class HarvestService
     {
         $running = $this->running();
 
-        foreach($running as $run)
-        {
+        foreach ($running as $run) {
             $this->api->toggleTimer($run->get('id'));
         }
 
@@ -134,15 +130,15 @@ class HarvestService
         $days = $this->getDays();
         $group = $this->groupByDays($days);
 
-        foreach($group as $i => $days)
-        {
-            $group[$i] = array_reduce($days, function($carry, $item) {
+        foreach ($group as $i => $days) {
+            $group[$i] = array_reduce($days, function ($carry, $item) {
                 /** @var DayEntry $carry */
                 /** @var DayEntry $item */
-                if(is_null($carry)) {
+                if (is_null($carry)) {
                     return $item;
-                } else if(!is_null($item)) {
+                } elseif (!is_null($item)) {
                     $carry->set('hours', $carry->get('hours') + $item->get('hours'));
+
                     return $carry;
                 }
 
@@ -162,9 +158,9 @@ class HarvestService
 
         $running = array();
 
-        foreach($days as $day) {
+        foreach ($days as $day) {
             $timer = $day->get('timer-started-at');
-            if(!empty($timer)) {
+            if (!empty($timer)) {
                 $running[] = $day;
             }
         }
@@ -175,9 +171,10 @@ class HarvestService
     public function getUrl($url)
     {
         $http = "http://";
-        if( $this->ssl ) {
+        if ($this->ssl) {
             $http = "https://";
         }
+
         return $http . $this->account . ".harvestapp.com/" . $url;
     }
 
@@ -189,22 +186,22 @@ class HarvestService
 
         $lines = array();
 
-        if($data instanceof DayEntry) {
+        if ($data instanceof DayEntry) {
             $day = new \DateTime($data->get('created-at'));
 
             $hours = $data->get('hours');
             if($hours < $this->truncateMax - $this->truncateRand) $hours = '<less>'.$hours.'H</less>';
-            else if($hours <= $this->truncateMax) $hours = '<ok>'.$hours.'H</ok>';
+            elseif($hours <= $this->truncateMax) $hours = '<ok>'.$hours.'H</ok>';
             else $hours = '<more>'.$hours.'H</more>';
 
             $lines[] = implode("\t\t", array(
                 $this->getUrl('time/day/'.$day->format('Y').'/'.$day->format('m').'/'.$day->format('d').'/'.$data->get('user-id')),
                 $hours,
             ));
-        } else if(is_array($data)) {
-            foreach($data as $d) {
+        } elseif (is_array($data)) {
+            foreach ($data as $d) {
                 $ll = $this->display($d, $output);
-                foreach($ll as $l) {
+                foreach ($ll as $l) {
                     $lines[] = $l;
                 }
             }

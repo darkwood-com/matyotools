@@ -7,8 +7,8 @@ use \Harvest\HarvestAPI;
 /**
  * Very simple proxy class to HarvestAPI functionality
  */
-class HarvestApp {
-
+class HarvestApp
+{
     private $harvest;
 
     /**

@@ -18,7 +18,7 @@ class MatyotoolsHarvestAppExtension extends Extension
     protected $resources = array(
         'harvest_app' => 'harvest_app.xml',
     );
-    
+
     /**
      * {@inheritdoc}
      */
