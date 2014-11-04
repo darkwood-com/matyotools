@@ -3,27 +3,26 @@
 # convert movies for iphone 4
 read -d '' JS <<"JAVASCRIPT"
 var path = require("path"), file = process.argv[1];
-command = [
-    'mv "',
-    file,
-    '" "',
-    path.dirname(file),
-    "/",
-    path.basename(file)
-    .toLowerCase()
-    .replace(/iphone|volume-up/g,"")
-    .replace(/addiction/g,"")
-    .replace(/french|vostfr/g,"")
-    .replace(/2013|2014/g,"")
-    .replace(/avi|mkv|mp4|xvid/g,"")
-    .replace(/720p|x264|hdtv|bluray|ld|bdrip|fastsub/g,"")
-    .replace(/ |-|_/g,".")
-    .replace(/\\.+/g,".").replace(/^\\.+/g,"").replace(/\\.+$/g,""),
-    path.extname(file),
-    '"'
-]
-console.log(command.join(""));
+var mv_file = path.dirname(file);
+mv_file += "/";
+mv_file += path.basename(file)
+             .toLowerCase()
+             .replace(/iphone|volume-up/g,"")
+             .replace(/addiction/g,"")
+             .replace(/french|vostfr/g,"")
+             .replace(/2013|2014/g,"")
+             .replace(/avi|mkv|mp4|srt|xvid/g,"")
+             .replace(/720p|480p|x264|hdtv|bluray|ld|bdrip|fastsub/g,"")
+             .replace(/ |-|_/g,".")
+             .replace(/\\.+/g,".").replace(/^\\.+/g,"").replace(/\\.+$/g,"");
+mv_file += path.extname(file);
+if(file != mv_file) {
+    command = [
+        'mv "', file, '" "', mv_file, '"'
+    ]
+    console.log(command.join(""));
+}
 JAVASCRIPT
 
 MOVIES=.
-find "$MOVIES" \( -name "*.avi" -o -name "*.mkv" -o -name "*.mp4" \) -exec node -e "$JS" {} \;
+find "$MOVIES" \( -name "*.avi" -o -name "*.mkv" -o -name "*.mp4" -o -name "*.srt" \) -exec node -e "$JS" {} \;
