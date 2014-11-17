@@ -2,7 +2,7 @@
 
 # log all account into messages
 osascript <<EOD
-  tell application "Messages"
+	tell application "Messages"
 		
 		set aServiceState to status
 		
@@ -13,6 +13,11 @@ osascript <<EOD
 		if aServiceState is offline then
 			log in
 		end if
+		
+		
+		repeat with c in chats
+			accept c
+		end repeat
 		
 	end tell
 EOD
