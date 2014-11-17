@@ -1,4 +1,6 @@
 #!/bin/bash
+
+# log all account into messages
 osascript <<EOD
   tell application "Messages"
 		
