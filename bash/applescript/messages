@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# log all account into messages
+# log all account into messages, auto-join rooms
 osascript <<EOD
 	tell application "Messages"
 		
