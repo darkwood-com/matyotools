@@ -5,14 +5,13 @@ osascript <<EOD
   tell application "Messages"
 		
 		set aServiceState to status
-		set anApplication to application "Messages"
 		
 		#if aServiceState is available then
-		#	tell anApplication to log out
+		#	log out
 		#end if
 		
 		if aServiceState is offline then
-			tell anApplication to log in
+			log in
 		end if
 		
 	end tell
