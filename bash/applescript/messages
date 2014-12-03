@@ -3,6 +3,7 @@
 # log all account into messages, auto-join rooms
 osascript <<EOD
 	tell application "Messages"
+		activate
 		
 		set aServiceState to status
 		
@@ -18,6 +19,9 @@ osascript <<EOD
 		repeat with c in chats
 			accept c
 		end repeat
+		
+		#set read status of every text of Messages where read status = false to true
+		#set read status of every text of inbox where status = false to true
 		
 	end tell
 EOD
