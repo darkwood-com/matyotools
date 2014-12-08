@@ -37,6 +37,8 @@ Tools for programming
 
   - **Harvest** : This allow use  [harverst api](http://www.getharvest.com/api) to fill and send approval of weeks, rather than spending time to record daily tasks.
 
+  - **Hipchat** : This allow send [hipchat](https://bigyouth.hipchat.com) messages from command line.
+
   - **SearchReplace** : This tool allows search and replace from input to output (file or stream). You can override the classes to customise your replacement rules.
 
 * Python

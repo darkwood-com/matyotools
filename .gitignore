@@ -35,6 +35,15 @@ php/Harvest/app/logs/*
 php/Harvest/build/
 php/Harvest/vendor/
 
+# Hipchat
+php/Hipchat/web/bundles/
+php/Hipchat/app/bootstrap.php.cache
+php/Hipchat/app/config/parameters.yml
+php/Hipchat/app/cache/*
+php/Hipchat/app/logs/*
+php/Hipchat/build/
+php/Hipchat/vendor/
+
 # SearchReplace
 php/SearchReplace/tests
 php/SearchReplace/vendor
