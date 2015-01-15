@@ -13,7 +13,7 @@ mv_file += path.basename(file)
              .replace(/2013|2014/g,"")
              .replace(/avi|mkv|mp4|srt|xvid/g,"")
              .replace(/720p|480p|x264|hdtv|bluray|ld|bdrip|fastsub/g,"")
-             .replace(/ |-|_/g,".")
+             .replace(/ |-|_|\\[|\\]/g,".")
              .replace(/\\.+/g,".").replace(/^\\.+/g,"").replace(/\\.+$/g,"");
 mv_file += path.extname(file);
 if(file != mv_file) {
