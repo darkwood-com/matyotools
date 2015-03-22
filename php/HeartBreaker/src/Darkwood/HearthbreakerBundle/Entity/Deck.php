@@ -7,8 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Deck
  *
- * @ORM\Table()
- * @ORM\Entity
+ * @ORM\Table(name="deck")
+ * @ORM\Entity(repositoryClass="Darkwood\HearthbreakerBundle\Repository\DeckRepository")
  */
 class Deck
 {
