@@ -47,12 +47,9 @@ php/Hipchat/vendor/
 # HeartBreaker
 php/HeartBreaker/app/bootstrap.php.cache
 php/HeartBreaker/app/cache/*
-php/HeartBreaker!app/cache/.gitkeep
 php/HeartBreaker/app/config/parameters.yml
 php/HeartBreaker/app/logs/*
-php/HeartBreaker!app/logs/.gitkeep
 php/HeartBreaker/app/phpunit.xml
-php/HeartBreaker/bin/
 php/HeartBreaker/composer.phar
 php/HeartBreaker/vendor/
 php/HeartBreaker/web/bundles/

@@ -161,6 +161,7 @@ php:
         session.save_path: /var/lib/php/session
         upload_max_filesize: 1024M
         post_max_size: 1024M
+        date.timezone: "Europe/Paris"
     mod_php: '1'
 hhvm:
     install: '0'

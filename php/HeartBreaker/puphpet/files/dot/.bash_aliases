@@ -52,3 +52,13 @@ alias grep='grep --color=auto -in'
 alias ..='cd ..'
 
 source /usr/local/rvm/scripts/rvm
+
+# git
+alias gs='git status'
+alias gd='git diff'
+alias gc='git commit -a -m'
+alias gpull='git pull'
+alias gpush='git push'
+
+# host
+export PHP_IDE_CONFIG="serverName=heartbreaker.dev"
