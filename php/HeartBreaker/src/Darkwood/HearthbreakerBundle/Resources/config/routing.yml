@@ -1,0 +1,3 @@
+hearthbreaker_homepage:
+    path:     /
+    defaults: { _controller: HearthbreakerBundle:Default:index }

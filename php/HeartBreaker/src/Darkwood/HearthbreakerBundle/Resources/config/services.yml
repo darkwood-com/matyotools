@@ -1,0 +1,4 @@
+services:
+#    hearthbreaker.example:
+#        class: Darkwood\HearthbreakerBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
