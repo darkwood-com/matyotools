@@ -34,7 +34,19 @@ class ScrapperService
             CacheSubscriber::attach($guzzle, array(
                 'storage' => new CacheStorage($this->cache),
                 'validate' => false,
+                'can_cache' => function () {
+                    return true;
+                }
             ));
+
+            $guzzle->getEmitter()->on(
+                'complete',
+                function (\GuzzleHttp\Event\CompleteEvent $event) {
+                    $response = $event->getResponse();
+                    $response->setHeader('Cache-Control', 'max-age=3600');
+                },
+                'first'
+            );
         }
 
         return $client->request('GET', $url);
@@ -42,7 +54,6 @@ class ScrapperService
 
     public function getCardList()
     {
-        $crawler = $this->request($this->host . '/carte');
         $crawler = $this->request($this->host . '/carte');
     }
 }
