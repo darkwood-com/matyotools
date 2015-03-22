@@ -71,3 +71,9 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+aequasi_cache:
+    instances:
+        scrapper:
+            type: file_system
+            directory: %kernel.cache_dir%/scrapper/cache

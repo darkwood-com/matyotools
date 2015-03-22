@@ -4,8 +4,58 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5fb605223bee975881af2126fc4c053f",
+    "hash": "78a8fccda7a3572be3d95e3436e0c02b",
     "packages": [
+        {
+            "name": "aequasi/cache-bundle",
+            "version": "2.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aequasi/cache-bundle.git",
+                "reference": "04a0db97bd5edde4f77552be2a5510349ff2ba85"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aequasi/cache-bundle/zipball/04a0db97bd5edde4f77552be2a5510349ff2ba85",
+                "reference": "04a0db97bd5edde4f77552be2a5510349ff2ba85",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/cache": ">=1.3.0",
+                "php": ">=5.3.0",
+                "symfony/symfony": ">=2.1.0"
+            },
+            "suggest": {
+                "ext-memcached": "Allows for caching with Memcached",
+                "ext-redis": "Allows for caching with Redis"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Aequasi\\Bundle\\CacheBundle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache v2"
+            ],
+            "authors": [
+                {
+                    "name": "Aaron Scherer",
+                    "email": "aequasi@gmail.com",
+                    "homepage": "https://github.com/aequasi"
+                }
+            ],
+            "description": "Creates services in Symfony 2, for cache, that can also be used with doctrines three cache types (metadata, result, and query). It also provides functionality for session handler support, and Router support.",
+            "homepage": "https://github.com/aequasi/cache-bundle",
+            "keywords": [
+                "cache",
+                "memcached",
+                "php",
+                "redis"
+            ],
+            "time": "2014-11-10 06:10:45"
+        },
         {
             "name": "doctrine/annotations",
             "version": "v1.2.3",
@@ -756,6 +806,58 @@
                 "scraper"
             ],
             "time": "2014-11-28 09:48:17"
+        },
+        {
+            "name": "guzzlehttp/cache-subscriber",
+            "version": "0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/cache-subscriber.git",
+                "reference": "ecb903f6e11b5ca9f2cdbc460e2e68deea9e8858"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/cache-subscriber/zipball/ecb903f6e11b5ca9f2cdbc460e2e68deea9e8858",
+                "reference": "ecb903f6e11b5ca9f2cdbc460e2e68deea9e8858",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/cache": "~1.3",
+                "guzzlehttp/guzzle": "~5.0",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Subscriber\\Cache\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Guzzle HTTP cache subscriber",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "Guzzle",
+                "cache"
+            ],
+            "time": "2014-10-29 21:06:25"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1919,7 +2021,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "guzzlehttp/cache-subscriber": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

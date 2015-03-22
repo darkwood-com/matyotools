@@ -4,3 +4,4 @@ parameters:
 services:
     hb.scrapper:
         class: %hb.scrapper.class%
+        arguments: [@aequasi_cache.instance.scrapper]
