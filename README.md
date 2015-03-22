@@ -37,8 +37,8 @@ Tools for programming
 
   - **Harvest** : This allow use  [harverst api](http://www.getharvest.com/api) to fill and send approval of weeks, rather than spending time to record daily tasks.
 
-  - **Harvest** : Grab Heartstone card database and stats. Then make stats on player card collection to find the best deck ratio to win more in game.
-  
+  - **HeartBreaker** : Grab Heartstone card database and stats. Then make stats on player card collection to find the best deck ratio to win more in game.
+
   - **Hipchat** : This allow send [hipchat](https://www.hipchat.com) messages from command line.
 
   - **SearchReplace** : This tool allows search and replace from input to output (file or stream). You can override the classes to customise your replacement rules.
