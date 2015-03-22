@@ -90,14 +90,14 @@ apache:
     vhosts:
         srz2snv7qvyd:
             servername: heartbreaker.dev
-            docroot: /var/www/php/HeartBreaker/web
+            docroot: /var/www/web
             port: '80'
             setenv:
                 - 'APP_ENV dev'
             directories:
                 zdgepd5zgh9u:
                     provider: directory
-                    path: /var/www/php/HeartBreaker
+                    path: /var/www
                     options:
                         - Indexes
                         - FollowSymlinks
