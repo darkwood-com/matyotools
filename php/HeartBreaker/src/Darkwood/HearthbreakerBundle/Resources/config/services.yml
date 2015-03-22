@@ -1,4 +1,6 @@
+parameters:
+    hb.crawler.class: Darkwood\HearthbreakerBundle\Services\CrawlerService
+
 services:
-#    hearthbreaker.example:
-#        class: Darkwood\HearthbreakerBundle\Example
-#        arguments: [@service_id, "plain_value", %parameter%]
+    hb.crawler:
+        class: %hb.crawler.class%
