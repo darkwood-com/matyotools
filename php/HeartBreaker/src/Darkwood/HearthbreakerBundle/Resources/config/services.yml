@@ -1,6 +1,6 @@
 parameters:
-    hb.crawler.class: Darkwood\HearthbreakerBundle\Services\CrawlerService
+    hb.scrapper.class: Darkwood\HearthbreakerBundle\Services\ScrapperService
 
 services:
-    hb.crawler:
-        class: %hb.crawler.class%
+    hb.scrapper:
+        class: %hb.scrapper.class%
