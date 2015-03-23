@@ -1,0 +1,5 @@
+card_list:
+    path: /carte
+
+card_detail:
+    path: /carte/voir/{slug}

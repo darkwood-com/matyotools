@@ -7,19 +7,26 @@ use Goutte\Client;
 use GuzzleHttp\Subscriber\Cache\CacheStorage;
 use GuzzleHttp\Subscriber\Cache\CacheSubscriber;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\Router;
 
 class ScrapperService
 {
-    private $host = 'http://www.hearthstone-decks.com';
-
-    private $route_card_list = '/carte';
-    private $route_card_detail = '/carte/voir/';
-
+	/**
+	 * @var Cache
+	 */
     private $cache;
 
-    public function __construct(Cache $cache)
+	/**
+	 * @var Router
+	 */
+	private $router;
+
+    public function __construct(Cache $cache, Router $router)
     {
         $this->cache = $cache;
+		$this->router = $router;
     }
 
     /**
@@ -58,15 +65,21 @@ class ScrapperService
 
     public function syncCardList()
     {
-        $crawler = $this->request($this->host . $this->route_card_list);
+		$url = $this->router->generate('card_list', array(), true);
+        $crawler = $this->request($url);
+
+		$slugs = array();
         $cards = $crawler
             ->filter('#liste_cartes .carte_galerie_container > a')
-            ->each(function($card) {
+            ->each(function($card) use(&$slugs) {
                 /** @var Crawler $card */
                 $href = $card->attr('href');
-                if(strpos($href, $this->route_card_detail) == 0) {
-                    $slug = substr($href, strlen($this->route_card_detail));
-                }
+				try {
+					$match = $this->router->match($href);
+					$slugs[] = $match['slug'];
+				} catch (ResourceNotFoundException $e) {
+				} catch (MethodNotAllowedException $e) {
+				}
             });
     }
 }
