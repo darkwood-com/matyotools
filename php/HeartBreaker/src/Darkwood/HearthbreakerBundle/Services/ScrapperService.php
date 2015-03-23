@@ -133,7 +133,6 @@ class ScrapperService
 					}
 				}
 			});
-		//$card->setName($crawler->filter('#content h3')->first()->text());
 
 		$this->cardService->save($card);
 	}
