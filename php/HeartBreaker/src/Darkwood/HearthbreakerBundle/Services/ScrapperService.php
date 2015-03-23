@@ -105,14 +105,9 @@ class ScrapperService
 					return $node->text() == 'Suiv';
 				})->count() > 0;
 
-			echo $crawler->filter('#liste_cartes .pagination')->children()
-				->reduce(function(Crawler $node) {
-					return $node->text() == 'Suiv';
-				})->count()."**\n";
-
 			$page += 1;
 
-		} while($this->cardService->count() < $cardsNumber && $hasNext);
+		} while(($this->cardService->count() < $cardsNumber || $force) && $hasNext);
     }
 
 	public function syncCard($slug, $force = false)
@@ -145,7 +140,7 @@ class ScrapperService
 						case "Texte d'ambiance": $card->setFlavor($text); break;
 						case "Rareté": $card->setRarity($text); break;
 						case "Classe": $card->setPlayerClass($text); break;
-						case "Type": $card->setFaction($text); break;
+						case "Type": $card->setType($text); break;
 					}
 				}
 			});
