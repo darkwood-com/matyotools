@@ -70,7 +70,7 @@ class ScrapperService
                 'complete',
                 function (\GuzzleHttp\Event\CompleteEvent $event) {
                     $response = $event->getResponse();
-                    $response->setHeader('Cache-Control', 'max-age=86400'); //1 day
+                    $response->setHeader('Cache-Control', 'max-age=31536000'); //1 year
                 },
                 'first'
             );
