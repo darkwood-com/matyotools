@@ -23,18 +23,33 @@ class ScrapperService
 	 */
 	private $router;
 
-    public function __construct(Cache $cache, Router $router)
+	/**
+	 * @var CardService
+	 */
+	private $cardService;
+
+	/**
+	 * @var DeckService
+	 */
+	private $deckService;
+
+    public function __construct(Cache $cache, Router $router, CardService $cardService, DeckService $deckService)
     {
         $this->cache = $cache;
 		$this->router = $router;
+		$this->cardService = $cardService;
+		$this->deckService = $deckService;
     }
 
-    /**
-     * @param $url
-     * @return \Symfony\Component\DomCrawler\Crawler
-     */
-    private function request($url)
+	/**
+	 * @param $name
+	 * @param array $parameters
+	 * @return Crawler
+	 */
+    private function request($name, $parameters = array())
     {
+		$url = $this->router->generate($name, $parameters, true);
+
         static $client = null;
 
         if(!$client) {
@@ -65,8 +80,7 @@ class ScrapperService
 
     public function syncCardList()
     {
-		$url = $this->router->generate('card_list', array(), true);
-        $crawler = $this->request($url);
+        $crawler = $this->request('card_list', array('page' => 1));
 
 		$slugs = array();
         $cards = $crawler
@@ -76,10 +90,20 @@ class ScrapperService
                 $href = $card->attr('href');
 				try {
 					$match = $this->router->match($href);
-					$slugs[] = $match['slug'];
+					if($match['_route'] == 'card_detail') {
+						$slugs[] = $match['slug'];
+					}
 				} catch (ResourceNotFoundException $e) {
 				} catch (MethodNotAllowedException $e) {
 				}
             });
+
+		$this->syncCard($slugs[0]);
     }
+
+	public function syncCard($slug)
+	{
+		$crawler = $this->request('card_detail', array('slug' => $slug));
+		$crawler->filter('#content h3')->first()->text();
+	}
 }

@@ -7,7 +7,9 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Card
  *
- * @ORM\Table(name="card")
+ * @ORM\Table(name="card",
+ * 	uniqueConstraints={@ORM\UniqueConstraint(name="unique_slug", columns={"slug"})}
+ * )
  * @ORM\Entity(repositoryClass="Darkwood\HearthbreakerBundle\Repository\CardRepository")
  */
 class Card
@@ -39,7 +41,7 @@ class Card
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -62,7 +64,7 @@ class Card
     /**
      * Get slug
      *
-     * @return string 
+     * @return string
      */
     public function getSlug()
     {
@@ -85,7 +87,7 @@ class Card
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {

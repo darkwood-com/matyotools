@@ -1,17 +1,35 @@
 parameters:
+    hb.card.class: Darkwood\HearthbreakerBundle\Services\CardService
+    hb.deck.class: Darkwood\HearthbreakerBundle\Services\DeckService
     hb.scrapper.class: Darkwood\HearthbreakerBundle\Services\ScrapperService
     bh.hearthstonedecks.router.class: Symfony\Component\Routing\Router
     bh.hearthstonedecks.router.request_context.class: Symfony\Component\Routing\RequestContext
     bh.hearthstonedecks.routing.loader.class: Symfony\Component\Routing\Loader\YamlFileLoader
 
 services:
+    hb.card:
+        class: %hb.card.class%
+        arguments: [@doctrine.orm.entity_manager]
+
+    hb.deck:
+        class: %hb.deck.class%
+        arguments: [@doctrine.orm.entity_manager]
+
     hb.scrapper:
         class: %hb.scrapper.class%
-        arguments: [@aequasi_cache.instance.scrapper, @hearthstonedecks.router]
+        arguments:
+          - @aequasi_cache.instance.scrapper
+          - @hearthstonedecks.router
+          - @hb.card
+          - @hb.deck
 
     hearthstonedecks.router:
         class: %bh.hearthstonedecks.router.class%
-        arguments: [@bh.hearthstonedecks.routing.loader,"%kernel.root_dir%/../src/Darkwood/HearthbreakerBundle/Resources/config/hearthstonedecks_routing.yml", [], @bh.hearthstonedecks.router.request_context]
+        arguments:
+          - @bh.hearthstonedecks.routing.loader
+          - "%kernel.root_dir%/../src/Darkwood/HearthbreakerBundle/Resources/config/hearthstonedecks_routing.yml"
+          - []
+          - @bh.hearthstonedecks.router.request_context
 
     bh.hearthstonedecks.router.request_context:
         class: %bh.hearthstonedecks.router.request_context.class%
