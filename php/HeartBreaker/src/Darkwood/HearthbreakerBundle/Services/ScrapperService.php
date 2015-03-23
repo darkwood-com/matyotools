@@ -87,12 +87,12 @@ class ScrapperService
 
 			$crawler
 				->filter('#liste_cartes .carte_galerie_container > a')
-				->each(function(Crawler $node) use(&$slugs) {
+				->each(function(Crawler $node) use(&$slugs, $force) {
 					try {
 						$href = $node->attr('href');
 						$match = $this->router->match($href);
 						if($match['_route'] == 'card_detail') {
-							$this->syncCard($match['slug']);
+							$this->syncCard($match['slug'], $force);
 						}
 					} catch (ResourceNotFoundException $e) {
 					} catch (MethodNotAllowedException $e) {
