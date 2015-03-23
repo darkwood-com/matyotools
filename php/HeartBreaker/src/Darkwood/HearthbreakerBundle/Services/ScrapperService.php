@@ -79,33 +79,50 @@ class ScrapperService
         return $client->request('GET', $url);
     }
 
-    public function syncCardList()
+    public function syncCardList($force = false)
     {
-        $crawler = $this->request('card_list', array('page' => 1));
+		$page = 1;
+		do {
+			$crawler = $this->request('card_list', array('page' => $page));
 
-        $crawler
-            ->filter('#liste_cartes .carte_galerie_container > a')
-            ->each(function($node) use(&$slugs) {
-                /** @var Crawler $node */
-				try {
-					$href = $node->attr('href');
-					$match = $this->router->match($href);
-					if($match['_route'] == 'card_detail') {
-						$this->syncCard($match['slug']);
+			$crawler
+				->filter('#liste_cartes .carte_galerie_container > a')
+				->each(function(Crawler $node) use(&$slugs) {
+					try {
+						$href = $node->attr('href');
+						$match = $this->router->match($href);
+						if($match['_route'] == 'card_detail') {
+							$this->syncCard($match['slug']);
+						}
+					} catch (ResourceNotFoundException $e) {
+					} catch (MethodNotAllowedException $e) {
 					}
-				} catch (ResourceNotFoundException $e) {
-				} catch (MethodNotAllowedException $e) {
-				}
-            });
+				});
 
+			$cardsNumber = intval($crawler->filter('#liste_cartes strong')->first()->text());
+			$hasNext = $crawler->filter('#liste_cartes .pagination')->children()
+				->reduce(function(Crawler $node) {
+					return $node->text() == 'Suiv';
+				})->count() > 0;
+
+			echo $crawler->filter('#liste_cartes .pagination')->children()
+				->reduce(function(Crawler $node) {
+					return $node->text() == 'Suiv';
+				})->count()."**\n";
+
+			$page += 1;
+
+		} while($this->cardService->count() < $cardsNumber && $hasNext);
     }
 
-	public function syncCard($slug)
+	public function syncCard($slug, $force = false)
 	{
 		$card = $this->cardService->findBySlug($slug);
 		if(!$card) {
 			$card = new Card();
 			$card->setSlug($slug);
+		} elseif (!$force) {
+			return $card;
 		}
 
 		$crawler = $this->request('card_detail', array('slug' => $slug));
@@ -113,8 +130,7 @@ class ScrapperService
 		$attr = null;
 		$crawler
 			->filter('#informations-cartes td')
-			->each(function($node, $i) use ($card, &$attr) {
-				/** @var Crawler $node */
+			->each(function(Crawler $node, $i) use ($card, &$attr) {
 				$text = $node->text();
 				if($i % 2 == 0) {
 					$attr = $text;
@@ -135,5 +151,7 @@ class ScrapperService
 			});
 
 		$this->cardService->save($card);
+
+		return $card;
 	}
 }

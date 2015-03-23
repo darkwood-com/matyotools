@@ -57,4 +57,9 @@ class CardService
 	{
 		return $this->cardRepository->findOneBy(array('slug' => $slug));
 	}
+
+	public function count()
+	{
+		return $this->cardRepository->count();
+	}
 }

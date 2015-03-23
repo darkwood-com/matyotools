@@ -12,5 +12,14 @@ use Doctrine\ORM\EntityRepository;
  */
 class CardRepository extends EntityRepository
 {
+	public function count()
+	{
+		$qb = $this->createQueryBuilder('c')
+			->select('COUNT(c.id) as nb')
+		;
 
+		$count = $qb->getQuery()->getScalarResult();
+
+		return $count[0]['nb'];
+	}
 }
