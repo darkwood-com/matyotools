@@ -1,0 +1,7 @@
+#!/bin/sh
+echo "flush_all" | nc -q 2 localhost 11211 #memcached flush
+rm -rf app/cache/* app/logs/*
+
+sudo service memcached restart
+sudo service apache2 restart
+sudo service mysql restart

@@ -2,6 +2,7 @@
 
 namespace Darkwood\HearthbreakerBundle\Services;
 
+use Darkwood\HearthbreakerBundle\Entity\Card;
 use Doctrine\Common\Cache\Cache;
 use Goutte\Client;
 use GuzzleHttp\Subscriber\Cache\CacheStorage;
@@ -103,7 +104,15 @@ class ScrapperService
 
 	public function syncCard($slug)
 	{
+		$card = $this->cardService->findBySlug($slug);
+		if(!$card) {
+			$card = new Card();
+			$card->setSlug($slug);
+		}
+
 		$crawler = $this->request('card_detail', array('slug' => $slug));
-		$crawler->filter('#content h3')->first()->text();
+		$card->setName($crawler->filter('#content h3')->first()->text());
+
+		$this->cardService->save($card);
 	}
 }

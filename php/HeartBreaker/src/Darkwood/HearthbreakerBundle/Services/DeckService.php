@@ -2,26 +2,55 @@
 
 namespace Darkwood\HearthbreakerBundle\Services;
 
+use Darkwood\HearthbreakerBundle\Entity\Deck;
 use Doctrine\ORM\EntityManager;
 use Darkwood\HearthbreakerBundle\Repository\DeckRepository;
 
 class DeckService
 {
 	/**
+	 * @var EntityManager
+	 */
+	private $em;
+
+	/**
 	 * @var DeckRepository
 	 */
-    private $cardRepository;
+	private $deckRepository;
 
 	/**
 	 * @param EntityManager $em
 	 */
-	public function __construct($em)
+	public function __construct(EntityManager $em)
 	{
-		$this->cardRepository = $em->getRepository('HearthbreakerBundle:Deck');
+		$this->em = $em;
+		$this->deckRepository = $em->getRepository('HearthbreakerBundle:Deck');
+	}
+
+	/**
+	 * Save a deck
+	 *
+	 * @param Deck $deck
+	 */
+	public function save(Deck $deck)
+	{
+		$this->em->persist($deck);
+		$this->em->flush();
+	}
+
+	/**
+	 * Remove one deck
+	 *
+	 * @param Deck $deck
+	 */
+	public function remove(Deck $deck)
+	{
+		$this->em->remove($deck);
+		$this->em->flush();
 	}
 
 	public function findBySlug($slug)
 	{
-		$this->cardRepository->findOneBy(array('slug' => $slug));
+		return $this->deckRepository->findOneBy(array('slug' => $slug));
 	}
 }
