@@ -49,6 +49,10 @@ class CardService
 		$this->em->flush();
 	}
 
+	/**
+	 * @param $slug
+	 * @return null|Card
+	 */
 	public function findBySlug($slug)
 	{
 		return $this->cardRepository->findOneBy(array('slug' => $slug));

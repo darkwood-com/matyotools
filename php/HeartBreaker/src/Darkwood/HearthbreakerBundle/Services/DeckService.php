@@ -49,6 +49,10 @@ class DeckService
 		$this->em->flush();
 	}
 
+	/**
+	 * @param $slug
+	 * @return null|Deck
+	 */
 	public function findBySlug($slug)
 	{
 		return $this->deckRepository->findOneBy(array('slug' => $slug));

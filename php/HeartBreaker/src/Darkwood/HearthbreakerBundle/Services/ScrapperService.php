@@ -83,23 +83,21 @@ class ScrapperService
     {
         $crawler = $this->request('card_list', array('page' => 1));
 
-		$slugs = array();
-        $cards = $crawler
+        $crawler
             ->filter('#liste_cartes .carte_galerie_container > a')
-            ->each(function($card) use(&$slugs) {
-                /** @var Crawler $card */
-                $href = $card->attr('href');
+            ->each(function($node) use(&$slugs) {
+                /** @var Crawler $node */
 				try {
+					$href = $node->attr('href');
 					$match = $this->router->match($href);
 					if($match['_route'] == 'card_detail') {
-						$slugs[] = $match['slug'];
+						$this->syncCard($match['slug']);
 					}
 				} catch (ResourceNotFoundException $e) {
 				} catch (MethodNotAllowedException $e) {
 				}
             });
 
-		$this->syncCard($slugs[0]);
     }
 
 	public function syncCard($slug)
@@ -111,7 +109,31 @@ class ScrapperService
 		}
 
 		$crawler = $this->request('card_detail', array('slug' => $slug));
-		$card->setName($crawler->filter('#content h3')->first()->text());
+
+		$attr = null;
+		$crawler
+			->filter('#informations-cartes td')
+			->each(function($node, $i) use ($card, &$attr) {
+				/** @var Crawler $node */
+				$text = $node->text();
+				if($i % 2 == 0) {
+					$attr = $text;
+				} else {
+					switch($attr) {
+						case "Nom": $card->setName($text); break;
+						case "Coût en mana": $card->setCost(intval($text)); break;
+						case "Attaque": $card->setAttack(intval($text)); break;
+						case "Vie": $card->setHealth(intval($text)); break;
+						case "Race": $card->setRace($text); break;
+						case "Description": $card->setText($text); break;
+						case "Texte d'ambiance": $card->setFlavor($text); break;
+						case "Rareté": $card->setRarity($text); break;
+						case "Classe": $card->setPlayerClass($text); break;
+						case "Type": $card->setFaction($text); break;
+					}
+				}
+			});
+		//$card->setName($crawler->filter('#content h3')->first()->text());
 
 		$this->cardService->save($card);
 	}
