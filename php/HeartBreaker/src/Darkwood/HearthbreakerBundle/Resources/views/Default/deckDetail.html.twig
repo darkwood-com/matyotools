@@ -4,7 +4,26 @@
 	<div class="panel panel-default">
 		<div class="panel-heading">{{ deck.name }}</div>
 		<div class="panel-body">
-
+			<table class="table table-striped">
+				<thead>
+				<tr>
+					<th></th>
+					<th>Card</th>
+					<th>Type</th>
+					<th>Cost</th>
+				</tr>
+				</thead>
+				<tbody>
+				{% for deckcard in deck.cards %}
+					<tr>
+						<td>{{ deckcard.quantity }}</td>
+						<td><a href="{{ path('card_detail', {'slug': deckcard.card.slug}) }}">{{ deckcard.card.name }}</a></td>
+						<td>{{ deckcard.card.type }}</td>
+						<td>{{ deckcard.card.cost }}</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
 		</div>
 	</div>
 {% endblock %}
