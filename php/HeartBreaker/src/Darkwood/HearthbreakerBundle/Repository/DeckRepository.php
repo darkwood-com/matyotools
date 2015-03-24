@@ -12,5 +12,26 @@ use Doctrine\ORM\EntityRepository;
  */
 class DeckRepository extends EntityRepository
 {
+	public function findAll()
+	{
+		$qb = $this->createQueryBuilder('d')
+			->select('d, dc, c')
+			->leftJoin('d.cards', 'dc')
+			->leftJoin('dc.card', 'c')
+		;
 
+		return $qb->getQuery()->getResult();
+	}
+
+	public function findBySlug($slug)
+	{
+		$qb = $this->createQueryBuilder('d')
+			->select('d, dc, c')
+			->leftJoin('d.cards', 'dc')
+			->leftJoin('dc.card', 'c')
+			->andWhere('d.slug = :slug')->setParameter('slug', $slug)
+		;
+
+		return $qb->getQuery()->getOneOrNullResult();
+	}
 }

@@ -60,6 +60,6 @@ class DeckService
 	 */
 	public function findBySlug($slug)
 	{
-		return $this->deckRepository->findOneBy(array('slug' => $slug));
+		return $this->deckRepository->findBySlug($slug);
 	}
 }

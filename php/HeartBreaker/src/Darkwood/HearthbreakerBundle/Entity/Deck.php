@@ -185,4 +185,28 @@ class Deck
     {
         return $this->cards;
     }
+
+	public function getBuy()
+	{
+		$cristal = 0;
+
+		foreach($this->cards as $deckCard) {
+			/** @var DeckCard $deckCard */
+			$cristal += $deckCard->getCard()->getBuy() * $deckCard->getQuantity();
+		}
+
+		return $cristal;
+	}
+
+	public function getSell()
+	{
+		$cristal = 0;
+
+		foreach($this->cards as $deckCard) {
+			/** @var DeckCard $deckCard */
+			$cristal += $deckCard->getCard()->getSell() * $deckCard->getQuantity();
+		}
+
+		return $cristal;
+	}
 }
