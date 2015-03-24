@@ -49,6 +49,11 @@ class CardService
 		$this->em->flush();
 	}
 
+	public function findAll()
+	{
+		return $this->cardRepository->findAll();
+	}
+
 	/**
 	 * @param $slug
 	 * @return null|Card

@@ -1,3 +1,19 @@
-hearthbreaker_homepage:
+homepage:
     path:     /
-    defaults: { _controller: HearthbreakerBundle:Default:index }
+    defaults: { _controller: HearthbreakerBundle:Default:card }
+
+card_list:
+    path: /carte
+    defaults: { _controller: HearthbreakerBundle:Default:card }
+
+card_detail:
+    path: /carte/{slug}
+    defaults: { _controller: HearthbreakerBundle:Default:cardDetail }
+
+deck_list:
+    path: /deck
+    defaults: { _controller: HearthbreakerBundle:Default:deck }
+
+deck_detail:
+    path: /deck/{slug}
+    defaults: { _controller: HearthbreakerBundle:Default:deckDetail }

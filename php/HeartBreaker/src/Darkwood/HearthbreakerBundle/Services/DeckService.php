@@ -49,6 +49,11 @@ class DeckService
 		$this->em->flush();
 	}
 
+	public function findAll()
+	{
+		return $this->deckRepository->findAll();
+	}
+
 	/**
 	 * @param $slug
 	 * @return null|Deck
