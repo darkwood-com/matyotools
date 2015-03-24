@@ -108,7 +108,7 @@ class Card
 	private $health;
 
 	/**
-	 * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\DeckCard", mappedBy="card", cascade={"remove"})
+	 * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\DeckCard", mappedBy="card", cascade={"all"})
 	 */
 	private $decks;
 

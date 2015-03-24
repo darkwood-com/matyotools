@@ -4,6 +4,7 @@ namespace Darkwood\HearthbreakerBundle\Services;
 
 use Darkwood\HearthbreakerBundle\Entity\Card;
 use Darkwood\HearthbreakerBundle\Entity\Deck;
+use Darkwood\HearthbreakerBundle\Entity\DeckCard;
 use Doctrine\Common\Cache\Cache;
 use Goutte\Client;
 use GuzzleHttp\Subscriber\Cache\CacheStorage;
@@ -35,12 +36,18 @@ class ScrapperService
 	 */
 	private $deckService;
 
-    public function __construct(Cache $cache, Router $router, CardService $cardService, DeckService $deckService)
+	/**
+	 * @var DeckCardService
+	 */
+	private $deckCardService;
+
+    public function __construct(Cache $cache, Router $router, CardService $cardService, DeckService $deckService, DeckCardService $deckCardService)
     {
         $this->cache = $cache;
 		$this->router = $router;
 		$this->cardService = $cardService;
 		$this->deckService = $deckService;
+		$this->deckCardService = $deckCardService;
     }
 
 	/**
@@ -204,27 +211,50 @@ class ScrapperService
 
 		$crawler = $this->request('deck_detail', array('slug' => $slug));
 
+		$deck->setName($crawler->filter('#content h3')->first()->text());
+
 		$attr = null;
 		$crawler
-			->filter('#liste_cartes table tbody')->children()
+			->filter('#creation-deck-etape1 td')
 			->each(function(Crawler $node, $i) use ($deck, &$attr) {
 				$text = $node->text();
-				/*if($i % 2 == 0) {
+				if($i % 2 == 0) {
 					$attr = $text;
 				} else {
 					switch($attr) {
-						case "Nom": $deck->setName($text); break;
-						case "Coût en mana": $deck->setCost(intval($text)); break;
-						case "Attaque": $deck->setAttack(intval($text)); break;
-						case "Vie": $deck->setHealth(intval($text)); break;
-						case "Race": $deck->setRace($text); break;
-						case "Description": $deck->setText($text); break;
-						case "Texte d'ambiance": $deck->setFlavor($text); break;
-						case "Rareté": $deck->setRarity($text); break;
-						case "Classe": $deck->setPlayerClass($text); break;
-						case "Type": $deck->setType($text); break;
+						case "Note":
+							$deck->setVoteUp(intval($node->filter('.up_vert')->text()));
+							$deck->setVoteDown(intval($node->filter('.up_rouge')->text()));
+							break;
 					}
-				}*/
+				}
+			});
+
+		$crawler
+			->filter('#liste_cartes tbody tr')
+			->each(function(Crawler $node, $i) use ($deck, &$attr, $force) {
+				try {
+					$href = $node->filter('a')->first()->attr('href');
+					$match = $this->router->match($href);
+					if($match['_route'] == 'card_detail') {
+						$card = $this->syncCard($match['slug'], $force);
+						$quantity = intval($node->filter('td')->first()->text());
+
+						$deckCard = $this->deckCardService->findByDeckAndCard($deck, $card);
+						if(!$deckCard) {
+							$deckCard = new DeckCard();
+							$deckCard->setDeck($deck);
+							$deckCard->setCard($card);
+						} elseif (!$force) {
+							return;
+						}
+
+						$deckCard->setQuantity($quantity);
+						$deck->addCard($deckCard);
+					}
+				} catch (ResourceNotFoundException $e) {
+				} catch (MethodNotAllowedException $e) {
+				}
 			});
 
 		$this->deckService->save($deck);
