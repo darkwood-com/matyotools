@@ -107,6 +107,19 @@ class Card
 	 */
 	private $health;
 
+	/**
+	 * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\DeckCard", mappedBy="card", cascade={"remove"})
+	 */
+	private $decks;
+
+
+	/**
+	 * Constructor
+	 */
+	public function __construct()
+	{
+		$this->decks = new \Doctrine\Common\Collections\ArrayCollection();
+	}
 
     /**
      * Get id
@@ -324,5 +337,36 @@ class Card
 		$this->health = $health;
 	}
 
+    /**
+     * Add decks
+     *
+     * @param \Darkwood\HearthbreakerBundle\Entity\DeckCard $decks
+     * @return Card
+     */
+    public function addDeck(\Darkwood\HearthbreakerBundle\Entity\DeckCard $decks)
+    {
+        $this->decks[] = $decks;
 
+        return $this;
+    }
+
+    /**
+     * Remove decks
+     *
+     * @param \Darkwood\HearthbreakerBundle\Entity\DeckCard $decks
+     */
+    public function removeDeck(\Darkwood\HearthbreakerBundle\Entity\DeckCard $decks)
+    {
+        $this->decks->removeElement($decks);
+    }
+
+    /**
+     * Get decks
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getDecks()
+    {
+        return $this->decks;
+    }
 }

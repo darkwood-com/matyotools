@@ -3,6 +3,7 @@
 namespace Darkwood\HearthbreakerBundle\Services;
 
 use Darkwood\HearthbreakerBundle\Entity\Card;
+use Darkwood\HearthbreakerBundle\Entity\Deck;
 use Doctrine\Common\Cache\Cache;
 use Goutte\Client;
 use GuzzleHttp\Subscriber\Cache\CacheStorage;
@@ -45,9 +46,10 @@ class ScrapperService
 	/**
 	 * @param $name
 	 * @param array $parameters
+	 * @param null|array $data
 	 * @return Crawler
 	 */
-    private function request($name, $parameters = array())
+    private function request($name, $parameters = array(), $data = null)
     {
 		$url = $this->router->generate($name, $parameters, true);
 
@@ -76,7 +78,7 @@ class ScrapperService
             );
         }
 
-        return $client->request('GET', $url);
+        return $data ? $client->request('POST', $url, $data) : $client->request('GET', $url);
     }
 
     public function syncCardList($force = false)
@@ -107,8 +109,48 @@ class ScrapperService
 
 			$page += 1;
 
-		} while(($this->cardService->count() < $cardsNumber || $force) && $hasNext);
+		} while($hasNext && ($this->cardService->count() < $cardsNumber || $force));
     }
+
+	public function syncDeckList($force = false)
+	{
+		$page = 1;
+		do {
+			$crawler = $this->request('deck_search', array(), array(
+				'etape' => 'RechercheDecks',
+				'colonne' => '',
+				'ordre' => 'undefined',
+				'page_demandee' => $page,
+				'keyword' => null,
+				'auteur' => null,
+				'classe' => null,
+				'top' => 'semaine',
+				'extension' => 'undefined',
+			));
+
+			$crawler
+				->filter('.nom_deck > a')
+				->each(function(Crawler $node) use(&$slugs, $force) {
+					try {
+						$href = $node->attr('href');
+						$match = $this->router->match($href);
+						if($match['_route'] == 'deck_detail') {
+							$this->syncDeck($match['slug'], $force);
+						}
+					} catch (ResourceNotFoundException $e) {
+					} catch (MethodNotAllowedException $e) {
+					}
+				});
+
+			$hasNext = $crawler->filter('.pagination')->children()
+					->reduce(function(Crawler $node) {
+						return $node->text() == 'Suiv';
+					})->count() > 0;
+
+			$page += 1;
+
+		} while($hasNext);
+	}
 
 	public function syncCard($slug, $force = false)
 	{
@@ -148,5 +190,45 @@ class ScrapperService
 		$this->cardService->save($card);
 
 		return $card;
+	}
+
+	public function syncDeck($slug, $force = false)
+	{
+		$deck = $this->deckService->findBySlug($slug);
+		if(!$deck) {
+			$deck = new Deck();
+			$deck->setSlug($slug);
+		} elseif (!$force) {
+			return $deck;
+		}
+
+		$crawler = $this->request('deck_detail', array('slug' => $slug));
+
+		$attr = null;
+		$crawler
+			->filter('#liste_cartes table tbody')->children()
+			->each(function(Crawler $node, $i) use ($deck, &$attr) {
+				$text = $node->text();
+				/*if($i % 2 == 0) {
+					$attr = $text;
+				} else {
+					switch($attr) {
+						case "Nom": $deck->setName($text); break;
+						case "Coût en mana": $deck->setCost(intval($text)); break;
+						case "Attaque": $deck->setAttack(intval($text)); break;
+						case "Vie": $deck->setHealth(intval($text)); break;
+						case "Race": $deck->setRace($text); break;
+						case "Description": $deck->setText($text); break;
+						case "Texte d'ambiance": $deck->setFlavor($text); break;
+						case "Rareté": $deck->setRarity($text); break;
+						case "Classe": $deck->setPlayerClass($text); break;
+						case "Type": $deck->setType($text); break;
+					}
+				}*/
+			});
+
+		$this->deckService->save($deck);
+
+		return $deck;
 	}
 }
