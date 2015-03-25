@@ -64,6 +64,17 @@ doctrine:
         auto_generate_proxy_classes: "%kernel.debug%"
         auto_mapping: true
 
+stof_doctrine_extensions:
+    default_locale: "%locale%"
+    orm:
+        default:
+            tree: true
+            timestampable: true
+            translatable: true
+            loggable: true
+            sluggable: true
+            sortable: true
+
 # Swiftmailer Configuration
 swiftmailer:
     transport: "%mailer_transport%"
@@ -71,6 +82,28 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+# FOS user bundle
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: Darkwood\UserBundle\Entity\User
+    from_email:
+        address:        noreply@hearthbreaker.fr
+        sender_name:    HearthBreaker
+    service:
+        mailer: fos_user.mailer.twig_swift
+    registration:
+        confirmation:
+            enabled:    true
+            template:   UserBundle:Registration:email.txt.twig
+        form:
+            type: user_registration
+    from_email:
+        address:        contact@hearthbreaker.com
+        sender_name:    HearthBreaker
+    service:
+        mailer: fos_user.mailer.twig_swift
 
 aequasi_cache:
     instances:

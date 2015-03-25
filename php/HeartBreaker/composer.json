@@ -23,7 +23,10 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "fabpot/goutte": "~2.0",
         "guzzlehttp/cache-subscriber": "0.1.*@dev",
-        "aequasi/cache-bundle": "~2.4.0"
+        "aequasi/cache-bundle": "~2.4.0",
+	  	"friendsofsymfony/user-bundle": "~2.0@dev",
+	  	"doctrine/doctrine-fixtures-bundle": "dev-master",
+	  	"stof/doctrine-extensions-bundle": "~1.1@dev"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

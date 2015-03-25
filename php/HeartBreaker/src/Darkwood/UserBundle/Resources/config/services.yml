@@ -1,0 +1,20 @@
+parameters:
+
+    # Services Class
+    hb.user.class:                   Darkwood\UserBundle\Services\UserService
+
+    # Entities Class
+    hb.entity.user.class:            Darkwood\UserBundle\Entity\User
+
+    hb.user.authentication.handler.success.class: Darkwood\UserBundle\Security\LoginSuccessHandler
+
+services:
+    hb.user.authentication.handler.success:
+        class: %hb.user.authentication.handler.success.class%
+        arguments: ["@router", "@security.context"]
+        tags:
+            - { name: monolog.logger, channel: security }
+
+    hb.user:
+        class: %hb.user.class%
+        arguments: [@doctrine.orm.entity_manager]
