@@ -7,6 +7,7 @@ use Darkwood\HearthbreakerBundle\Entity\Deck;
 use Darkwood\HearthbreakerBundle\Entity\DeckCard;
 use Doctrine\Common\Cache\Cache;
 use Goutte\Client;
+use GuzzleHttp\Post\PostBody;
 use GuzzleHttp\Subscriber\Cache\CacheStorage;
 use GuzzleHttp\Subscriber\Cache\CacheSubscriber;
 use Symfony\Component\DomCrawler\Crawler;
@@ -78,8 +79,15 @@ class ScrapperService
             $guzzle->getEmitter()->on(
                 'complete',
                 function (\GuzzleHttp\Event\CompleteEvent $event) {
+					$request = $event->getRequest();
                     $response = $event->getResponse();
-                    $response->setHeader('Cache-Control', 'max-age=31536000'); //1 year
+
+					$response->setHeader('Cache-Control', 'max-age=31536000'); //1 year
+
+					$body = $request->getBody();
+					if($body instanceof PostBody) {
+						$response->setHeader('ETag', md5($body->getFields(true)));
+					}
                 },
                 'first'
             );
