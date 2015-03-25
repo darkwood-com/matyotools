@@ -109,4 +109,4 @@ aequasi_cache:
     instances:
         scrapper:
             type: file_system
-            directory: %kernel.cache_dir%/scrapper/cache
+            directory: %kernel.root_dir%/../.cache/scrapper
