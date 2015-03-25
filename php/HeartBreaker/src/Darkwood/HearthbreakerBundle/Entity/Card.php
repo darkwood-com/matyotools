@@ -112,6 +112,11 @@ class Card
 	 */
 	private $decks;
 
+	/**
+	 * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\UserCard", mappedBy="card", cascade={"all"})
+	 */
+	private $users;
+
 
 	/**
 	 * Constructor
@@ -119,6 +124,7 @@ class Card
 	public function __construct()
 	{
 		$this->decks = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->users = new \Doctrine\Common\Collections\ArrayCollection();
 	}
 
     /**
@@ -409,4 +415,37 @@ class Card
 
 		return 0;
 	}
+
+    /**
+     * Add users
+     *
+     * @param \Darkwood\HearthbreakerBundle\Entity\UserCard $users
+     * @return Card
+     */
+    public function addUser(\Darkwood\HearthbreakerBundle\Entity\UserCard $users)
+    {
+        $this->users[] = $users;
+
+        return $this;
+    }
+
+    /**
+     * Remove users
+     *
+     * @param \Darkwood\HearthbreakerBundle\Entity\UserCard $users
+     */
+    public function removeUser(\Darkwood\HearthbreakerBundle\Entity\UserCard $users)
+    {
+        $this->users->removeElement($users);
+    }
+
+    /**
+     * Get users
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getUsers()
+    {
+        return $this->users;
+    }
 }

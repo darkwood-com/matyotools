@@ -57,41 +57,25 @@ class User extends BaseUser
      */
     protected $updated;
 
-    /**
-     * Set created
-     * @param \Datetime $created
-     */
-    public function setCreated($created)
-    {
-        $this->created = $created;
-    }
+	/**
+	 * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\UserCard", mappedBy="deck", cascade={"all"})
+	 */
+	private $cards;
 
     /**
-     * Get created
-     *
-     * @return \Datetime
+     * Constructor
      */
-    public function getCreated()
+    public function __construct()
     {
-        return $this->created;
-    }
+		parent::__construct();
 
-    /**
-     * Set id
-     *
-     * @param integer $id
-     *
-     * @return integer
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
+        $this->cards = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
      * Get id
      *
-     * @return mixed
+     * @return integer
      */
     public function getId()
     {
@@ -99,39 +83,22 @@ class User extends BaseUser
     }
 
     /**
-     * Set updated
+     * Set firstName
      *
-     * @param \Datetime $updated
-     */
-    public function setUpdated($updated)
-    {
-        $this->updated = $updated;
-    }
-
-    /**
-     * Get updated
-     *
-     * @return \Datetime
-     */
-    public function getUpdated()
-    {
-        return $this->updated;
-    }
-
-    /**
-     * Set firstname
-     *
-     * @param mixed $firstName
+     * @param string $firstName
+     * @return User
      */
     public function setFirstName($firstName)
     {
         $this->firstName = $firstName;
+
+        return $this;
     }
 
     /**
-     * Get firstname
+     * Get firstName
      *
-     * @return mixed
+     * @return string
      */
     public function getFirstName()
     {
@@ -139,22 +106,104 @@ class User extends BaseUser
     }
 
     /**
-     * Set lastname
+     * Set lastName
      *
-     * @param mixed $lastName
+     * @param string $lastName
+     * @return User
      */
     public function setLastName($lastName)
     {
         $this->lastName = $lastName;
+
+        return $this;
     }
 
     /**
-     * Get lastname
+     * Get lastName
      *
-     * @return mixed
+     * @return string
      */
     public function getLastName()
     {
         return $this->lastName;
+    }
+
+    /**
+     * Set created
+     *
+     * @param \DateTime $created
+     * @return User
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     * @return User
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return \DateTime
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
+    }
+
+    /**
+     * Add cards
+     *
+     * @param \Darkwood\HearthbreakerBundle\Entity\UserCard $cards
+     * @return User
+     */
+    public function addCard(\Darkwood\HearthbreakerBundle\Entity\UserCard $cards)
+    {
+        $this->cards[] = $cards;
+
+        return $this;
+    }
+
+    /**
+     * Remove cards
+     *
+     * @param \Darkwood\HearthbreakerBundle\Entity\UserCard $cards
+     */
+    public function removeCard(\Darkwood\HearthbreakerBundle\Entity\UserCard $cards)
+    {
+        $this->cards->removeElement($cards);
+    }
+
+    /**
+     * Get cards
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCards()
+    {
+        return $this->cards;
     }
 }

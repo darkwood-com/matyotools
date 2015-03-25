@@ -2,6 +2,7 @@ parameters:
     hb.card.class: Darkwood\HearthbreakerBundle\Services\CardService
     hb.deck.class: Darkwood\HearthbreakerBundle\Services\DeckService
     hb.deckCard.class: Darkwood\HearthbreakerBundle\Services\DeckCardService
+    hb.userCard.class: Darkwood\HearthbreakerBundle\Services\UserCardService
     hb.scrapper.class: Darkwood\HearthbreakerBundle\Services\ScrapperService
     bh.hearthstonedecks.router.class: Symfony\Component\Routing\Router
     bh.hearthstonedecks.router.request_context.class: Symfony\Component\Routing\RequestContext
@@ -18,6 +19,10 @@ services:
 
     hb.deckCard:
         class: %hb.deckCard.class%
+        arguments: [@doctrine.orm.entity_manager]
+
+    hb.userCard:
+        class: %hb.userCard.class%
         arguments: [@doctrine.orm.entity_manager]
 
     hb.scrapper:
