@@ -53,8 +53,8 @@ class UserCardService
 	 * @param $slug
 	 * @return null|UserCard
 	 */
-	public function findByUserAndCard($user, $card)
+	public function findByUserAndCard($user, $card, $isGolden = null)
 	{
-		return $this->userCardRepository->findOneBy(array('user' => $user, 'card' => $card));
+        return $this->userCardRepository->findByUserAndCard($user, $card, $isGolden);
 	}
 }

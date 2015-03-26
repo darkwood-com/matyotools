@@ -2,7 +2,10 @@
 
 namespace Darkwood\HearthbreakerBundle\Controller;
 
+use Darkwood\HearthbreakerBundle\Entity\UserCard;
+use Darkwood\HearthbreakerBundle\Services\UserCardService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -58,20 +61,30 @@ class DefaultController extends Controller
 
 	public function userCardAction($slug, $isGolden)
 	{
-		$card = $this->get('hb.card')->findBySlug($slug);
+        $user = $this->getUser();
+        if(!$user) {
+            throw new AccessDeniedHttpException();
+        }
 
-		if(!$card) {
-			throw new NotFoundHttpException();
-		}
+        $card = $this->get('hb.card')->findBySlug($slug);
 
-		$user = $this->getUser();
-		if(!$user) {
-			throw new AccessDeniedHttpException();
-		}
+        if(!$card) {
+            throw new NotFoundHttpException();
+        }
 
-		return $this->render('HearthbreakerBundle:Default:cardDetail.html.twig', array(
-			'nav' => 'card',
-			'card' => $card,
-		));
+        /** @var UserCardService $userCardService */
+        $userCardService = $this->get('hb.userCard');
+		$userCard = $userCardService->findByUserAndCard($user, $card, $isGolden);
+		if(!$userCard) {
+            $userCard = new UserCard();
+            $userCard->setUser($user);
+            $userCard->setCard($card);
+            $userCard->setIsGolden($isGolden);
+        }
+        $quantity = ($userCard->getQuantity() + 1) % 3;
+        $userCard->setQuantity($quantity);
+        $userCardService->save($userCard);
+
+		return new JsonResponse($quantity);
 	}
 }

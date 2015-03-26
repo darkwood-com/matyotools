@@ -12,5 +12,18 @@ use Doctrine\ORM\EntityRepository;
  */
 class UserCardRepository extends EntityRepository
 {
+    public function findByUserAndCard($user, $card, $isGolden = null)
+    {
+        $qb = $this->createQueryBuilder('uc')
+            ->select('uc')
+            ->andWhere('uc.user = :user')->setParameter('user', $user)
+            ->andWhere('uc.card = :card')->setParameter('card', $card)
+        ;
 
+        if($isGolden) {
+            $qb->andWhere('uc.isGolden = :isGolden')->setParameter('isGolden', $isGolden);
+        }
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }

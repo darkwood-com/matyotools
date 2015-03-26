@@ -4,8 +4,11 @@ $(window).load(function() {
 		var slug = $self.data('slug');
 		var isGolden = $self.data('isGolden');
 
-		$.get(Routing.generate('user_card', { slug: slug, isGolden: isGolden ? '1' : '0' }), function(data) {
-			$self.html(data);
-		});
+        $.ajax({
+            url: Routing.generate('user_card', { slug: slug, isGolden: isGolden ? '1' : '0' }),
+            success: function(data) {
+                $self.html(data);
+            }
+        });
 	});
 });
