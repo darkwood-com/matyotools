@@ -3,6 +3,7 @@
 namespace Darkwood\HearthbreakerBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DefaultController extends Controller
@@ -52,6 +53,25 @@ class DefaultController extends Controller
 		return $this->render('HearthbreakerBundle:Default:deckDetail.html.twig', array(
 			'nav' => 'deck',
 			'deck' => $deck,
+		));
+	}
+
+	public function userCardAction($slug, $isGolden)
+	{
+		$card = $this->get('hb.card')->findBySlug($slug);
+
+		if(!$card) {
+			throw new NotFoundHttpException();
+		}
+
+		$user = $this->getUser();
+		if(!$user) {
+			throw new AccessDeniedHttpException();
+		}
+
+		return $this->render('HearthbreakerBundle:Default:cardDetail.html.twig', array(
+			'nav' => 'card',
+			'card' => $card,
 		));
 	}
 }

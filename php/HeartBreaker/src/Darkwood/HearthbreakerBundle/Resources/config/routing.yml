@@ -17,3 +17,9 @@ deck_list:
 deck_detail:
     path: /deck/{slug}
     defaults: { _controller: HearthbreakerBundle:Default:deckDetail }
+
+user_card:
+    path: /joueur/carte/{slug}/{isGolden}
+    defaults: { _controller: HearthbreakerBundle:Default:userCard }
+    options:
+        expose: true
