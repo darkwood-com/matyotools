@@ -72,6 +72,8 @@ class DefaultController extends Controller
             throw new NotFoundHttpException();
         }
 
+        $isGolden = boolval($isGolden);
+
         /** @var UserCardService $userCardService */
         $userCardService = $this->get('hb.userCard');
 		$userCard = $userCardService->findByUserAndCard($user, $card, $isGolden);

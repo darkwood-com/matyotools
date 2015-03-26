@@ -11,8 +11,9 @@ use Doctrine\ORM\Mapping as ORM;
  *  indexes={
  *    @ORM\Index(name="IDX_DECK", columns={"user_id"}),
  *    @ORM\Index(name="IDX_CARD", columns={"card_id"}),
+ *    @ORM\Index(name="IDX_IS_GOLDEN", columns={"isGolden"}),
  *  },
- * 	uniqueConstraints={@ORM\UniqueConstraint(name="unique_user_card", columns={"user_id", "card_id"})}
+ * 	uniqueConstraints={@ORM\UniqueConstraint(name="unique_user_card", columns={"user_id", "card_id", "isGolden"})}
  * )
  * @ORM\Entity(repositoryClass="Darkwood\HearthbreakerBundle\Repository\UserCardRepository")
  */
@@ -44,19 +45,18 @@ class UserCard
 	protected $card;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="quantity", type="integer")
-     */
-    private $quantity;
-
-    /**
      * @var boolean
      *
      * @ORM\Column(name="isGolden", type="boolean")
      */
     private $isGolden;
 
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="quantity", type="integer")
+     */
+    private $quantity;
 
     /**
      * Get id
@@ -115,29 +115,6 @@ class UserCard
 	}
 
     /**
-     * Set quantity
-     *
-     * @param integer $quantity
-     * @return UserCard
-     */
-    public function setQuantity($quantity)
-    {
-        $this->quantity = $quantity;
-
-        return $this;
-    }
-
-    /**
-     * Get quantity
-     *
-     * @return integer
-     */
-    public function getQuantity()
-    {
-        return $this->quantity;
-    }
-
-    /**
      * Set isGolden
      *
      * @param boolean $isGolden
@@ -158,5 +135,28 @@ class UserCard
     public function getIsGolden()
     {
         return $this->isGolden;
+    }
+
+    /**
+     * Set quantity
+     *
+     * @param integer $quantity
+     * @return UserCard
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+
+        return $this;
+    }
+
+    /**
+     * Get quantity
+     *
+     * @return integer
+     */
+    public function getQuantity()
+    {
+        return $this->quantity;
     }
 }

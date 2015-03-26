@@ -49,10 +49,12 @@ class UserCardService
 		$this->em->flush();
 	}
 
-	/**
-	 * @param $slug
-	 * @return null|UserCard
-	 */
+    /**
+     * @param $user
+     * @param $card
+     * @param null $isGolden
+     * @return mixed
+     */
 	public function findByUserAndCard($user, $card, $isGolden = null)
 	{
         return $this->userCardRepository->findByUserAndCard($user, $card, $isGolden);

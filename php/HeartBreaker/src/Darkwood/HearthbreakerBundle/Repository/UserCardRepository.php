@@ -20,7 +20,7 @@ class UserCardRepository extends EntityRepository
             ->andWhere('uc.card = :card')->setParameter('card', $card)
         ;
 
-        if($isGolden) {
+        if(!is_null($isGolden)) {
             $qb->andWhere('uc.isGolden = :isGolden')->setParameter('isGolden', $isGolden);
         }
 
