@@ -54,6 +54,11 @@ class CardService
 		return $this->cardRepository->findAll();
 	}
 
+    public function findAllWithUser($user)
+    {
+        return $this->cardRepository->findAllWithUser($user);
+    }
+
 	/**
 	 * @param $slug
 	 * @return null|Card

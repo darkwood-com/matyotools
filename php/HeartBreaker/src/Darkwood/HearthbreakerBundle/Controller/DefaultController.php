@@ -13,11 +13,26 @@ class DefaultController extends Controller
 {
 	public function cardAction()
 	{
+        $user = $this->getUser();
+        if(!$user) {
+            throw new AccessDeniedHttpException();
+        }
+
 		$cards = $this->get('hb.card')->findAll();
+
+        $cardsQuantity = array();
+        $userCards = $this->get('hb.userCard')->findByUser($user);
+        foreach($userCards as $userCard) {
+            /** @var UserCard $userCard */
+            $id = $userCard->getCard()->getId();
+            $isGolden = $userCard->getIsGolden() ? '1' : '0';
+            $cardsQuantity[$id][$isGolden] = $userCard->getQuantity();
+        }
 
 		return $this->render('HearthbreakerBundle:Default:card.html.twig', array(
 			'nav' => 'card',
 			'cards' => $cards,
+            'cardsQuantity' => $cardsQuantity,
 		));
 	}
 
