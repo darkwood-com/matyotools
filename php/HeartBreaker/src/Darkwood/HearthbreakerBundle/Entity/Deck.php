@@ -37,7 +37,28 @@ class Deck
      */
     private $name;
 
-	/**
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @var \DateTime $updatedAt
+     */
+    protected $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @var \DateTime $updatedAt
+     */
+    protected $updatedAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @var \DateTime $updatedAt
+     */
+    protected $syncedAt;
+
+    /**
 	 * @var integer
 	 *
 	 * @ORM\Column(name="vote_up", type="integer", nullable=true)
@@ -121,7 +142,55 @@ class Deck
         return $this->name;
     }
 
-	/**
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getSyncedAt()
+    {
+        return $this->syncedAt;
+    }
+
+    /**
+     * @param \DateTime $syncedAt
+     */
+    public function setSyncedAt($syncedAt)
+    {
+        $this->syncedAt = $syncedAt;
+    }
+
+    /**
 	 * @return int
 	 */
 	public function getVoteUp()

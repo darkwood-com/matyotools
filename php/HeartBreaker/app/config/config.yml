@@ -105,6 +105,14 @@ fos_user:
     service:
         mailer: fos_user.mailer.twig_swift
 
+vich_uploader:
+    db_driver: orm
+
+    mappings:
+        card:
+            uri_prefix:         /medias/card
+            upload_destination: %kernel.root_dir%/../web/medias/card
+
 aequasi_cache:
     instances:
         scrapper:

@@ -22,6 +22,7 @@ class AppKernel extends Kernel
 			new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
 			new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
             new Aequasi\Bundle\CacheBundle\AequasiCacheBundle(),
+            new Vich\UploaderBundle\VichUploaderBundle(),
 
             new Darkwood\HearthbreakerBundle\HearthbreakerBundle(),
 			new Darkwood\UserBundle\UserBundle(),

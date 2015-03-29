@@ -11,6 +11,7 @@ use GuzzleHttp\Post\PostBody;
 use GuzzleHttp\Subscriber\Cache\CacheStorage;
 use GuzzleHttp\Subscriber\Cache\CacheSubscriber;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Router;
@@ -51,16 +52,16 @@ class ScrapperService
 		$this->deckCardService = $deckCardService;
     }
 
-	/**
-	 * @param $name
-	 * @param array $parameters
-	 * @param null|array $data
-	 * @return Crawler
-	 */
-    private function request($name, $parameters = array(), $data = null)
+    private function requestRoute($name, $parameters = array(), $data = null)
     {
-		$url = $this->router->generate($name, $parameters, true);
+        $url = $this->router->generate($name, $parameters, true);
+        $client = $this->getClient($url, $data);
 
+        return $data ? $client->request('POST', $url, $data) : $client->request('GET', $url);
+    }
+
+    private function getClient()
+    {
         static $client = null;
 
         if(!$client) {
@@ -93,14 +94,14 @@ class ScrapperService
             );
         }
 
-        return $data ? $client->request('POST', $url, $data) : $client->request('GET', $url);
+        return $client;
     }
 
     public function syncCardList($force = false)
     {
 		$page = 1;
 		do {
-			$crawler = $this->request('card_list', array('page' => $page));
+			$crawler = $this->requestRoute('card_list', array('page' => $page));
 
 			$crawler
 				->filter('#liste_cartes .carte_galerie_container > a')
@@ -131,7 +132,7 @@ class ScrapperService
 	{
 		$page = 1;
 		do {
-			$crawler = $this->request('deck_search', array(), array(
+			$crawler = $this->requestRoute('deck_search', array(), array(
 				'etape' => 'RechercheDecks',
 				'colonne' => '',
 				'ordre' => 'undefined',
@@ -177,7 +178,7 @@ class ScrapperService
 			return $card;
 		}
 
-		$crawler = $this->request('card_detail', array('slug' => $slug));
+		$crawler = $this->requestRoute('card_detail', array('slug' => $slug));
 
 		$attr = null;
 		$crawler
@@ -202,6 +203,12 @@ class ScrapperService
 				}
 			});
 
+        $imageSrc = $crawler->filter("#visuelcarte")->first()->attr('src');
+        $guzzle = $this->getClient()->getClient();
+        $response = $guzzle->get(trim($imageSrc));
+        $card->setImageFile(new File(''));
+
+        $card->setSyncedAt(new \DateTime());
 		$this->cardService->save($card);
 
 		return $card;
@@ -217,7 +224,7 @@ class ScrapperService
 			return $deck;
 		}
 
-		$crawler = $this->request('deck_detail', array('slug' => $slug));
+		$crawler = $this->requestRoute('deck_detail', array('slug' => $slug));
 
 		$deck->setName($crawler->filter('#content h3')->first()->text());
 
@@ -265,6 +272,7 @@ class ScrapperService
 				}
 			});
 
+        $deck->setSyncedAt(new \DateTime());
 		$this->deckService->save($deck);
 
 		return $deck;
