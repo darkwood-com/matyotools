@@ -11,7 +11,7 @@ use GuzzleHttp\Post\PostBody;
 use GuzzleHttp\Subscriber\Cache\CacheStorage;
 use GuzzleHttp\Subscriber\Cache\CacheSubscriber;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Router;
@@ -206,7 +206,9 @@ class ScrapperService
         $imageSrc = $crawler->filter("#visuelcarte")->first()->attr('src');
         $guzzle = $this->getClient()->getClient();
         $response = $guzzle->get(trim($imageSrc));
-        $card->setImageFile(new File(''));
+        $filePath = tempnam(sys_get_temp_dir(), 'HB_');
+        file_put_contents($filePath, $response->getBody());
+        $card->setImageFile(new UploadedFile($filePath, 'tmp.jpg', null, null, null, true));
 
         $card->setSyncedAt(new \DateTime());
 		$this->cardService->save($card);
