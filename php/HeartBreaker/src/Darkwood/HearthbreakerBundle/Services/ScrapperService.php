@@ -203,12 +203,14 @@ class ScrapperService
 				}
 			});
 
-        $imageSrc = $crawler->filter("#visuelcarte")->first()->attr('src');
-        $guzzle = $this->getClient()->getClient();
-        $response = $guzzle->get(trim($imageSrc));
-        $filePath = tempnam(sys_get_temp_dir(), 'HB_');
-        file_put_contents($filePath, $response->getBody());
-        $card->setImageFile(new UploadedFile($filePath, 'tmp.jpg', null, null, null, true));
+		if(!$card->getImageName()) {
+			$imageSrc = $crawler->filter("#visuelcarte")->first()->attr('src');
+			$guzzle = $this->getClient()->getClient();
+			$response = $guzzle->get(trim($imageSrc));
+			$filePath = tempnam(sys_get_temp_dir(), 'HB_');
+			file_put_contents($filePath, $response->getBody());
+			$card->setImage(new UploadedFile($filePath, $slug.'.jpg', null, null, null, true));
+		}
 
         $card->setSyncedAt(new \DateTime());
 		$this->cardService->save($card);

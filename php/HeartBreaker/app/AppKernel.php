@@ -23,6 +23,7 @@ class AppKernel extends Kernel
 			new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
             new Aequasi\Bundle\CacheBundle\AequasiCacheBundle(),
             new Vich\UploaderBundle\VichUploaderBundle(),
+			new Liip\ImagineBundle\LiipImagineBundle(),
 
             new Darkwood\HearthbreakerBundle\HearthbreakerBundle(),
 			new Darkwood\UserBundle\UserBundle(),

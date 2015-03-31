@@ -1,5 +1,6 @@
 $(window).load(function() {
-	$('#cards .user-card').click(function() {
+	var $cards = $('#cards');
+	$cards.find('.user-card').click(function() {
 		var $self = $(this);
 		var slug = $self.data('slug');
 		var isGolden = $self.data('isGolden');
@@ -10,5 +11,10 @@ $(window).load(function() {
                 $self.html(data);
             }
         });
+	});
+
+	$('[data-toggle="popover"]').popover({
+		trigger: 'hover',
+		placement: 'auto'
 	});
 });

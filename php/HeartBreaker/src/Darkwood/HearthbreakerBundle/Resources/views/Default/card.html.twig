@@ -19,7 +19,7 @@
 				</thead>
 				<tbody>
 				{% for card in cards %}
-					<tr>
+					<tr data-toggle="popover" data-html="true" data-content="<img src='{{ vich_uploader_asset(card, 'image') | imagine_filter('card_small') }}'></img>">
 						<td><a href="{{ path('card_detail', {'slug': card.slug}) }}">{{ card.name }}</a></td>
 						<td>{{ card.type }}</td>
 						<td>{{ card.playerClass }}</td>

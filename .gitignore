@@ -54,7 +54,7 @@ php/HeartBreaker/app/phpunit.xml
 php/HeartBreaker/composer.phar
 php/HeartBreaker/vendor/
 php/HeartBreaker/web/bundles/
-php/HeartBreaker/web/medias/
+php/HeartBreaker/web/media/
 
 
 # SearchReplace

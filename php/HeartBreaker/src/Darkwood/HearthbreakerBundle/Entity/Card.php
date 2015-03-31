@@ -120,9 +120,9 @@ class Card
     /**
      * @Vich\UploadableField(mapping="card", fileNameProperty="imageName")
      *
-     * @var File $imageFile
+     * @var File $image
      */
-    protected $imageFile;
+    protected $image;
 
     /**
      * @ORM\Column(type="string", length=255, name="image_name")
@@ -392,9 +392,9 @@ class Card
      *
      * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile $image
      */
-    public function setImageFile(File $image = null)
+    public function setImage(File $image = null)
     {
-        $this->imageFile = $image;
+        $this->image = $image;
 
         if ($image) {
             // It is required that at least one field changes if you are using doctrine
@@ -406,9 +406,9 @@ class Card
     /**
      * @return File
      */
-    public function getImageFile()
+    public function getImage()
     {
-        return $this->imageFile;
+        return $this->image;
     }
 
     /**
@@ -526,7 +526,7 @@ class Card
     /**
      * Get users
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getUsers()
     {
