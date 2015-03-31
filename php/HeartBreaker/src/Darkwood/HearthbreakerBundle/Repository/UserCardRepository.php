@@ -41,4 +41,29 @@ class UserCardRepository extends EntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+	public function findOneByUserAndCard($user, $card, $isGolden = null)
+	{
+		$qb = $this->createQueryBuilder('uc')
+			->andWhere('uc.user = :user')->setParameter('user', $user)
+			->andWhere('uc.card = :card')->setParameter('card', $card)
+		;
+
+		if(!is_null($isGolden)) {
+			$qb->andWhere('uc.isGolden = :isGolden')->setParameter('isGolden', $isGolden);
+		}
+
+		return $qb->getQuery()->getOneOrNullResult();
+	}
+
+	public function findAll()
+	{
+		$qb = $this->createQueryBuilder('uc')
+			->select('uc, c, u')
+			->leftJoin('uc.card', 'c')
+			->leftJoin('uc.user', 'u')
+		;
+
+		return $qb->getQuery()->getResult();
+	}
 }

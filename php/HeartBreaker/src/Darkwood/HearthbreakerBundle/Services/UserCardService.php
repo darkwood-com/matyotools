@@ -64,4 +64,14 @@ class UserCardService
     {
         return $this->userCardRepository->findByUser($user, $isGolden);
     }
+
+	public function findOneByUserAndCard($user, $card, $isGolden = null)
+	{
+		return $this->userCardRepository->findOneByUserAndCard($user, $card, $isGolden);
+	}
+
+	public function findAll()
+	{
+		return $this->userCardRepository->findAll();
+	}
 }
