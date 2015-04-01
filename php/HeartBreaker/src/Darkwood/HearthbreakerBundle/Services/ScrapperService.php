@@ -5,16 +5,9 @@ namespace Darkwood\HearthbreakerBundle\Services;
 use Darkwood\HearthbreakerBundle\Entity\Card;
 use Darkwood\HearthbreakerBundle\Entity\Deck;
 use Darkwood\HearthbreakerBundle\Entity\DeckCard;
+use Darkwood\HearthbreakerBundle\Subscriber\Cache\CacheStorage;
 use Doctrine\Common\Cache\Cache;
 use Goutte\Client;
-use GuzzleHttp\Event\BeforeEvent;
-use GuzzleHttp\Event\CompleteEvent;
-use GuzzleHttp\Event\RequestEvents;
-use GuzzleHttp\Message\RequestInterface;
-use GuzzleHttp\Message\Response;
-use GuzzleHttp\Post\PostBody;
-use GuzzleHttp\Stream\Utils;
-use GuzzleHttp\Subscriber\Cache\CacheStorage;
 use GuzzleHttp\Subscriber\Cache\CacheSubscriber;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -66,20 +59,6 @@ class ScrapperService
         return $data ? $client->request('POST', $url, $data) : $client->request('GET', $url);
     }
 
-	private function getCacheKey(RequestInterface $request)
-	{
-		$post = null;
-		$body = $request->getBody();
-		if($body instanceof PostBody) {
-			$post = $body->getFields(true);
-		}
-		return "HB_" . md5(implode(':', array(
-			$request->getMethod(),
-			$request->getUrl(),
-			$post
-		)));
-	}
-
     private function getClient()
     {
         static $client = null;
@@ -89,30 +68,8 @@ class ScrapperService
 
             $guzzle = $client->getClient();
             $guzzle->setDefaultOption('debug', true);
-			$guzzle->getEmitter()->on('before', function(BeforeEvent $event) {
-				$request = $event->getRequest();
 
-				$key = $this->getCacheKey($request);
-
-				$body = $this->cache->fetch($key);
-				if (!$body) {
-					return;
-				}
-				$body = Utils::create($body);
-
-				$response = new Response(200);
-				$response->setBody($body);
-				$event->intercept($response);
-			}, RequestEvents::LATE);
-			$guzzle->getEmitter()->on('complete', function(CompleteEvent $event) {
-				$request = $event->getRequest();
-				$response = $event->getResponse();
-
-				$key = $this->getCacheKey($request);
-				$this->cache->save($key, (string) $response->getBody());
-			}, RequestEvents::EARLY);
-
-            /*CacheSubscriber::attach($guzzle, array(
+            CacheSubscriber::attach($guzzle, array(
                 'storage' => new CacheStorage($this->cache),
                 'validate' => false,
                 'can_cache' => function () {
@@ -123,18 +80,12 @@ class ScrapperService
             $guzzle->getEmitter()->on(
                 'complete',
                 function (\GuzzleHttp\Event\CompleteEvent $event) {
-					$request = $event->getRequest();
                     $response = $event->getResponse();
 
 					$response->setHeader('Cache-Control', 'max-age=31536000'); //1 year
-
-					$body = $request->getBody();
-					if($body instanceof PostBody) {
-						$response->setHeader('ETag', md5($body->getFields(true)));
-					}
                 },
                 'first'
-            );*/
+            );
         }
 
         return $client;
