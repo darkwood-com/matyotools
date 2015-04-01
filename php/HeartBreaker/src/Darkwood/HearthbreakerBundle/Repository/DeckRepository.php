@@ -34,4 +34,18 @@ class DeckRepository extends EntityRepository
 
 		return $qb->getQuery()->getOneOrNullResult();
 	}
+
+	public function findBySlugWithUser($slug, $user)
+	{
+		$qb = $this->createQueryBuilder('d')
+			->select('d, dc, c')
+			->leftJoin('d.cards', 'dc')
+			->leftJoin('dc.card', 'c')
+			->leftJoin('c.users', 'uc', 'with', 'uc.user = :user')
+			->setParameter('user', $user)
+			->andWhere('d.slug = :slug')->setParameter('slug', $slug)
+		;
+
+		return $qb->getQuery()->getOneOrNullResult();
+	}
 }

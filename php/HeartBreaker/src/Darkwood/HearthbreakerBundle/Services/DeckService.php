@@ -62,4 +62,9 @@ class DeckService
 	{
 		return $this->deckRepository->findBySlug($slug);
 	}
+
+	public function findBySlugWithUser($slug, $user)
+	{
+		return $this->deckRepository->findBySlugWithUser($slug, $user);
+	}
 }

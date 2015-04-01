@@ -62,7 +62,12 @@ class DefaultController extends Controller
 
 	public function deckDetailAction($slug)
 	{
-		$deck = $this->get('hb.deck')->findBySlug($slug);
+		$user = $this->getUser();
+		if(!$user) {
+			throw new AccessDeniedHttpException();
+		}
+
+		$deck = $this->get('hb.deck')->findBySlugWithUser($slug, $user);
 
 		if(!$deck) {
 			throw new NotFoundHttpException();
