@@ -46,7 +46,6 @@ php/Hipchat/vendor/
 
 # HeartBreaker
 php/HeartBreaker/.cache
-php/HeartBreaker/save.json
 php/HeartBreaker/app/bootstrap.php.cache
 php/HeartBreaker/app/cache/*
 php/HeartBreaker/app/config/parameters.yml
