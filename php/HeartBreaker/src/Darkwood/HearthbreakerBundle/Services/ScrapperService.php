@@ -7,7 +7,13 @@ use Darkwood\HearthbreakerBundle\Entity\Deck;
 use Darkwood\HearthbreakerBundle\Entity\DeckCard;
 use Doctrine\Common\Cache\Cache;
 use Goutte\Client;
+use GuzzleHttp\Event\BeforeEvent;
+use GuzzleHttp\Event\CompleteEvent;
+use GuzzleHttp\Event\RequestEvents;
+use GuzzleHttp\Message\RequestInterface;
+use GuzzleHttp\Message\Response;
 use GuzzleHttp\Post\PostBody;
+use GuzzleHttp\Stream\Utils;
 use GuzzleHttp\Subscriber\Cache\CacheStorage;
 use GuzzleHttp\Subscriber\Cache\CacheSubscriber;
 use Symfony\Component\DomCrawler\Crawler;
@@ -60,6 +66,20 @@ class ScrapperService
         return $data ? $client->request('POST', $url, $data) : $client->request('GET', $url);
     }
 
+	private function getCacheKey(RequestInterface $request)
+	{
+		$post = null;
+		$body = $request->getBody();
+		if($body instanceof PostBody) {
+			$post = $body->getFields(true);
+		}
+		return "HB_" . md5(implode(':', array(
+			$request->getMethod(),
+			$request->getUrl(),
+			$post
+		)));
+	}
+
     private function getClient()
     {
         static $client = null;
@@ -69,7 +89,30 @@ class ScrapperService
 
             $guzzle = $client->getClient();
             $guzzle->setDefaultOption('debug', true);
-            CacheSubscriber::attach($guzzle, array(
+			$guzzle->getEmitter()->on('before', function(BeforeEvent $event) {
+				$request = $event->getRequest();
+
+				$key = $this->getCacheKey($request);
+
+				$body = $this->cache->fetch($key);
+				if (!$body) {
+					return;
+				}
+				$body = Utils::create($body);
+
+				$response = new Response(200);
+				$response->setBody($body);
+				$event->intercept($response);
+			}, RequestEvents::LATE);
+			$guzzle->getEmitter()->on('complete', function(CompleteEvent $event) {
+				$request = $event->getRequest();
+				$response = $event->getResponse();
+
+				$key = $this->getCacheKey($request);
+				$this->cache->save($key, (string) $response->getBody());
+			}, RequestEvents::EARLY);
+
+            /*CacheSubscriber::attach($guzzle, array(
                 'storage' => new CacheStorage($this->cache),
                 'validate' => false,
                 'can_cache' => function () {
@@ -91,7 +134,7 @@ class ScrapperService
 					}
                 },
                 'first'
-            );
+            );*/
         }
 
         return $client;
