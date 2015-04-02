@@ -4,7 +4,7 @@
 	<div class="panel panel-default">
 		<div class="panel-heading">{{ deck.name }}</div>
 		<div class="panel-body">
-			<table class="table table-striped">
+			<table class="table">
 				<thead>
 				<tr>
 					<th></th>
@@ -17,7 +17,11 @@
 				</thead>
 				<tbody>
 				{% for deckcard in deck.cards %}
-					<tr data-toggle="popover" data-html="true" data-content="<img src='{{ vich_uploader_asset(deckcard.card, 'image') | imagine_filter('card_small') }}' />">
+					{% set userQuantity = cardsQuantity[deckcard.card.id]['total'] | default(0) %}
+					<tr class="{% if userQuantity >= deckcard.quantity %}success{% elseif userQuantity > 0 %}warning{% endif %}"
+						data-toggle="popover"
+						data-html="true"
+						data-content="<img src='{{ vich_uploader_asset(deckcard.card, 'image') | imagine_filter('card_small') }}' />">
 						<td>{{ deckcard.quantity }}</td>
 						<td><a href="{{ path('card_detail', {'slug': deckcard.card.slug}) }}">{{ deckcard.card.name }}</a></td>
 						<td>{{ deckcard.card.type }}</td>

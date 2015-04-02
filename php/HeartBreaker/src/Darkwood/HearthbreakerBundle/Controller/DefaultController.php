@@ -146,8 +146,14 @@ class DefaultController extends Controller
 		foreach($userCards as $userCard) {
 			/** @var UserCard $userCard */
 			$id = $userCard->getCard()->getId();
+
+			if(!isset($cardsQuantity[$id])) {
+				$cardsQuantity[$id] = array('0' => 0, '1' => 0, 'total' => 0);
+			}
+
 			$isGolden = $userCard->getIsGolden() ? '1' : '0';
 			$cardsQuantity[$id][$isGolden] = $userCard->getQuantity();
+			$cardsQuantity[$id]['total'] += $userCard->getQuantity();
 		}
 
 		return $this->render('HearthbreakerBundle:Default:deckDetail.html.twig', array(
