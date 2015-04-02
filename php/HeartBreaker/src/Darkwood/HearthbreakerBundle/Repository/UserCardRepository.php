@@ -42,15 +42,18 @@ class UserCardRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-	public function findByUserAndDeck($user, $deck, $isGolden = null)
+	public function findByUserAndDeck($user, $deck = null, $isGolden = null)
 	{
 		$qb = $this->createQueryBuilder('uc')
 			->select('uc, c')
 			->leftJoin('uc.card', 'c')
 			->leftJoin('c.decks', 'dc')
 			->andWhere('uc.user = :user')->setParameter('user', $user)
-			->andWhere('dc.deck = :deck')->setParameter('deck', $deck)
 		;
+
+		if(!is_null($deck)) {
+			$qb->andWhere('dc.deck = :deck')->setParameter('deck', $deck);
+		}
 
 		if(!is_null($isGolden)) {
 			$qb->andWhere('uc.isGolden = :isGolden')->setParameter('isGolden', $isGolden);

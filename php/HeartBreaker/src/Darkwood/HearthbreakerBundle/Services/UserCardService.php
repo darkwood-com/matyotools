@@ -65,7 +65,7 @@ class UserCardService
         return $this->userCardRepository->findByUser($user, $isGolden);
     }
 
-	public function findByUserAndDeck($user, $deck, $isGolden = null)
+	public function findByUserAndDeck($user, $deck = null, $isGolden = null)
 	{
 		return $this->userCardRepository->findByUserAndDeck($user, $deck, $isGolden);
 	}

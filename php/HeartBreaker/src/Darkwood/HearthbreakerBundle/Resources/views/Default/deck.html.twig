@@ -17,14 +17,18 @@
 						<th>Title</th>
 						<th>Buy</th>
 						<th>Note</th>
+						<th>Card %</th>
+						<th>Buy %</th>
 					</tr>
 				</thead>
 				<tbody>
 				{% for deck in decks %}
 					<tr>
-						<td><a href="{{ path('deck_detail', {'slug': deck.slug}) }}">{{ deck.name }}</a></td>
-						<td>{{ deck.buy }}</td>
-						<td>{{ deck.voteUp }} - {{ deck.voteDown }}</td>
+						<td><a href="{{ path('deck_detail', {'slug': deck.deck.slug}) }}">{{ deck.deck.name }}</a></td>
+						<td>{{ deck.deck.buy }}</td>
+						<td>{{ deck.deck.voteUp }} - {{ deck.deck.voteDown }}</td>
+						<td>{{ deck.cardPercent }} %</td>
+						<td>{{ deck.buyPercent }} %</td>
 					</tr>
 				{% endfor %}
 				</tbody>

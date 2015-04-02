@@ -15,6 +15,26 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DefaultController extends Controller
 {
+	private function cardQuantity($user, $deck = null)
+	{
+		$cardsQuantity = array();
+		$userCards = $this->get('hb.userCard')->findByUserAndDeck($user, $deck);
+		foreach($userCards as $userCard) {
+			/** @var UserCard $userCard */
+			$id = $userCard->getCard()->getId();
+
+			if(!isset($cardsQuantity[$id])) {
+				$cardsQuantity[$id] = array('0' => 0, '1' => 0, 'total' => 0);
+			}
+
+			$isGolden = $userCard->getIsGolden() ? '1' : '0';
+			$cardsQuantity[$id][$isGolden] = $userCard->getQuantity();
+			$cardsQuantity[$id]['total'] += $userCard->getQuantity();
+		}
+
+		return $cardsQuantity;
+	}
+
 	public function cardAction(Request $request)
 	{
         $user = $this->getUser();
@@ -72,14 +92,7 @@ class DefaultController extends Controller
 
 		$cards = $this->get('hb.card')->search($search);
 
-        $cardsQuantity = array();
-        $userCards = $this->get('hb.userCard')->findByUser($user);
-        foreach($userCards as $userCard) {
-            /** @var UserCard $userCard */
-            $id = $userCard->getCard()->getId();
-            $isGolden = $userCard->getIsGolden() ? '1' : '0';
-            $cardsQuantity[$id][$isGolden] = $userCard->getQuantity();
-        }
+        $cardsQuantity = $this->cardQuantity($user);
 
 		return $this->render('HearthbreakerBundle:Default:card.html.twig', array(
 			'nav' => 'card',
@@ -103,6 +116,16 @@ class DefaultController extends Controller
 		));
 	}
 
+	private function percent($percent)
+	{
+		if($percent['total'] > 0)
+		{
+			return number_format($percent['value'] / $percent['total'] * 100, 1);
+		}
+
+		return 0;
+	}
+
 	public function deckAction(Request $request)
 	{
 		$user = $this->getUser();
@@ -123,6 +146,39 @@ class DefaultController extends Controller
 		}
 
 		$decks = $this->get('hb.deck')->search($search);
+
+		$cardsQuantity = $this->cardQuantity($user);
+
+		$decks = array_map(function($deck) use ($cardsQuantity) {
+			/** @var Deck $deck */
+
+			$cardPercent = array('value'=> 0, 'total' => 0);
+			$buyPercent = array('value'=> 0, 'total' => $deck->getBuy());
+
+			$deckCards = $deck->getCards();
+			foreach($deckCards as $deckCard)
+			{
+				/** @var DeckCard $deckCard */
+				$card = $deckCard->getCard();
+				$cardId = $card->getId();
+
+				if(isset($cardsQuantity[$cardId]))
+				{
+					$userQuantity = min($cardsQuantity[$cardId]['total'], $deckCard->getQuantity());
+
+					$cardPercent['value'] += $userQuantity;
+					$buyPercent['value'] += $userQuantity * $card->getBuy();
+				}
+
+				$cardPercent['total'] += $deckCard->getQuantity();
+			}
+
+			return array(
+				'cardPercent' => $this->percent($cardPercent),
+				'buyPercent' => $this->percent($buyPercent),
+				'deck' => $deck,
+			);
+		}, $decks);
 
 		return $this->render('HearthbreakerBundle:Default:deck.html.twig', array(
 			'nav' => 'deck',
@@ -145,20 +201,7 @@ class DefaultController extends Controller
 			throw new NotFoundHttpException();
 		}
 
-		$cardsQuantity = array();
-		$userCards = $this->get('hb.userCard')->findByUserAndDeck($user, $deck);
-		foreach($userCards as $userCard) {
-			/** @var UserCard $userCard */
-			$id = $userCard->getCard()->getId();
-
-			if(!isset($cardsQuantity[$id])) {
-				$cardsQuantity[$id] = array('0' => 0, '1' => 0, 'total' => 0);
-			}
-
-			$isGolden = $userCard->getIsGolden() ? '1' : '0';
-			$cardsQuantity[$id][$isGolden] = $userCard->getQuantity();
-			$cardsQuantity[$id]['total'] += $userCard->getQuantity();
-		}
+		$cardsQuantity = $this->cardQuantity($user, $deck);
 
 		$cards = $deck->getCards();
 		$cardsByClass = array();
