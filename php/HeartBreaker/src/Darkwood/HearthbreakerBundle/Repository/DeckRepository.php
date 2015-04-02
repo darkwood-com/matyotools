@@ -30,6 +30,7 @@ class DeckRepository extends EntityRepository
 			->leftJoin('d.cards', 'dc')
 			->leftJoin('dc.card', 'c')
 			->andWhere('d.slug = :slug')->setParameter('slug', $slug)
+			->orderBy('c.cost')
 		;
 
 		return $qb->getQuery()->getOneOrNullResult();

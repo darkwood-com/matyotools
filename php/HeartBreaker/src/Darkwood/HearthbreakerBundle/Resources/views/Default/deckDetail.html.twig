@@ -4,34 +4,44 @@
 	<div class="panel panel-default">
 		<div class="panel-heading">{{ deck.name }}</div>
 		<div class="panel-body">
-			<table class="table">
-				<thead>
-				<tr>
-					<th></th>
-					<th>Card</th>
-					<th>Type</th>
-					<th>Cost</th>
-					<th></th>
-					<th></th>
-				</tr>
-				</thead>
-				<tbody>
-				{% for deckcard in deck.cards %}
-					{% set userQuantity = cardsQuantity[deckcard.card.id]['total'] | default(0) %}
-					<tr class="{% if userQuantity >= deckcard.quantity %}success{% elseif userQuantity > 0 %}warning{% endif %}"
-						data-toggle="popover"
-						data-html="true"
-						data-content="<img src='{{ vich_uploader_asset(deckcard.card, 'image') | imagine_filter('card_small') }}' />">
-						<td>{{ deckcard.quantity }}</td>
-						<td><a href="{{ path('card_detail', {'slug': deckcard.card.slug}) }}">{{ deckcard.card.name }}</a></td>
-						<td>{{ deckcard.card.type }}</td>
-						<td>{{ deckcard.card.cost }}</td>
-						<td>{{ cardsQuantity[deckcard.card.id][0] | default(0) }}</td>
-						<td>{{ cardsQuantity[deckcard.card.id][1] | default(0) }}</td>
-					</tr>
+			<div class="row">
+				{% for class, cards in cardsByClass %}
+				<div class="col-xs-6">
+					<div class="page-header">
+						<h2>Cards {{ class }} ({{ cards.count }})</h2>
+					</div>
+
+					<table class="table">
+						<thead>
+						<tr>
+							<th></th>
+							<th>Card</th>
+							<th>Type</th>
+							<th>Cost</th>
+							<th></th>
+							<th></th>
+						</tr>
+						</thead>
+						<tbody>
+						{% for deckcard in cards.cards %}
+							{% set userQuantity = cardsQuantity[deckcard.card.id]['total'] | default(0) %}
+							<tr class="{% if userQuantity >= deckcard.quantity %}success{% elseif userQuantity > 0 %}warning{% endif %}"
+								data-toggle="popover"
+								data-html="true"
+								data-content="<img src='{{ vich_uploader_asset(deckcard.card, 'image') | imagine_filter('card_small') }}' />">
+								<td>{{ deckcard.quantity }}</td>
+								<td><a href="{{ path('card_detail', {'slug': deckcard.card.slug}) }}">{{ deckcard.card.name }}</a></td>
+								<td>{{ deckcard.card.type }}</td>
+								<td>{{ deckcard.card.cost }}</td>
+								<td>{{ cardsQuantity[deckcard.card.id][0] | default(0) }}</td>
+								<td>{{ cardsQuantity[deckcard.card.id][1] | default(0) }}</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
 				{% endfor %}
-				</tbody>
-			</table>
+			</div>
 		</div>
 	</div>
 {% endblock %}

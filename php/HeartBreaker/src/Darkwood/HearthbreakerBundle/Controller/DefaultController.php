@@ -2,6 +2,9 @@
 
 namespace Darkwood\HearthbreakerBundle\Controller;
 
+use Darkwood\HearthbreakerBundle\Entity\Card;
+use Darkwood\HearthbreakerBundle\Entity\Deck;
+use Darkwood\HearthbreakerBundle\Entity\DeckCard;
 use Darkwood\HearthbreakerBundle\Entity\UserCard;
 use Darkwood\HearthbreakerBundle\Services\UserCardService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -135,6 +138,7 @@ class DefaultController extends Controller
 			throw new AccessDeniedHttpException();
 		}
 
+		/** @var Deck $deck */
 		$deck = $this->get('hb.deck')->findBySlug($slug);
 
 		if(!$deck) {
@@ -156,9 +160,35 @@ class DefaultController extends Controller
 			$cardsQuantity[$id]['total'] += $userCard->getQuantity();
 		}
 
+		$cards = $deck->getCards();
+		$cardsByClass = array();
+		foreach($cards as $deckCard)
+		{
+			/** @var DeckCard $deckCard */
+			$class = $deckCard->getCard()->getPlayerClass();
+			$cardsByClass[$class][] = $deckCard;
+		}
+		$cardsByClass = array_map(function($deckCards) {
+			return array(
+				'cards' => $deckCards,
+				'count' => array_reduce($deckCards, function($carry, $deckCard) {
+					/** @var DeckCard $deckCard */
+					return $carry + $deckCard->getQuantity();
+				}, 0)
+			);
+		}, $cardsByClass);
+		uksort($cardsByClass, function($c1, $c2) {
+			if($c1 == $c2) return 0;
+			if($c1 == 'Neutre') return 1;
+			if($c2 == 'Neutre') return -1;
+
+			return 0;
+		});
+
 		return $this->render('HearthbreakerBundle:Default:deckDetail.html.twig', array(
 			'nav' => 'deck',
 			'deck' => $deck,
+			'cardsByClass' => $cardsByClass,
 			'cardsQuantity' => $cardsQuantity,
 		));
 	}
