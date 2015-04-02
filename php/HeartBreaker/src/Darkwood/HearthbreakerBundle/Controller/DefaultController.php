@@ -20,6 +20,7 @@ class DefaultController extends Controller
         }
 
 		$form = $this->createFormBuilder()
+			->add('title', 'text', array('required' => false))
 			->add('type', 'choice', array(
 				'choices'   => array(
 					'Arme' => 'Arme',
