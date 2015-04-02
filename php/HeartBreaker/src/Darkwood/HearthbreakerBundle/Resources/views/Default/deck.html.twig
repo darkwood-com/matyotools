@@ -5,6 +5,16 @@
 		<div class="panel-body">
 			{{ form_start(form) }}
 			{{ form_row(form.title) }}
+			{{ form_row(form.class) }}
+			<div class="row">
+				<div class="col-xs-4">{{ form_row(form.buy) }}</div>
+				<div class="col-xs-4">{{ form_row(form.vote_up) }}</div>
+				<div class="col-xs-4">{{ form_row(form.vote_down) }}</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-6">{{ form_row(form.card_percent) }}</div>
+				<div class="col-xs-6">{{ form_row(form.buy_percent) }}</div>
+			</div>
 			{{ form_end(form) }}
 		</div>
 	</div>

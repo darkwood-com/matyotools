@@ -135,6 +135,26 @@ class DefaultController extends Controller
 
 		$form = $this->createFormBuilder()
 			->add('title', 'text', array('required' => false))
+			->add('class', 'choice', array(
+				'choices'   => array(
+					'Chaman' => 'Chaman',
+					'Chasseur' => 'Chasseur',
+					'Démoniste' => 'Démoniste',
+					'Druide' => 'Druide',
+					'Guerrier' => 'Guerrier',
+					'Mage' => 'Mage',
+					'Neutre' => 'Neutre',
+					'Paladin' => 'Paladin',
+					'Prêtre' => 'Prêtre',
+					'Voleur' => 'Voleur',
+				),
+				'required' => false
+			))
+			->add('vote_up', 'integer', array('required' => false))
+			->add('vote_down', 'integer', array('required' => false))
+			->add('buy', 'integer', array('required' => false))
+			->add('card_percent', 'integer', array('required' => false))
+			->add('buy_percent', 'integer', array('required' => false))
 			->add('submit', 'submit')
 			->getForm()
 		;
@@ -179,6 +199,17 @@ class DefaultController extends Controller
 				'deck' => $deck,
 			);
 		}, $decks);
+
+		$decks = array_filter($decks, function($deck) use ($search) {
+			if((isset($search['buy']) && $search['buy'] != null && $deck['deck']->getBuy() < $search['buy'])
+			|| (isset($search['card_percent']) && $search['card_percent'] != null && $deck['cardPercent'] < $search['card_percent'])
+			|| (isset($search['buy_percent']) && $search['buy_percent'] != null && $deck['buyPercent'] < $search['buy_percent']))
+			{
+				return false;
+			}
+
+			return true;
+		});
 
 		return $this->render('HearthbreakerBundle:Default:deck.html.twig', array(
 			'nav' => 'deck',

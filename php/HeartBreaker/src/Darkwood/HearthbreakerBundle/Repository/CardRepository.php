@@ -49,17 +49,17 @@ class CardRepository extends EntityRepository
 
 		if(isset($search['cost']) && $search['cost'] != null)
 		{
-			$qb->andWhere('c.cost = :cost')->setParameter('cost', $search['cost']);
+			$qb->andWhere('c.cost > :cost')->setParameter('cost', $search['cost']);
 		}
 
 		if(isset($search['attack']) && $search['attack'] != null)
 		{
-			$qb->andWhere('c.attack = :attack')->setParameter('attack', $search['attack']);
+			$qb->andWhere('c.attack > :attack')->setParameter('attack', $search['attack']);
 		}
 
 		if(isset($search['health']) && $search['health'] != null)
 		{
-			$qb->andWhere('c.health = :health')->setParameter('health', $search['health']);
+			$qb->andWhere('c.health > :health')->setParameter('health', $search['health']);
 		}
 
 		return $qb->getQuery()->getResult();

@@ -49,6 +49,16 @@ class DeckRepository extends EntityRepository
 			$qb->andWhere('d.name LIKE :name')->setParameter('name', '%'.$search['title'].'%');
 		}
 
+		if(isset($search['vote_up']) && $search['vote_up'] != null)
+		{
+			$qb->andWhere('d.voteUp > :vote_up')->setParameter('vote_up', $search['vote_up']);
+		}
+
+		if(isset($search['vote_down']) && $search['vote_down'] != null)
+		{
+			$qb->andWhere('d.voteDown > :vote_down')->setParameter('vote_down', $search['vote_down']);
+		}
+
 		return $qb->getQuery()->getResult();
 	}
 }
