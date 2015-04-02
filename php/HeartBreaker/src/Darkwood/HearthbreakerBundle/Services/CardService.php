@@ -72,4 +72,9 @@ class CardService
 	{
 		return $this->cardRepository->count();
 	}
+
+	public function search($search)
+	{
+		return $this->cardRepository->search($search);
+	}
 }

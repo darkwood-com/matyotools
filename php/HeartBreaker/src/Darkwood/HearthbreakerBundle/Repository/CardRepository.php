@@ -22,4 +22,41 @@ class CardRepository extends EntityRepository
 
 		return $count[0]['nb'];
 	}
+
+	public function search($search)
+	{
+		$qb = $this->createQueryBuilder('c');
+
+		if(isset($search['type']) && $search['type'] != null)
+		{
+			$qb->andWhere('c.type = :type')->setParameter('type', $search['type']);
+		}
+
+		if(isset($search['class']) && $search['class'] != null)
+		{
+			$qb->andWhere('c.playerClass = :playerClass')->setParameter('playerClass', $search['class']);
+		}
+
+		if(isset($search['rarity']) && $search['rarity'] != null)
+		{
+			$qb->andWhere('c.rarity = :rarity')->setParameter('rarity', $search['rarity']);
+		}
+
+		if(isset($search['cost']) && $search['cost'] != null)
+		{
+			$qb->andWhere('c.cost = :cost')->setParameter('cost', $search['cost']);
+		}
+
+		if(isset($search['attack']) && $search['attack'] != null)
+		{
+			$qb->andWhere('c.attack = :attack')->setParameter('attack', $search['attack']);
+		}
+
+		if(isset($search['health']) && $search['health'] != null)
+		{
+			$qb->andWhere('c.health = :health')->setParameter('health', $search['health']);
+		}
+
+		return $qb->getQuery()->getResult();
+	}
 }

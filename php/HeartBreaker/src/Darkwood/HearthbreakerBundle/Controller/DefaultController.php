@@ -6,19 +6,67 @@ use Darkwood\HearthbreakerBundle\Entity\UserCard;
 use Darkwood\HearthbreakerBundle\Services\UserCardService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DefaultController extends Controller
 {
-	public function cardAction()
+	public function cardAction(Request $request)
 	{
         $user = $this->getUser();
         if(!$user) {
             throw new AccessDeniedHttpException();
         }
 
-		$cards = $this->get('hb.card')->findAll();
+		$form = $this->createFormBuilder()
+			->add('type', 'choice', array(
+				'choices'   => array(
+					'Arme' => 'Arme',
+					'Serviteur' => 'Serviteur',
+					'Sort' => 'Sort',
+				),
+				'required' => false
+			))
+			->add('class', 'choice', array(
+				'choices'   => array(
+					'Chaman' => 'Chaman',
+					'Chasseur' => 'Chasseur',
+					'Démoniste' => 'Démoniste',
+					'Druide' => 'Druide',
+					'Guerrier' => 'Guerrier',
+					'Mage' => 'Mage',
+					'Neutre' => 'Neutre',
+					'Paladin' => 'Paladin',
+					'Prêtre' => 'Prêtre',
+					'Voleur' => 'Voleur',
+				),
+				'required' => false
+			))
+			->add('rarity', 'choice', array(
+				'choices'   => array(
+					'Basique' => 'Basique',
+					'Commune' => 'Commune',
+					'Rare' => 'Rare',
+					'Epique' => 'Epique',
+					'Légendaire' => 'Légendaire',
+				),
+				'required' => false
+			))
+			->add('cost', 'integer', array('required' => false))
+			->add('attack', 'integer', array('required' => false))
+			->add('health', 'integer', array('required' => false))
+			->add('submit', 'submit')
+			->getForm()
+		;
+
+		$search = array();
+		$form->handleRequest($request);
+		if($form->isValid()) {
+			$search = $form->getData();
+		}
+
+		$cards = $this->get('hb.card')->search($search);
 
         $cardsQuantity = array();
         $userCards = $this->get('hb.userCard')->findByUser($user);
@@ -32,6 +80,7 @@ class DefaultController extends Controller
 		return $this->render('HearthbreakerBundle:Default:card.html.twig', array(
 			'nav' => 'card',
 			'cards' => $cards,
+			'form' => $form->createView(),
             'cardsQuantity' => $cardsQuantity,
 		));
 	}

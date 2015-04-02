@@ -178,7 +178,7 @@ class ScrapperService
 		$crawler
 			->filter('#informations-cartes td')
 			->each(function(Crawler $node, $i) use ($card, &$attr) {
-				$text = $node->text();
+				$text = trim($node->text());
 				if($i % 2 == 0) {
 					$attr = $text;
 				} else {
@@ -230,7 +230,7 @@ class ScrapperService
 		$crawler
 			->filter('#creation-deck-etape1 td')
 			->each(function(Crawler $node, $i) use ($deck, &$attr) {
-				$text = $node->text();
+				$text = trim($node->text());
 				if($i % 2 == 0) {
 					$attr = $text;
 				} else {
