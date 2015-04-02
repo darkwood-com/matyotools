@@ -3,6 +3,14 @@
 {% block content %}
 	<div class="panel panel-default">
 		<div class="panel-body">
+			{{ form_start(form) }}
+			{{ form_row(form.title) }}
+			{{ form_end(form) }}
+		</div>
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-body">
 			<table class="table table-striped">
 				<thead>
 					<tr>

@@ -11,6 +11,8 @@
 					<th>Card</th>
 					<th>Type</th>
 					<th>Cost</th>
+					<th></th>
+					<th></th>
 				</tr>
 				</thead>
 				<tbody>
@@ -20,6 +22,8 @@
 						<td><a href="{{ path('card_detail', {'slug': deckcard.card.slug}) }}">{{ deckcard.card.name }}</a></td>
 						<td>{{ deckcard.card.type }}</td>
 						<td>{{ deckcard.card.cost }}</td>
+						<td>{{ cardsQuantity[deckcard.card.id][0] | default(0) }}</td>
+						<td>{{ cardsQuantity[deckcard.card.id][1] | default(0) }}</td>
 					</tr>
 				{% endfor %}
 				</tbody>

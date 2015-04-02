@@ -100,13 +100,31 @@ class DefaultController extends Controller
 		));
 	}
 
-	public function deckAction()
+	public function deckAction(Request $request)
 	{
-		$decks = $this->get('hb.deck')->findAll();
+		$user = $this->getUser();
+		if(!$user) {
+			throw new AccessDeniedHttpException();
+		}
+
+		$form = $this->createFormBuilder()
+			->add('title', 'text', array('required' => false))
+			->add('submit', 'submit')
+			->getForm()
+		;
+
+		$search = array();
+		$form->handleRequest($request);
+		if($form->isValid()) {
+			$search = $form->getData();
+		}
+
+		$decks = $this->get('hb.deck')->search($search);
 
 		return $this->render('HearthbreakerBundle:Default:deck.html.twig', array(
 			'nav' => 'deck',
 			'decks' => $decks,
+			'form' => $form->createView(),
 		));
 	}
 
@@ -117,15 +135,25 @@ class DefaultController extends Controller
 			throw new AccessDeniedHttpException();
 		}
 
-		$deck = $this->get('hb.deck')->findBySlugWithUser($slug, $user);
+		$deck = $this->get('hb.deck')->findBySlug($slug);
 
 		if(!$deck) {
 			throw new NotFoundHttpException();
 		}
 
+		$cardsQuantity = array();
+		$userCards = $this->get('hb.userCard')->findByUserAndDeck($user, $deck);
+		foreach($userCards as $userCard) {
+			/** @var UserCard $userCard */
+			$id = $userCard->getCard()->getId();
+			$isGolden = $userCard->getIsGolden() ? '1' : '0';
+			$cardsQuantity[$id][$isGolden] = $userCard->getQuantity();
+		}
+
 		return $this->render('HearthbreakerBundle:Default:deckDetail.html.twig', array(
 			'nav' => 'deck',
 			'deck' => $deck,
+			'cardsQuantity' => $cardsQuantity,
 		));
 	}
 

@@ -3,9 +3,22 @@
 {% block content %}
 	<div class="panel panel-default">
 		<div class="panel-body">
-			{{ form(form) }}
+			{{ form_start(form) }}
+			{{ form_row(form.title) }}
+			<div class="row">
+				<div class="col-xs-4">{{ form_row(form.type) }}</div>
+				<div class="col-xs-4">{{ form_row(form.class) }}</div>
+				<div class="col-xs-4">{{ form_row(form.rarity) }}</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-4">{{ form_row(form.cost) }}</div>
+				<div class="col-xs-4">{{ form_row(form.attack) }}</div>
+				<div class="col-xs-4">{{ form_row(form.health) }}</div>
+			</div>
+			{{ form_end(form) }}
 		</div>
 	</div>
+
 	<div class="panel panel-default">
 		<div class="panel-body">
 			<table id="cards" class="table table-striped">
