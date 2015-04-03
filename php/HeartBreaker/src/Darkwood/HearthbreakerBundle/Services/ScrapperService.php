@@ -51,6 +51,25 @@ class ScrapperService
 		$this->deckCardService = $deckCardService;
     }
 
+	private function guessDate($date)
+	{
+		$date = str_replace(array(
+			"lundi", "mardi", "mercredi", "jeudi",
+			"vendredi", "samedi", "dimanche", "janvier",
+			"février", "mars", "avril", "mai",
+			"juin", "juillet", "août", "septembre",
+			"octobre", "novembre", "décembre"
+		), array(
+			"Monday", "Tuesday", "Wednesday", "Thursday",
+			"Friday", "Saturday", "Sunday", "January",
+			"February", "March", "April", "May",
+			"June", "July", "August", "September",
+			"October", "November", "December"
+		), strtolower($date));
+
+		return new \DateTime($date);
+	}
+
     private function requestRoute($name, $parameters = array(), $data = null)
     {
         $url = $this->router->generate($name, $parameters, true);
@@ -81,8 +100,7 @@ class ScrapperService
                 'complete',
                 function (\GuzzleHttp\Event\CompleteEvent $event) {
                     $response = $event->getResponse();
-
-					$response->setHeader('Cache-Control', 'max-age=31536000'); //1 year
+					$response->setHeader('Cache-Control', 'max-age=86400'); //1 day
                 },
                 'first'
             );
@@ -238,6 +256,12 @@ class ScrapperService
 						case "Note":
 							$deck->setVoteUp(intval($node->filter('.up_vert')->text()));
 							$deck->setVoteDown(intval($node->filter('.up_rouge')->text()));
+							break;
+						case "Création":
+							$deck->setCreatedAt($this->guessDate($text));
+							break;
+						case "Mise à jour":
+							$deck->setUpdatedAt($this->guessDate($text));
 							break;
 					}
 				}
