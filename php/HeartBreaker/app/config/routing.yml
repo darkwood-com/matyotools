@@ -1,5 +1,5 @@
-darkwood_hearthstonedecks:
-    resource: "@DarkwoodHearthstonedecksBundle/Resources/config/routing.yml"
+darkwood_hearthbreaker:
+    resource: "@HearthbreakerBundle/Resources/config/routing.yml"
     prefix:   /
 
 fos_user_security:
