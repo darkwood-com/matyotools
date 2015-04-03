@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
- * Card
+ * Card.
  *
  * @ORM\Table(name="card_hearthstonedecks")
  * @ORM\Entity()
@@ -22,23 +22,24 @@ class CardHearthstonedecks extends Card
      */
     private $nameEn;
 
-	/**
-	 * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker", mappedBy="cardHearthstonedecks")
-	 */
-	private $cards;
+    /**
+     * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker", mappedBy="cardHearthstonedecks")
+     */
+    private $cards;
 
-	/**
-	 * Constructor
-	 */
-	public function __construct()
-	{
-		$this->cards = new \Doctrine\Common\Collections\ArrayCollection();
-	}
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->cards = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
-	/**
-     * Set name
+    /**
+     * Set name.
      *
      * @param string $name
+     *
      * @return Card
      */
     public function setNameEn($nameEn)
@@ -49,7 +50,7 @@ class CardHearthstonedecks extends Card
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
@@ -59,9 +60,10 @@ class CardHearthstonedecks extends Card
     }
 
     /**
-     * Add cards
+     * Add cards.
      *
      * @param \Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker $cards
+     *
      * @return CardHearthstonedecks
      */
     public function addCard(\Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker $cards)
@@ -72,7 +74,7 @@ class CardHearthstonedecks extends Card
     }
 
     /**
-     * Remove cards
+     * Remove cards.
      *
      * @param \Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker $cards
      */
@@ -82,7 +84,7 @@ class CardHearthstonedecks extends Card
     }
 
     /**
-     * Get cards
+     * Get cards.
      *
      * @return \Doctrine\Common\Collections\Collection
      */

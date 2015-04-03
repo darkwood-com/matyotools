@@ -3,7 +3,6 @@
 namespace Darkwood\HearthbreakerBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -22,6 +21,6 @@ class ScrapperCommand extends ContainerAwareCommand
         /** @var \Darkwood\HearthbreakerBundle\Services\ScrapperHearthstonedecksService $scrapperService */
         $scrapperService = $this->getContainer()->get('hb.hearthstonedecks.scrapper');
         $scrapperService->syncCardList();
-		$scrapperService->syncDeckList();
+        $scrapperService->syncDeckList();
     }
 }

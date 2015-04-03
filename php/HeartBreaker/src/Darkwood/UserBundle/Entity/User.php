@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * Class User
+ * Class User.
  *
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="Darkwood\UserBundle\Repository\UserRepository")
@@ -15,7 +15,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class User extends BaseUser
 {
     /**
-     * Id
+     * Id.
      *
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -24,23 +24,23 @@ class User extends BaseUser
     protected $id;
 
     /**
-     * Firstname
+     * Firstname.
      *
      * @ORM\Column(length=255)
      */
     protected $firstName;
 
     /**
-     * Lastname
+     * Lastname.
      *
      * @ORM\Column(length=255)
      */
     protected $lastName;
 
     /**
-     * Creation
+     * Creation.
      *
-     * @var \DateTime $created
+     * @var \DateTime
      *
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
@@ -48,34 +48,34 @@ class User extends BaseUser
     protected $created;
 
     /**
-     * Edit
+     * Edit.
      *
-     * @var \DateTime $updated
+     * @var \DateTime
      *
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime")
      */
     protected $updated;
 
-	/**
-	 * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\UserCard", mappedBy="deck", cascade={"all"})
-	 */
-	private $cards;
+    /**
+     * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\UserCard", mappedBy="deck", cascade={"all"})
+     */
+    private $cards;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
-		parent::__construct();
+        parent::__construct();
 
         $this->cards = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -83,9 +83,10 @@ class User extends BaseUser
     }
 
     /**
-     * Set firstName
+     * Set firstName.
      *
      * @param string $firstName
+     *
      * @return User
      */
     public function setFirstName($firstName)
@@ -96,7 +97,7 @@ class User extends BaseUser
     }
 
     /**
-     * Get firstName
+     * Get firstName.
      *
      * @return string
      */
@@ -106,9 +107,10 @@ class User extends BaseUser
     }
 
     /**
-     * Set lastName
+     * Set lastName.
      *
      * @param string $lastName
+     *
      * @return User
      */
     public function setLastName($lastName)
@@ -119,7 +121,7 @@ class User extends BaseUser
     }
 
     /**
-     * Get lastName
+     * Get lastName.
      *
      * @return string
      */
@@ -129,9 +131,10 @@ class User extends BaseUser
     }
 
     /**
-     * Set created
+     * Set created.
      *
      * @param \DateTime $created
+     *
      * @return User
      */
     public function setCreated($created)
@@ -142,7 +145,7 @@ class User extends BaseUser
     }
 
     /**
-     * Get created
+     * Get created.
      *
      * @return \DateTime
      */
@@ -152,9 +155,10 @@ class User extends BaseUser
     }
 
     /**
-     * Set updated
+     * Set updated.
      *
      * @param \DateTime $updated
+     *
      * @return User
      */
     public function setUpdated($updated)
@@ -165,7 +169,7 @@ class User extends BaseUser
     }
 
     /**
-     * Get updated
+     * Get updated.
      *
      * @return \DateTime
      */
@@ -175,9 +179,10 @@ class User extends BaseUser
     }
 
     /**
-     * Add cards
+     * Add cards.
      *
      * @param \Darkwood\HearthbreakerBundle\Entity\UserCard $cards
+     *
      * @return User
      */
     public function addCard(\Darkwood\HearthbreakerBundle\Entity\UserCard $cards)
@@ -188,7 +193,7 @@ class User extends BaseUser
     }
 
     /**
-     * Remove cards
+     * Remove cards.
      *
      * @param \Darkwood\HearthbreakerBundle\Entity\UserCard $cards
      */
@@ -198,7 +203,7 @@ class User extends BaseUser
     }
 
     /**
-     * Get cards
+     * Get cards.
      *
      * @return \Doctrine\Common\Collections\Collection
      */

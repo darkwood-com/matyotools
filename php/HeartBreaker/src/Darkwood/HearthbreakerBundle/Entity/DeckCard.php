@@ -5,7 +5,7 @@ namespace Darkwood\HearthbreakerBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * DeckCard
+ * DeckCard.
  *
  * @ORM\Table(name="deck_card",
  *  indexes={
@@ -19,7 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
 class DeckCard
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -27,34 +27,33 @@ class DeckCard
      */
     private $id;
 
-	/**
-	 * @var \Darkwood\HearthbreakerBundle\Entity\Deck
-	 *
-	 * @ORM\ManyToOne(targetEntity="\Darkwood\HearthbreakerBundle\Entity\Deck", inversedBy="cards")
-	 * @ORM\JoinColumn(name="deck_id", referencedColumnName="id")
-	 */
-	protected $deck;
-
-	/**
-	 * @var \Darkwood\HearthbreakerBundle\Entity\Card
-	 *
-	 * @ORM\ManyToOne(targetEntity="\Darkwood\HearthbreakerBundle\Entity\Card", inversedBy="decks")
-	 * @ORM\JoinColumn(name="card_id", referencedColumnName="id")
-	 */
-	protected $card;
+    /**
+     * @var \Darkwood\HearthbreakerBundle\Entity\Deck
+     *
+     * @ORM\ManyToOne(targetEntity="\Darkwood\HearthbreakerBundle\Entity\Deck", inversedBy="cards")
+     * @ORM\JoinColumn(name="deck_id", referencedColumnName="id")
+     */
+    protected $deck;
 
     /**
-     * @var integer
+     * @var \Darkwood\HearthbreakerBundle\Entity\Card
+     *
+     * @ORM\ManyToOne(targetEntity="\Darkwood\HearthbreakerBundle\Entity\Card", inversedBy="decks")
+     * @ORM\JoinColumn(name="card_id", referencedColumnName="id")
+     */
+    protected $card;
+
+    /**
+     * @var int
      *
      * @ORM\Column(name="quantity", type="integer")
      */
     private $quantity;
 
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -62,9 +61,10 @@ class DeckCard
     }
 
     /**
-     * Set deck
+     * Set deck.
      *
      * @param \Darkwood\HearthbreakerBundle\Entity\Deck $deck
+     *
      * @return DeckCard
      */
     public function setDeck(\Darkwood\HearthbreakerBundle\Entity\Deck $deck = null)
@@ -75,7 +75,7 @@ class DeckCard
     }
 
     /**
-     * Get deck
+     * Get deck.
      *
      * @return \Darkwood\HearthbreakerBundle\Entity\Deck
      */
@@ -85,9 +85,10 @@ class DeckCard
     }
 
     /**
-     * Set card
+     * Set card.
      *
      * @param \Darkwood\HearthbreakerBundle\Entity\Card $card
+     *
      * @return DeckCard
      */
     public function setCard(\Darkwood\HearthbreakerBundle\Entity\Card $card = null)
@@ -98,7 +99,7 @@ class DeckCard
     }
 
     /**
-     * Get card
+     * Get card.
      *
      * @return \Darkwood\HearthbreakerBundle\Entity\Card
      */
@@ -107,26 +108,27 @@ class DeckCard
         return $this->card;
     }
 
-	/**
-	 * Set quantity
-	 *
-	 * @param integer $quantity
-	 * @return DeckCard
-	 */
-	public function setQuantity($quantity)
-	{
-		$this->quantity = $quantity;
+    /**
+     * Set quantity.
+     *
+     * @param int $quantity
+     *
+     * @return DeckCard
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Get quantity
-	 *
-	 * @return integer
-	 */
-	public function getQuantity()
-	{
-		return $this->quantity;
-	}
+    /**
+     * Get quantity.
+     *
+     * @return int
+     */
+    public function getQuantity()
+    {
+        return $this->quantity;
+    }
 }

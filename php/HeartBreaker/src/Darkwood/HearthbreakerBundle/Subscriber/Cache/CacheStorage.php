@@ -1,4 +1,5 @@
 <?php
+
 namespace Darkwood\HearthbreakerBundle\Subscriber\Cache;
 
 use GuzzleHttp\Message\MessageInterface;
@@ -60,7 +61,7 @@ class CacheStorage implements CacheStorageInterface
             $this->persistHeaders($response),
             $response->getStatusCode(),
             $bodyDigest,
-            $ctime + $ttl
+            $ctime + $ttl,
         ]);
 
         $this->cache->save($key, serialize($entries));
@@ -98,7 +99,7 @@ class CacheStorage implements CacheStorageInterface
         $entries = $this->cache->fetch($key);
 
         if (!$entries) {
-            return null;
+            return;
         }
 
         $match = $matchIndex = null;
@@ -115,7 +116,7 @@ class CacheStorage implements CacheStorageInterface
         }
 
         if (!$match) {
-            return null;
+            return;
         }
 
         // Ensure that the response is not expired
@@ -143,14 +144,15 @@ class CacheStorage implements CacheStorageInterface
             } else {
                 $this->cache->delete($key);
             }
-            return null;
+
+            return;
         }
 
         return $response;
     }
 
     /**
-     * Hash a request URL into a string that returns cache metadata
+     * Hash a request URL into a string that returns cache metadata.
      *
      * @param RequestInterface $request
      *
@@ -158,17 +160,18 @@ class CacheStorage implements CacheStorageInterface
      */
     private function getCacheKey(RequestInterface $request)
     {
-		$post = null;
-		$body = $request->getBody();
-		if($body instanceof PostBody) {
-			$post = $body->getFields(true);
-		}
+        $post = null;
+        $body = $request->getBody();
+        if ($body instanceof PostBody) {
+            $post = $body->getFields(true);
+        }
+
         return $this->keyPrefix
-            . md5($request->getMethod() . ':' . $request->getUrl(). ':'.$post);
+            .md5($request->getMethod().':'.$request->getUrl().':'.$post);
     }
 
     /**
-     * Create a cache key for a response's body
+     * Create a cache key for a response's body.
      *
      * @param string          $url  URL of the entry
      * @param StreamInterface $body Response body
@@ -177,11 +180,11 @@ class CacheStorage implements CacheStorageInterface
      */
     private function getBodyKey($url, StreamInterface $body)
     {
-        return $this->keyPrefix . md5($url) . Stream\Utils::hash($body, 'md5');
+        return $this->keyPrefix.md5($url).Stream\Utils::hash($body, 'md5');
     }
 
     /**
-     * Determines whether two Request HTTP header sets are non-varying
+     * Determines whether two Request HTTP header sets are non-varying.
      *
      * @param string $vary Response vary header
      * @param array  $r1   HTTP header array
@@ -206,7 +209,7 @@ class CacheStorage implements CacheStorageInterface
     }
 
     /**
-     * Creates an array of cacheable and normalized message headers
+     * Creates an array of cacheable and normalized message headers.
      *
      * @param MessageInterface $message
      *
@@ -226,7 +229,7 @@ class CacheStorage implements CacheStorageInterface
             'transfer-encoding' => true,
             'upgrade' => true,
             'set-cookie' => true,
-            'set-cookie2' => true
+            'set-cookie2' => true,
         ];
 
         // Clone the response to not destroy any necessary headers when caching

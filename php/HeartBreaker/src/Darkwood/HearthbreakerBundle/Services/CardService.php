@@ -8,73 +8,74 @@ use Darkwood\HearthbreakerBundle\Repository\CardRepository;
 
 class CardService
 {
-	/**
-	 * @var EntityManager
-	 */
-	private $em;
+    /**
+     * @var EntityManager
+     */
+    private $em;
 
-	/**
-	 * @var CardRepository
-	 */
+    /**
+     * @var CardRepository
+     */
     private $cardRepository;
 
-	/**
-	 * @param EntityManager $em
-	 */
+    /**
+     * @param EntityManager $em
+     */
     public function __construct(EntityManager $em)
     {
-		$this->em = $em;
+        $this->em = $em;
         $this->cardRepository = $em->getRepository('HearthbreakerBundle:Card');
     }
 
-	/**
-	 * Save a card
-	 *
-	 * @param Card $card
-	 */
-	public function save(Card $card)
-	{
-		$this->em->persist($card);
-		$this->em->flush();
-	}
+    /**
+     * Save a card.
+     *
+     * @param Card $card
+     */
+    public function save(Card $card)
+    {
+        $this->em->persist($card);
+        $this->em->flush();
+    }
 
-	/**
-	 * Remove one card
-	 *
-	 * @param Card $card
-	 */
-	public function remove(Card $card)
-	{
-		$this->em->remove($card);
-		$this->em->flush();
-	}
+    /**
+     * Remove one card.
+     *
+     * @param Card $card
+     */
+    public function remove(Card $card)
+    {
+        $this->em->remove($card);
+        $this->em->flush();
+    }
 
-	public function findAll()
-	{
-		return $this->cardRepository->findAll();
-	}
+    public function findAll()
+    {
+        return $this->cardRepository->findAll();
+    }
 
     public function findAllWithUser($user)
     {
         return $this->cardRepository->findAllWithUser($user);
     }
 
-	/**
-	 * @param $slug
-	 * @return null|Card
-	 */
-	public function findBySlug($slug)
-	{
-		return $this->cardRepository->findOneBy(array('slug' => $slug));
-	}
+    /**
+     * @param $slug
+     *
+     * @return null|Card
+     */
+    public function findBySlug($slug)
+    {
+        return $this->cardRepository->findOneBy(array('slug' => $slug));
+    }
 
-	public function count()
-	{
-		return $this->cardRepository->count();
-	}
+    public function count()
+    {
+        return $this->cardRepository->count();
+    }
 
-	public function search($search)
-	{
-		return $this->cardRepository->search($search);
-	}
+    public function search($search)
+    {
+        return $this->cardRepository->search($search);
+    }
 }

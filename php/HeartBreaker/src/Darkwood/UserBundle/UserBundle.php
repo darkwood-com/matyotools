@@ -5,14 +5,12 @@ namespace Darkwood\UserBundle;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
- * Class UserBundle
- *
- * @package Darkwood\UserBundle
+ * Class UserBundle.
  */
 class UserBundle extends Bundle
 {
     /**
-     * Get parent bundle
+     * Get parent bundle.
      *
      * @return string
      */

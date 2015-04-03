@@ -47,7 +47,7 @@ class SecurityController extends ContainerAware
             'last_username' => $lastUsername,
             'error'         => $error,
             'csrf_token' => $csrfToken,
-			'nav' => 'login',
+            'nav' => 'login',
         ));
     }
 

@@ -9,26 +9,23 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Darkwood\UserBundle\Entity\User;
-use Faker\Factory;
 
 /**
- * Class LoadUserData
+ * Class LoadUserData.
  *
  * Load user's fixtures
- *
- * @package Darkwood\UserBundle\DataFixtures\ORM
  */
 class LoadUserData extends AbstractFixture implements FixtureInterface,  ContainerAwareInterface, OrderedFixtureInterface
 {
     /**
-     * Container
+     * Container.
      *
      * @var ContainerInterface
      */
     private $container;
 
     /**
-     * Set container
+     * Set container.
      *
      * @param ContainerInterface $container
      */
@@ -38,7 +35,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface,  Contain
     }
 
     /**
-     * Load
+     * Load.
      *
      * @param ObjectManager $manager
      */
@@ -50,14 +47,14 @@ class LoadUserData extends AbstractFixture implements FixtureInterface,  Contain
             'password' => 'admin',
             'role'     => 'ROLE_SUPER_ADMIN',
             'enabled'  => true,
-			'firstname' => 'admin',
-			'lastname' => 'admin'
+            'firstname' => 'admin',
+            'lastname' => 'admin',
         ));
         $this->addReference('admin-user', $user);
     }
 
     /**
-     * Add user on base
+     * Add user on base.
      *
      * @param $settings
      */
@@ -65,7 +62,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface,  Contain
     {
         $userManager = $this->container->get('fos_user.user_manager');
 
-		/** @var \Darkwood\UserBundle\Entity\User $user */
+        /** @var \Darkwood\UserBundle\Entity\User $user */
         $user = $userManager->createUser();
         $user->setUsername($settings['username']);
         $user->setEmail($settings['email']);

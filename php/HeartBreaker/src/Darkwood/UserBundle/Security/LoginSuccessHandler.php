@@ -8,7 +8,6 @@ use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Router;
-use Symfony\Component\Httpfoundation\Response;
 
 /**
  * The LoginSuccessHandler class is call after authentication.
@@ -16,26 +15,24 @@ use Symfony\Component\Httpfoundation\Response;
 class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
 {
     /**
-     * Router
+     * Router.
      *
      * @var Router
      */
     protected $router;
 
     /**
-     * Security
+     * Security.
      *
      * @var SecurityContext
      */
     protected $security;
 
     /**
-     * Initialize authentication
+     * Initialize authentication.
      *
      * @param Router          $router   Router
      * @param SecurityContext $security SecurityContext
-     *
-     * @return void
      */
     public function __construct($router, SecurityContext $security)
     {

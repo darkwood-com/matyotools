@@ -8,63 +8,64 @@ use Darkwood\HearthbreakerBundle\Repository\DeckRepository;
 
 class DeckService
 {
-	/**
-	 * @var EntityManager
-	 */
-	private $em;
+    /**
+     * @var EntityManager
+     */
+    private $em;
 
-	/**
-	 * @var DeckRepository
-	 */
-	private $deckRepository;
+    /**
+     * @var DeckRepository
+     */
+    private $deckRepository;
 
-	/**
-	 * @param EntityManager $em
-	 */
-	public function __construct(EntityManager $em)
-	{
-		$this->em = $em;
-		$this->deckRepository = $em->getRepository('HearthbreakerBundle:Deck');
-	}
+    /**
+     * @param EntityManager $em
+     */
+    public function __construct(EntityManager $em)
+    {
+        $this->em = $em;
+        $this->deckRepository = $em->getRepository('HearthbreakerBundle:Deck');
+    }
 
-	/**
-	 * Save a deck
-	 *
-	 * @param Deck $deck
-	 */
-	public function save(Deck $deck)
-	{
-		$this->em->persist($deck);
-		$this->em->flush();
-	}
+    /**
+     * Save a deck.
+     *
+     * @param Deck $deck
+     */
+    public function save(Deck $deck)
+    {
+        $this->em->persist($deck);
+        $this->em->flush();
+    }
 
-	/**
-	 * Remove one deck
-	 *
-	 * @param Deck $deck
-	 */
-	public function remove(Deck $deck)
-	{
-		$this->em->remove($deck);
-		$this->em->flush();
-	}
+    /**
+     * Remove one deck.
+     *
+     * @param Deck $deck
+     */
+    public function remove(Deck $deck)
+    {
+        $this->em->remove($deck);
+        $this->em->flush();
+    }
 
-	public function findAll()
-	{
-		return $this->deckRepository->findAll();
-	}
+    public function findAll()
+    {
+        return $this->deckRepository->findAll();
+    }
 
-	/**
-	 * @param $slug
-	 * @return null|Deck
-	 */
-	public function findBySlug($slug)
-	{
-		return $this->deckRepository->findBySlug($slug);
-	}
+    /**
+     * @param $slug
+     *
+     * @return null|Deck
+     */
+    public function findBySlug($slug)
+    {
+        return $this->deckRepository->findBySlug($slug);
+    }
 
-	public function search($search)
-	{
-		return $this->deckRepository->search($search);
-	}
+    public function search($search)
+    {
+        return $this->deckRepository->search($search);
+    }
 }

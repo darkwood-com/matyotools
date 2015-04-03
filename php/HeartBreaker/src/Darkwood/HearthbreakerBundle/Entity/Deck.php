@@ -5,7 +5,7 @@ namespace Darkwood\HearthbreakerBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Deck
+ * Deck.
  *
  * @ORM\Table(name="deck",
  * 	uniqueConstraints={@ORM\UniqueConstraint(name="unique_slug", columns={"slug"})}
@@ -20,7 +20,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Deck
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -45,28 +45,27 @@ class Deck
     /**
      * @ORM\Column(type="datetime", nullable=true)
      *
-     * @var \DateTime $updatedAt
+     * @var \DateTime
      */
     protected $syncedAt;
 
-	/**
-	 * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\DeckCard", mappedBy="deck", cascade={"all"})
-	 */
-	private $cards;
-
-
-	/**
-	 * Constructor
-	 */
-	public function __construct()
-	{
-		$this->cards = new \Doctrine\Common\Collections\ArrayCollection();
-	}
+    /**
+     * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\DeckCard", mappedBy="deck", cascade={"all"})
+     */
+    private $cards;
 
     /**
-     * Get id
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->cards = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -74,9 +73,10 @@ class Deck
     }
 
     /**
-     * Set slug
+     * Set slug.
      *
      * @param string $slug
+     *
      * @return Deck
      */
     public function setSlug($slug)
@@ -87,7 +87,7 @@ class Deck
     }
 
     /**
-     * Get slug
+     * Get slug.
      *
      * @return string
      */
@@ -97,9 +97,10 @@ class Deck
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
+     *
      * @return Deck
      */
     public function setName($name)
@@ -110,7 +111,7 @@ class Deck
     }
 
     /**
-     * Get name
+     * Get name.
      *
      * @return string
      */
@@ -136,9 +137,10 @@ class Deck
     }
 
     /**
-     * Add cards
+     * Add cards.
      *
      * @param \Darkwood\HearthbreakerBundle\Entity\DeckCard $cards
+     *
      * @return Deck
      */
     public function addCard(\Darkwood\HearthbreakerBundle\Entity\DeckCard $cards)
@@ -149,7 +151,7 @@ class Deck
     }
 
     /**
-     * Remove cards
+     * Remove cards.
      *
      * @param \Darkwood\HearthbreakerBundle\Entity\DeckCard $cards
      */
@@ -159,7 +161,7 @@ class Deck
     }
 
     /**
-     * Get cards
+     * Get cards.
      *
      * @return \Doctrine\Common\Collections\Collection
      */
@@ -168,41 +170,41 @@ class Deck
         return $this->cards;
     }
 
-	public function getBuy()
-	{
-		$cristal = 0;
+    public function getBuy()
+    {
+        $cristal = 0;
 
-		foreach($this->cards as $deckCard) {
-			/** @var DeckCard $deckCard */
-			$cristal += $deckCard->getCard()->getBuy() * $deckCard->getQuantity();
-		}
+        foreach ($this->cards as $deckCard) {
+            /* @var DeckCard $deckCard */
+            $cristal += $deckCard->getCard()->getBuy() * $deckCard->getQuantity();
+        }
 
-		return $cristal;
-	}
+        return $cristal;
+    }
 
-	public function getSell()
-	{
-		$cristal = 0;
+    public function getSell()
+    {
+        $cristal = 0;
 
-		foreach($this->cards as $deckCard) {
-			/** @var DeckCard $deckCard */
-			$cristal += $deckCard->getCard()->getSell() * $deckCard->getQuantity();
-		}
+        foreach ($this->cards as $deckCard) {
+            /* @var DeckCard $deckCard */
+            $cristal += $deckCard->getCard()->getSell() * $deckCard->getQuantity();
+        }
 
-		return $cristal;
-	}
+        return $cristal;
+    }
 
-	public function getClass()
-	{
-		$classes = array_map(function($deckCard) {
-			/** @var DeckCard $deckCard */
-			return $deckCard->getCard()->getPlayerClass();
-		}, $this->cards->toArray());
-		$classes = array_filter($classes, function($class) {
-			return $class != 'Neutre';
-		});
-		$classes = array_unique($classes);
+    public function getClass()
+    {
+        $classes = array_map(function ($deckCard) {
+            /* @var DeckCard $deckCard */
+            return $deckCard->getCard()->getPlayerClass();
+        }, $this->cards->toArray());
+        $classes = array_filter($classes, function ($class) {
+            return $class != 'Neutre';
+        });
+        $classes = array_unique($classes);
 
-		return current($classes);
-	}
+        return current($classes);
+    }
 }

@@ -5,7 +5,7 @@ namespace Darkwood\HearthbreakerBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * UserCard
+ * UserCard.
  *
  * @ORM\Table(name="user_card",
  *  indexes={
@@ -20,7 +20,7 @@ use Doctrine\ORM\Mapping as ORM;
 class UserCard
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -28,96 +28,99 @@ class UserCard
      */
     private $id;
 
-	/**
-	 * @var \Darkwood\UserBundle\Entity\User
-	 *
-	 * @ORM\ManyToOne(targetEntity="\Darkwood\UserBundle\Entity\User", inversedBy="cards")
-	 * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
-	 */
-	protected $user;
-
-	/**
-	 * @var \Darkwood\HearthbreakerBundle\Entity\Card
-	 *
-	 * @ORM\ManyToOne(targetEntity="\Darkwood\HearthbreakerBundle\Entity\Card", inversedBy="users")
-	 * @ORM\JoinColumn(name="card_id", referencedColumnName="id")
-	 */
-	protected $card;
+    /**
+     * @var \Darkwood\UserBundle\Entity\User
+     *
+     * @ORM\ManyToOne(targetEntity="\Darkwood\UserBundle\Entity\User", inversedBy="cards")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    protected $user;
 
     /**
-     * @var boolean
+     * @var \Darkwood\HearthbreakerBundle\Entity\Card
+     *
+     * @ORM\ManyToOne(targetEntity="\Darkwood\HearthbreakerBundle\Entity\Card", inversedBy="users")
+     * @ORM\JoinColumn(name="card_id", referencedColumnName="id")
+     */
+    protected $card;
+
+    /**
+     * @var bool
      *
      * @ORM\Column(name="isGolden", type="boolean")
      */
     private $isGolden;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="quantity", type="integer")
      */
     private $quantity;
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
         return $this->id;
     }
 
-	/**
-	 * Set user
-	 *
-	 * @param \Darkwood\UserBundle\Entity\User $user
-	 * @return UserCard
-	 */
-	public function setUser(\Darkwood\UserBundle\Entity\User $user = null)
-	{
-		$this->user = $user;
+    /**
+     * Set user.
+     *
+     * @param \Darkwood\UserBundle\Entity\User $user
+     *
+     * @return UserCard
+     */
+    public function setUser(\Darkwood\UserBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
 
-		return $this;
-	}
-
-	/**
-	 * Get user
-	 *
-	 * @return \Darkwood\UserBundle\Entity\User
-	 */
-	public function getUser()
-	{
-		return $this->user;
-	}
-
-	/**
-	 * Set card
-	 *
-	 * @param \Darkwood\HearthbreakerBundle\Entity\Card $card
-	 * @return UserCard
-	 */
-	public function setCard(\Darkwood\HearthbreakerBundle\Entity\Card $card = null)
-	{
-		$this->card = $card;
-
-		return $this;
-	}
-
-	/**
-	 * Get card
-	 *
-	 * @return \Darkwood\HearthbreakerBundle\Entity\Card
-	 */
-	public function getCard()
-	{
-		return $this->card;
-	}
+        return $this;
+    }
 
     /**
-     * Set isGolden
+     * Get user.
      *
-     * @param boolean $isGolden
+     * @return \Darkwood\UserBundle\Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Set card.
+     *
+     * @param \Darkwood\HearthbreakerBundle\Entity\Card $card
+     *
+     * @return UserCard
+     */
+    public function setCard(\Darkwood\HearthbreakerBundle\Entity\Card $card = null)
+    {
+        $this->card = $card;
+
+        return $this;
+    }
+
+    /**
+     * Get card.
+     *
+     * @return \Darkwood\HearthbreakerBundle\Entity\Card
+     */
+    public function getCard()
+    {
+        return $this->card;
+    }
+
+    /**
+     * Set isGolden.
+     *
+     * @param bool $isGolden
+     *
      * @return UserCard
      */
     public function setIsGolden($isGolden)
@@ -128,9 +131,9 @@ class UserCard
     }
 
     /**
-     * Get isGolden
+     * Get isGolden.
      *
-     * @return boolean
+     * @return bool
      */
     public function getIsGolden()
     {
@@ -138,9 +141,10 @@ class UserCard
     }
 
     /**
-     * Set quantity
+     * Set quantity.
      *
-     * @param integer $quantity
+     * @param int $quantity
+     *
      * @return UserCard
      */
     public function setQuantity($quantity)
@@ -151,9 +155,9 @@ class UserCard
     }
 
     /**
-     * Get quantity
+     * Get quantity.
      *
-     * @return integer
+     * @return int
      */
     public function getQuantity()
     {
