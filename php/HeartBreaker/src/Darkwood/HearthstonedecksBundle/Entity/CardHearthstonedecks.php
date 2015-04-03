@@ -23,17 +23,9 @@ class CardHearthstonedecks extends Card
     private $nameEn;
 
     /**
-     * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker", mappedBy="cardHearthstonedecks")
+     * @ORM\OneToOne(targetEntity="Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker", mappedBy="cardHearthstonedecks")
      */
-    private $cards;
-
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        $this->cards = new \Doctrine\Common\Collections\ArrayCollection();
-    }
+    private $card;
 
     /**
      * Set name.
@@ -60,36 +52,25 @@ class CardHearthstonedecks extends Card
     }
 
     /**
-     * Add cards.
+     * Set card
      *
-     * @param \Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker $cards
-     *
+     * @param \Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker $card
      * @return CardHearthstonedecks
      */
-    public function addCard(\Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker $cards)
+    public function setCard(\Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker $card = null)
     {
-        $this->cards[] = $cards;
+        $this->card = $card;
 
         return $this;
     }
 
     /**
-     * Remove cards.
+     * Get card
      *
-     * @param \Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker $cards
+     * @return \Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker 
      */
-    public function removeCard(\Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker $cards)
+    public function getCard()
     {
-        $this->cards->removeElement($cards);
-    }
-
-    /**
-     * Get cards.
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getCards()
-    {
-        return $this->cards;
+        return $this->card;
     }
 }

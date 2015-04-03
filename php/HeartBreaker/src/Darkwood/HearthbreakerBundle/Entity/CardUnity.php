@@ -8,16 +8,16 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 /**
  * Card.
  *
- * @ORM\Table(name="card_hearthbreaker")
- * @ORM\Entity()
+ * @ORM\Table(name="card_unity")
+ * @ORM\Entity(repositoryClass="Darkwood\HearthbreakerBundle\Repository\CardUnityRepository")
  * @Vich\Uploadable
  */
-class CardHearthbreaker extends Card
+class CardUnity
 {
     /**
      * @var \Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks
      *
-     * @ORM\ManyToOne(targetEntity="\Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks", inversedBy="cards")
+     * @ORM\OneToOne(targetEntity="\Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks", inversedBy="card")
      * @ORM\JoinColumn(name="card_hearthstonedecks_id", referencedColumnName="id")
      */
     protected $cardHearthstonedecks;
@@ -36,11 +36,10 @@ class CardHearthbreaker extends Card
     }
 
     /**
-     * Set cardHearthstonedecks.
+     * Set cardHearthstonedecks
      *
      * @param \Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks $cardHearthstonedecks
-     *
-     * @return CardHearthbreaker
+     * @return CardUnity
      */
     public function setCardHearthstonedecks(\Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks $cardHearthstonedecks = null)
     {
@@ -50,9 +49,9 @@ class CardHearthbreaker extends Card
     }
 
     /**
-     * Get cardHearthstonedecks.
+     * Get cardHearthstonedecks
      *
-     * @return \Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks
+     * @return \Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks 
      */
     public function getCardHearthstonedecks()
     {
@@ -60,11 +59,10 @@ class CardHearthbreaker extends Card
     }
 
     /**
-     * Add users.
+     * Add users
      *
      * @param \Darkwood\HearthbreakerBundle\Entity\UserCard $users
-     *
-     * @return Card
+     * @return CardUnity
      */
     public function addUser(\Darkwood\HearthbreakerBundle\Entity\UserCard $users)
     {
@@ -74,7 +72,7 @@ class CardHearthbreaker extends Card
     }
 
     /**
-     * Remove users.
+     * Remove users
      *
      * @param \Darkwood\HearthbreakerBundle\Entity\UserCard $users
      */
@@ -84,9 +82,9 @@ class CardHearthbreaker extends Card
     }
 
     /**
-     * Get users.
+     * Get users
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return \Doctrine\Common\Collections\Collection 
      */
     public function getUsers()
     {
