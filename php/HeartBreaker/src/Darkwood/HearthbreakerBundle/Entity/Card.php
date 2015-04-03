@@ -10,7 +10,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * Card.
  *
  * @ORM\Table(name="card",
- * 	uniqueConstraints={@ORM\UniqueConstraint(name="unique_slug", columns={"slug"})}
+ * 	uniqueConstraints={@ORM\UniqueConstraint(name="unique_slug", columns={"slug","source"})}
  * )
  * @ORM\Entity(repositoryClass="Darkwood\HearthbreakerBundle\Repository\CardRepository")
  * @ORM\InheritanceType("JOINED")

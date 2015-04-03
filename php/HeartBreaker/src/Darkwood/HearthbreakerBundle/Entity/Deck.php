@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Deck.
  *
  * @ORM\Table(name="deck",
- * 	uniqueConstraints={@ORM\UniqueConstraint(name="unique_slug", columns={"slug"})}
+ * 	uniqueConstraints={@ORM\UniqueConstraint(name="unique_slug", columns={"slug","source"})}
  * )
  * @ORM\Entity(repositoryClass="Darkwood\HearthbreakerBundle\Repository\DeckRepository")
  * @ORM\InheritanceType("JOINED")
