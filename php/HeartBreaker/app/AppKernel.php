@@ -26,6 +26,7 @@ class AppKernel extends Kernel
 			new Liip\ImagineBundle\LiipImagineBundle(),
 
             new Darkwood\HearthbreakerBundle\HearthbreakerBundle(),
+			new Darkwood\HearthstonedecksBundle\HearthstonedecksBundle(),
 			new Darkwood\UserBundle\UserBundle(),
         );
 

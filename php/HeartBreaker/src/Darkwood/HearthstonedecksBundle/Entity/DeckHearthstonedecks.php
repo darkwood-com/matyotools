@@ -1,7 +1,8 @@
 <?php
 
-namespace Darkwood\HearthbreakerBundle\Entity;
+namespace Darkwood\HearthstonedecksBundle\Entity;
 
+use Darkwood\HearthbreakerBundle\Entity\Deck;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

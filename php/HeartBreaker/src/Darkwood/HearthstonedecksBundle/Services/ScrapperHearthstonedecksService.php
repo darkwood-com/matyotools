@@ -1,10 +1,13 @@
 <?php
 
-namespace Darkwood\HearthbreakerBundle\Services;
+namespace Darkwood\HearthstonedecksBundle\Services;
 
-use Darkwood\HearthbreakerBundle\Entity\CardHearthstonedecks;
+use Darkwood\HearthbreakerBundle\Services\CardService;
+use Darkwood\HearthbreakerBundle\Services\DeckCardService;
+use Darkwood\HearthbreakerBundle\Services\DeckService;
+use Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks;
 use Darkwood\HearthbreakerBundle\Entity\DeckCard;
-use Darkwood\HearthbreakerBundle\Entity\DeckHearthstonedecks;
+use Darkwood\HearthstonedecksBundle\Entity\DeckHearthstonedecks;
 use Darkwood\HearthbreakerBundle\Subscriber\Cache\CacheStorage;
 use Doctrine\Common\Cache\Cache;
 use Goutte\Client;

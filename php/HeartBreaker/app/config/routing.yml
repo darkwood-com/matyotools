@@ -1,3 +1,7 @@
+darkwood_hearthstonedecks:
+    resource: "@DarkwoodHearthstonedecksBundle/Resources/config/routing.yml"
+    prefix:   /
+
 darkwood_hearthbreaker:
     resource: "@HearthbreakerBundle/Resources/config/routing.yml"
     prefix:   /

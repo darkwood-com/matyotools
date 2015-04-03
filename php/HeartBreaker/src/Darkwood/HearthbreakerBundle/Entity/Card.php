@@ -17,7 +17,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ORM\DiscriminatorColumn(name="source", type="string")
  * @ORM\DiscriminatorMap({
  *      "hearthbreaker" = "CardHearthbreaker",
- *      "hearthstonedecks" = "Darkwood\HearthbreakerBundle\Entity\CardHearthstonedecks"
+ *      "hearthstonedecks" = "Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks"
  * })
  * @Vich\Uploadable
  */
