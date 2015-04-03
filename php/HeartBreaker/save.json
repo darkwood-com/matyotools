@@ -1396,6 +1396,14 @@
 			"isGolden": false,
 			"quantity": 1,
 			"card": "empereur-thaurissan"
+		},{
+			"isGolden": false,
+			"quantity": 2,
+			"card": "tir-reflexe"
+		},{
+			"isGolden": false,
+			"quantity": 2,
+			"card": "souffle-du-dragon"
 		}
 	]
 }
