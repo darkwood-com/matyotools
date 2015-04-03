@@ -2,9 +2,9 @@
 
 namespace Darkwood\HearthbreakerBundle\Services;
 
-use Darkwood\HearthbreakerBundle\Entity\Card;
-use Darkwood\HearthbreakerBundle\Entity\Deck;
+use Darkwood\HearthbreakerBundle\Entity\CardHearthstonedecks;
 use Darkwood\HearthbreakerBundle\Entity\DeckCard;
+use Darkwood\HearthbreakerBundle\Entity\DeckHearthstonedecks;
 use Darkwood\HearthbreakerBundle\Subscriber\Cache\CacheStorage;
 use Doctrine\Common\Cache\Cache;
 use Goutte\Client;
@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Router;
 
-class ScrapperService
+class ScrapperHearthstonedecksService
 {
 	/**
 	 * @var Cache
@@ -100,7 +100,8 @@ class ScrapperService
                 'complete',
                 function (\GuzzleHttp\Event\CompleteEvent $event) {
                     $response = $event->getResponse();
-					$response->setHeader('Cache-Control', 'max-age=86400'); //1 day
+					$response->setHeader('Cache-Control', 'max-age=604800'); //1 week
+					//$response->setHeader('Cache-Control', 'max-age=86400'); //1 day
                 },
                 'first'
             );
@@ -184,7 +185,7 @@ class ScrapperService
 	{
 		$card = $this->cardService->findBySlug($slug);
 		if(!$card) {
-			$card = new Card();
+			$card = new CardHearthstonedecks();
 			$card->setSlug($slug);
 		} elseif (!$force) {
 			return $card;
@@ -202,6 +203,7 @@ class ScrapperService
 				} else {
 					switch($attr) {
 						case "Nom": $card->setName($text); break;
+						case "Nom original": $card->setNameEn($text); break;
 						case "Coût en mana": $card->setCost(intval($text)); break;
 						case "Attaque": $card->setAttack(intval($text)); break;
 						case "Vie": $card->setHealth(intval($text)); break;
@@ -234,7 +236,7 @@ class ScrapperService
 	{
 		$deck = $this->deckService->findBySlug($slug);
 		if(!$deck) {
-			$deck = new Deck();
+			$deck = new DeckHearthstonedecks();
 			$deck->setSlug($slug);
 		} elseif (!$force) {
 			return $deck;

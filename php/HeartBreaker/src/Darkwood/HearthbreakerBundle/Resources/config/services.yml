@@ -3,10 +3,10 @@ parameters:
     hb.deck.class: Darkwood\HearthbreakerBundle\Services\DeckService
     hb.deckCard.class: Darkwood\HearthbreakerBundle\Services\DeckCardService
     hb.userCard.class: Darkwood\HearthbreakerBundle\Services\UserCardService
-    hb.scrapper.class: Darkwood\HearthbreakerBundle\Services\ScrapperService
-    bh.hearthstonedecks.router.class: Symfony\Component\Routing\Router
-    bh.hearthstonedecks.router.request_context.class: Symfony\Component\Routing\RequestContext
-    bh.hearthstonedecks.routing.loader.class: Symfony\Component\Routing\Loader\YamlFileLoader
+    hb.hearthstonedecks.scrapper.class: Darkwood\HearthbreakerBundle\Services\ScrapperHearthstonedecksService
+    hb.hearthstonedecks.router.class: Symfony\Component\Routing\Router
+    hb.hearthstonedecks.router.request_context.class: Symfony\Component\Routing\RequestContext
+    hb.hearthstonedecks.routing.loader.class: Symfony\Component\Routing\Loader\YamlFileLoader
 
 services:
     hb.card:
@@ -25,27 +25,27 @@ services:
         class: %hb.userCard.class%
         arguments: [@doctrine.orm.entity_manager]
 
-    hb.scrapper:
-        class: %hb.scrapper.class%
+    hb.hearthstonedecks.scrapper:
+        class: %hb.hearthstonedecks.scrapper.class%
         arguments:
           - @aequasi_cache.instance.scrapper
-          - @hearthstonedecks.router
+          - @hb.hearthstonedecks.router
           - @hb.card
           - @hb.deck
           - @hb.deckCard
 
-    hearthstonedecks.router:
-        class: %bh.hearthstonedecks.router.class%
+    hb.hearthstonedecks.router:
+        class: %hb.hearthstonedecks.router.class%
         arguments:
-          - @bh.hearthstonedecks.routing.loader
+          - @hb.hearthstonedecks.routing.loader
           - "%kernel.root_dir%/../src/Darkwood/HearthbreakerBundle/Resources/config/hearthstonedecks_routing.yml"
           - []
-          - @bh.hearthstonedecks.router.request_context
+          - @hb.hearthstonedecks.router.request_context
 
-    bh.hearthstonedecks.router.request_context:
-        class: %bh.hearthstonedecks.router.request_context.class%
+    hb.hearthstonedecks.router.request_context:
+        class: %hb.hearthstonedecks.router.request_context.class%
         arguments: ["", "GET", "www.hearthstone-decks.com"]
 
-    bh.hearthstonedecks.routing.loader:
+    hb.hearthstonedecks.routing.loader:
         class: %routing.loader.yml.class%
         arguments: [@file_locator]

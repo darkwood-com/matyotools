@@ -13,6 +13,12 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * 	uniqueConstraints={@ORM\UniqueConstraint(name="unique_slug", columns={"slug"})}
  * )
  * @ORM\Entity(repositoryClass="Darkwood\HearthbreakerBundle\Repository\CardRepository")
+ * @ORM\InheritanceType("JOINED")
+ * @ORM\DiscriminatorColumn(name="source", type="string")
+ * @ORM\DiscriminatorMap({
+ *      "hearthbreaker" = "CardHearthbreaker",
+ *      "hearthstonedecks" = "Darkwood\HearthbreakerBundle\Entity\CardHearthstonedecks"
+ * })
  * @Vich\Uploadable
  */
 class Card
@@ -135,11 +141,6 @@ class Card
 	 * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\DeckCard", mappedBy="card", cascade={"all"})
 	 */
 	private $decks;
-
-	/**
-	 * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\UserCard", mappedBy="card", cascade={"all"})
-	 */
-	private $users;
 
 
 	/**
@@ -499,37 +500,4 @@ class Card
 
 		return 0;
 	}
-
-    /**
-     * Add users
-     *
-     * @param \Darkwood\HearthbreakerBundle\Entity\UserCard $users
-     * @return Card
-     */
-    public function addUser(\Darkwood\HearthbreakerBundle\Entity\UserCard $users)
-    {
-        $this->users[] = $users;
-
-        return $this;
-    }
-
-    /**
-     * Remove users
-     *
-     * @param \Darkwood\HearthbreakerBundle\Entity\UserCard $users
-     */
-    public function removeUser(\Darkwood\HearthbreakerBundle\Entity\UserCard $users)
-    {
-        $this->users->removeElement($users);
-    }
-
-    /**
-     * Get users
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getUsers()
-    {
-        return $this->users;
-    }
 }

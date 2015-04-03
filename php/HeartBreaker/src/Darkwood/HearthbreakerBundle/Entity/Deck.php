@@ -11,6 +11,11 @@ use Doctrine\ORM\Mapping as ORM;
  * 	uniqueConstraints={@ORM\UniqueConstraint(name="unique_slug", columns={"slug"})}
  * )
  * @ORM\Entity(repositoryClass="Darkwood\HearthbreakerBundle\Repository\DeckRepository")
+ * @ORM\InheritanceType("JOINED")
+ * @ORM\DiscriminatorColumn(name="source", type="string")
+ * @ORM\DiscriminatorMap({
+ *      "hearthstonedecks" = "DeckHearthstonedecks"
+ * })
  */
 class Deck
 {
@@ -42,35 +47,7 @@ class Deck
      *
      * @var \DateTime $updatedAt
      */
-    protected $createdAt;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     *
-     * @var \DateTime $updatedAt
-     */
-    protected $updatedAt;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     *
-     * @var \DateTime $updatedAt
-     */
     protected $syncedAt;
-
-    /**
-	 * @var integer
-	 *
-	 * @ORM\Column(name="vote_up", type="integer", nullable=true)
-	 */
-	private $voteUp;
-
-	/**
-	 * @var integer
-	 *
-	 * @ORM\Column(name="vote_down", type="integer", nullable=true)
-	 */
-	private $voteDown;
 
 	/**
 	 * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\DeckCard", mappedBy="deck", cascade={"all"})
@@ -145,38 +122,6 @@ class Deck
     /**
      * @return \DateTime
      */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-    }
-
-    /**
-     * @return \DateTime
-     */
     public function getSyncedAt()
     {
         return $this->syncedAt;
@@ -189,38 +134,6 @@ class Deck
     {
         $this->syncedAt = $syncedAt;
     }
-
-    /**
-	 * @return int
-	 */
-	public function getVoteUp()
-	{
-		return $this->voteUp;
-	}
-
-	/**
-	 * @param int $voteUp
-	 */
-	public function setVoteUp($voteUp)
-	{
-		$this->voteUp = $voteUp;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getVoteDown()
-	{
-		return $this->voteDown;
-	}
-
-	/**
-	 * @param int $voteDown
-	 */
-	public function setVoteDown($voteDown)
-	{
-		$this->voteDown = $voteDown;
-	}
 
     /**
      * Add cards
