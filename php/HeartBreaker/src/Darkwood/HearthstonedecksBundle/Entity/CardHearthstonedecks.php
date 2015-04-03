@@ -22,7 +22,20 @@ class CardHearthstonedecks extends Card
      */
     private $nameEn;
 
-    /**
+	/**
+	 * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker", mappedBy="cardHearthstonedecks")
+	 */
+	private $cards;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct()
+	{
+		$this->cards = new \Doctrine\Common\Collections\ArrayCollection();
+	}
+
+	/**
      * Set name
      *
      * @param string $name
@@ -43,5 +56,38 @@ class CardHearthstonedecks extends Card
     public function getNameEn()
     {
         return $this->nameEn;
+    }
+
+    /**
+     * Add cards
+     *
+     * @param \Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker $cards
+     * @return CardHearthstonedecks
+     */
+    public function addCard(\Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker $cards)
+    {
+        $this->cards[] = $cards;
+
+        return $this;
+    }
+
+    /**
+     * Remove cards
+     *
+     * @param \Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker $cards
+     */
+    public function removeCard(\Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker $cards)
+    {
+        $this->cards->removeElement($cards);
+    }
+
+    /**
+     * Get cards
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCards()
+    {
+        return $this->cards;
     }
 }
