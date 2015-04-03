@@ -143,7 +143,6 @@ class DefaultController extends Controller
 					'Druide' => 'Druide',
 					'Guerrier' => 'Guerrier',
 					'Mage' => 'Mage',
-					'Neutre' => 'Neutre',
 					'Paladin' => 'Paladin',
 					'Prêtre' => 'Prêtre',
 					'Voleur' => 'Voleur',
@@ -201,7 +200,8 @@ class DefaultController extends Controller
 		}, $decks);
 
 		$decks = array_filter($decks, function($deck) use ($search) {
-			if((isset($search['buy']) && $search['buy'] != null && $deck['deck']->getBuy() < $search['buy'])
+			if((isset($search['class']) && $search['class'] != null && $deck['deck']->getClass() != $search['class'])
+			|| (isset($search['buy']) && $search['buy'] != null && $deck['deck']->getBuy() < $search['buy'])
 			|| (isset($search['card_percent']) && $search['card_percent'] != null && $deck['cardPercent'] < $search['card_percent'])
 			|| (isset($search['buy_percent']) && $search['buy_percent'] != null && $deck['buyPercent'] < $search['buy_percent']))
 			{

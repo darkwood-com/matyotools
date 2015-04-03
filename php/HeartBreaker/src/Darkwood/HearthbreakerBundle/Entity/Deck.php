@@ -278,4 +278,18 @@ class Deck
 
 		return $cristal;
 	}
+
+	public function getClass()
+	{
+		$classes = array_map(function($deckCard) {
+			/** @var DeckCard $deckCard */
+			return $deckCard->getCard()->getPlayerClass();
+		}, $this->cards->toArray());
+		$classes = array_filter($classes, function($class) {
+			return $class != 'Neutre';
+		});
+		$classes = array_unique($classes);
+
+		return current($classes);
+	}
 }
