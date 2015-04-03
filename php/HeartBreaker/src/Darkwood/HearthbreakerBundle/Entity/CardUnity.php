@@ -15,6 +15,15 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 class CardUnity
 {
     /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
      * @var \Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks
      *
      * @ORM\OneToOne(targetEntity="\Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks", inversedBy="card")
@@ -33,6 +42,16 @@ class CardUnity
     public function __construct()
     {
         $this->users = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Get id.
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**

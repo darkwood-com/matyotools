@@ -23,7 +23,7 @@ class CardHearthstonedecks extends Card
     private $nameEn;
 
     /**
-     * @ORM\OneToOne(targetEntity="Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker", mappedBy="cardHearthstonedecks")
+     * @ORM\OneToOne(targetEntity="Darkwood\HearthbreakerBundle\Entity\CardUnity", mappedBy="cardHearthstonedecks")
      */
     private $card;
 
@@ -54,10 +54,10 @@ class CardHearthstonedecks extends Card
     /**
      * Set card
      *
-     * @param \Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker $card
+     * @param \Darkwood\HearthbreakerBundle\Entity\CardUnity $card
      * @return CardHearthstonedecks
      */
-    public function setCard(\Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker $card = null)
+    public function setCard(\Darkwood\HearthbreakerBundle\Entity\CardUnity $card = null)
     {
         $this->card = $card;
 
@@ -67,7 +67,7 @@ class CardHearthstonedecks extends Card
     /**
      * Get card
      *
-     * @return \Darkwood\HearthbreakerBundle\Entity\CardHearthbreaker 
+     * @return \Darkwood\HearthbreakerBundle\Entity\CardUnity 
      */
     public function getCard()
     {
