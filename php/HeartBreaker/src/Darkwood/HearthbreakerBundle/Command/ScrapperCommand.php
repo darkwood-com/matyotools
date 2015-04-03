@@ -18,7 +18,7 @@ class ScrapperCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /** @var \Darkwood\HearthbreakerBundle\Services\ScrapperHearthstonedecksService $scrapperService */
+        /** @var \Darkwood\HearthstonedecksBundle\Services\ScrapperHearthstonedecksService $scrapperService */
         $scrapperService = $this->getContainer()->get('hb.hearthstonedecks.scrapper');
         $scrapperService->syncCardList();
         $scrapperService->syncDeckList();
