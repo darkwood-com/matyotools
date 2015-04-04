@@ -1,5 +1,6 @@
 parameters:
     hb.card.class: Darkwood\HearthbreakerBundle\Services\CardService
+    hb.cardUnity.class: Darkwood\HearthbreakerBundle\Services\CardUnityService
     hb.deck.class: Darkwood\HearthbreakerBundle\Services\DeckService
     hb.deckCard.class: Darkwood\HearthbreakerBundle\Services\DeckCardService
     hb.userCard.class: Darkwood\HearthbreakerBundle\Services\UserCardService
@@ -7,6 +8,10 @@ parameters:
 services:
     hb.card:
         class: %hb.card.class%
+        arguments: [@doctrine.orm.entity_manager]
+
+    hb.cardUnity:
+        class: %hb.cardUnity.class%
         arguments: [@doctrine.orm.entity_manager]
 
     hb.deck:
