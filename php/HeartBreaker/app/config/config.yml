@@ -120,6 +120,7 @@ vich_uploader:
         card:
             uri_prefix:         /media/card
             upload_destination: %kernel.root_dir%/../web/media/card
+            namer:              bh.namer_card
 
 liip_imagine:
     resolvers:

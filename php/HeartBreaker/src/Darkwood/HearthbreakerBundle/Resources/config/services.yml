@@ -4,6 +4,7 @@ parameters:
     hb.deck.class: Darkwood\HearthbreakerBundle\Services\DeckService
     hb.deckCard.class: Darkwood\HearthbreakerBundle\Services\DeckCardService
     hb.userCard.class: Darkwood\HearthbreakerBundle\Services\UserCardService
+    bh.namer_card.class: Darkwood\HearthbreakerBundle\Naming\CardNamer
 
 services:
     hb.card:
@@ -25,3 +26,6 @@ services:
     hb.userCard:
         class: %hb.userCard.class%
         arguments: [@doctrine.orm.entity_manager]
+
+    bh.namer_card:
+        class: %bh.namer_card.class%

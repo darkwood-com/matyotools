@@ -41,6 +41,11 @@ class DeckHearthstonedecks extends Deck
      */
     private $voteDown;
 
+    public function getSource()
+    {
+        return 'hearthstonedecks';
+    }
+
     /**
      * @return \DateTime
      */

@@ -72,6 +72,11 @@ class Deck
         return $this->id;
     }
 
+    public function getSource()
+    {
+        return 'none';
+    }
+
     /**
      * Set slug.
      *

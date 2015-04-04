@@ -15,6 +15,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  */
 class CardHearthstonedecks extends Card
 {
+    public function getSource()
+    {
+        return 'hearthstonedecks';
+    }
+
     /**
      * @var string
      *
