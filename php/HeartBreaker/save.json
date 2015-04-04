@@ -1404,6 +1404,10 @@
 			"isGolden": false,
 			"quantity": 2,
 			"card": "souffle-du-dragon"
-		}
+		},{
+          "isGolden": false,
+          "quantity": 2,
+          "card": "benediction-des-rois"
+        }
 	]
 }
