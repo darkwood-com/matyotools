@@ -10,8 +10,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * Card.
  *
  * @ORM\Table(name="card",
- * 	uniqueConstraints={@ORM\UniqueConstraint(name="unique_slug", columns={"slug","source"})}
- * )
+ * 	uniqueConstraints={
+ *      @ORM\UniqueConstraint(name="unique_slug", columns={"slug","source"}),
+ *      @ORM\UniqueConstraint(name="unique_card", columns={"card_id","source"})
+ * })
  * @ORM\Entity(repositoryClass="Darkwood\HearthbreakerBundle\Repository\CardRepository")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="source", type="string")
@@ -140,6 +142,14 @@ class Card
      * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\DeckCard", mappedBy="card", cascade={"all"})
      */
     private $decks;
+
+    /**
+     * @var \Darkwood\HearthbreakerBundle\Entity\Card
+     *
+     * @ORM\ManyToOne(targetEntity="\Darkwood\HearthbreakerBundle\Entity\CardUnity", inversedBy="cards")
+     * @ORM\JoinColumn(name="card_id", referencedColumnName="id")
+     */
+    protected $card;
 
     /**
      * Constructor.
@@ -460,6 +470,29 @@ class Card
     public function getDecks()
     {
         return $this->decks;
+    }
+
+    /**
+     * Set card
+     *
+     * @param \Darkwood\HearthbreakerBundle\Entity\CardUnity $card
+     * @return Card
+     */
+    public function setCard(\Darkwood\HearthbreakerBundle\Entity\CardUnity $card = null)
+    {
+        $this->card = $card;
+
+        return $this;
+    }
+
+    /**
+     * Get card
+     *
+     * @return \Darkwood\HearthbreakerBundle\Entity\CardUnity
+     */
+    public function getCard()
+    {
+        return $this->card;
     }
 
     public function getBuy($golden = false)

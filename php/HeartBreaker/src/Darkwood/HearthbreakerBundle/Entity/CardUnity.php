@@ -10,7 +10,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *
  * @ORM\Table(name="card_unity")
  * @ORM\Entity(repositoryClass="Darkwood\HearthbreakerBundle\Repository\CardUnityRepository")
- * @Vich\Uploadable
  */
 class CardUnity
 {
@@ -24,17 +23,14 @@ class CardUnity
     private $id;
 
     /**
-     * @var \Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks
-     *
-     * @ORM\OneToOne(targetEntity="\Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks", inversedBy="card")
-     * @ORM\JoinColumn(name="card_hearthstonedecks_id", referencedColumnName="id")
-     */
-    protected $cardHearthstonedecks;
-
-    /**
      * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\UserCard", mappedBy="card", cascade={"all"})
      */
     private $users;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\Card", mappedBy="card")
+     */
+    private $cards;
 
     /**
      * Constructor.
@@ -52,29 +48,6 @@ class CardUnity
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set cardHearthstonedecks
-     *
-     * @param \Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks $cardHearthstonedecks
-     * @return CardUnity
-     */
-    public function setCardHearthstonedecks(\Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks $cardHearthstonedecks = null)
-    {
-        $this->cardHearthstonedecks = $cardHearthstonedecks;
-
-        return $this;
-    }
-
-    /**
-     * Get cardHearthstonedecks
-     *
-     * @return \Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks 
-     */
-    public function getCardHearthstonedecks()
-    {
-        return $this->cardHearthstonedecks;
     }
 
     /**
@@ -108,5 +81,38 @@ class CardUnity
     public function getUsers()
     {
         return $this->users;
+    }
+
+    /**
+     * Add cards
+     *
+     * @param \Darkwood\HearthbreakerBundle\Entity\Card $cards
+     * @return CardUnity
+     */
+    public function addCard(\Darkwood\HearthbreakerBundle\Entity\Card $cards)
+    {
+        $this->cards[] = $cards;
+
+        return $this;
+    }
+
+    /**
+     * Remove cards
+     *
+     * @param \Darkwood\HearthbreakerBundle\Entity\Card $cards
+     */
+    public function removeCard(\Darkwood\HearthbreakerBundle\Entity\Card $cards)
+    {
+        $this->cards->removeElement($cards);
+    }
+
+    /**
+     * Get cards
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCards()
+    {
+        return $this->cards;
     }
 }
