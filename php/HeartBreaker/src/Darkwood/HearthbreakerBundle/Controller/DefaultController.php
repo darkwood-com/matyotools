@@ -291,14 +291,14 @@ class DefaultController extends Controller
         ));
     }
 
-    public function userCardAction($slug, $isGolden)
+    public function userCardAction($source, $slug, $isGolden)
     {
         $user = $this->getUser();
         if (!$user) {
             throw new AccessDeniedHttpException();
         }
 
-        $card = $this->get('hb.card')->findBySlug($slug, 'hearthstonedecks');
+        $card = $this->get('hb.card')->findBySlug($slug, $source);
 
         if (!$card) {
             throw new NotFoundHttpException();
