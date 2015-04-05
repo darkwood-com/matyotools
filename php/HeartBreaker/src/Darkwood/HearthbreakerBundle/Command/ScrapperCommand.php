@@ -26,6 +26,6 @@ class ScrapperCommand extends ContainerAwareCommand
         /** @var \Darkwood\HearthpwnBundle\Services\ScrapperHearthpwnService $scrapperService */
         $scrapperService = $this->getContainer()->get('hb.hearthpwn.scrapper');
         $scrapperService->syncCardList();
-        $scrapperService->syncDeckList();
+        //$scrapperService->syncDeckList();
     }
 }

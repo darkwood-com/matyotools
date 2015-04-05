@@ -29,10 +29,13 @@ class DeckRepository extends EntityRepository
             ->select('d, dc, c')
             ->leftJoin('d.cards', 'dc')
             ->leftJoin('dc.card', 'c')
-            ->andWhere('d.slug = :slug')->setParameter('source', $source)
             ->andWhere('d.slug = :slug')->setParameter('slug', $slug)
             ->orderBy('c.cost')
         ;
+
+        if($source) {
+            $qb->andWhere('d INSTANCE OF :source')->setParameter('source', $source);
+        }
 
         return $qb->getQuery()->getOneOrNullResult();
     }

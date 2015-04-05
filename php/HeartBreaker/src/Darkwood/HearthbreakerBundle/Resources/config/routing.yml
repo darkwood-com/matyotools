@@ -7,7 +7,7 @@ card_list:
     defaults: { _controller: HearthbreakerBundle:Default:card }
 
 card_detail:
-    path: /carte/{slug}
+    path: /carte/{source}/{slug}
     defaults: { _controller: HearthbreakerBundle:Default:cardDetail }
 
 deck_list:
@@ -15,11 +15,11 @@ deck_list:
     defaults: { _controller: HearthbreakerBundle:Default:deck }
 
 deck_detail:
-    path: /deck/{slug}
+    path: /deck/{source}/{slug}
     defaults: { _controller: HearthbreakerBundle:Default:deckDetail }
 
 user_card:
-    path: /joueur/carte/{slug}/{isGolden}
+    path: /joueur/carte/{slug}/{source}/{isGolden}
     defaults: { _controller: HearthbreakerBundle:Default:userCard }
     options:
         expose: true

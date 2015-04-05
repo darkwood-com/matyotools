@@ -20,10 +20,7 @@ class CardRepository extends EntityRepository
         ;
 
         if($source) {
-            $source = $this->getClassMetadata()->discriminatorMap[$source];
-            $qb->andWhere('c INSTANCE OF :source')
-                ->setParameter('source', $source)
-            ;
+            $qb->andWhere('c INSTANCE OF :source')->setParameter('source', $source);
         }
 
         return $qb->getQuery()->getOneOrNullResult();

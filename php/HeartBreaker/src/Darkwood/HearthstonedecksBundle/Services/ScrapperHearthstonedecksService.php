@@ -161,7 +161,7 @@ class ScrapperHearthstonedecksService
 
             $crawler
                 ->filter('.nom_deck > a')
-                ->each(function (Crawler $node) use (&$slugs, $force) {
+                ->each(function (Crawler $node) use ($force) {
                     try {
                         $href = $node->attr('href');
                         $match = $this->router->match($href);

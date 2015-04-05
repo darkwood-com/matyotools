@@ -102,9 +102,9 @@ class DefaultController extends Controller
         ));
     }
 
-    public function cardDetailAction($slug)
+    public function cardDetailAction($source, $slug)
     {
-        $card = $this->get('hb.card')->findBySlug($slug, 'hearthstonedecks');
+        $card = $this->get('hb.card')->findBySlug($slug, $source);
 
         if (!$card) {
             throw new NotFoundHttpException();
@@ -214,7 +214,7 @@ class DefaultController extends Controller
         ));
     }
 
-    public function deckDetailAction($slug)
+    public function deckDetailAction($source, $slug)
     {
         $user = $this->getUser();
         if (!$user) {
@@ -222,7 +222,7 @@ class DefaultController extends Controller
         }
 
         /** @var Deck $deck */
-        $deck = $this->get('hb.deck')->findBySlug($slug, 'hearthstonedecks');
+        $deck = $this->get('hb.deck')->findBySlug($slug, $source);
 
         if (!$deck) {
             throw new NotFoundHttpException();

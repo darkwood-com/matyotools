@@ -38,15 +38,15 @@
 				<tbody>
 				{% for card in cards %}
 					<tr data-toggle="popover" data-html="true" data-content="<img src='{{ vich_uploader_asset(card, 'image') | imagine_filter('card_small') }}' />">
-						<td><a href="{{ path('card_detail', {'slug': card.slug}) }}">{{ card.name }}</a></td>
+						<td><a href="{{ path('card_detail', {'source': card.source, 'slug': card.slug}) }}">{{ card.name }}</a></td>
 						<td>{{ card.type }}</td>
 						<td>{{ card.playerClass }}</td>
 						<td>{{ card.rarity }}</td>
 						<td>{{ card.cost }}</td>
 						<td>{{ card.attack }}</td>
 						<td>{{ card.health }}</td>
-						<td class="user-card" data-slug="{{ card.slug }}" data-is-golden="0">{{ cardsQuantity[card.id][0] | default(0) }}</td>
-                        <td class="user-card" data-slug="{{ card.slug }}" data-is-golden="1">{{ cardsQuantity[card.id][1] | default(0) }}</td>
+						<td class="user-card" data-source="{{ card.source }}" data-slug="{{ card.slug }}" data-is-golden="0">{{ cardsQuantity[card.id][0] | default(0) }}</td>
+                        <td class="user-card" data-source="{{ card.source }}" data-slug="{{ card.slug }}" data-is-golden="1">{{ cardsQuantity[card.id][1] | default(0) }}</td>
 					</tr>
 				{% endfor %}
 				</tbody>

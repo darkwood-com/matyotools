@@ -34,7 +34,7 @@
 				<tbody>
 				{% for deck in decks %}
 					<tr>
-						<td><a href="{{ path('deck_detail', {'slug': deck.deck.slug}) }}">{{ deck.deck.name }}</a></td>
+						<td><a href="{{ path('deck_detail', {'source': deck.source, 'slug': deck.deck.slug}) }}">{{ deck.deck.name }}</a></td>
 						<td>{{ deck.deck.buy }}</td>
 						<td>{{ deck.deck.voteUp }} - {{ deck.deck.voteDown }}</td>
 						<td>{{ deck.cardPercent }} %</td>
