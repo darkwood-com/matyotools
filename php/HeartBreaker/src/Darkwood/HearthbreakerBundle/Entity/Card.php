@@ -448,6 +448,29 @@ class Card
     }
 
     /**
+     * Set identifier
+     *
+     * @param integer $identifier
+     * @return Card
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
+
+        return $this;
+    }
+
+    /**
+     * Get identifier
+     *
+     * @return integer
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    /**
      * Add decks.
      *
      * @param \Darkwood\HearthbreakerBundle\Entity\DeckCard $decks
