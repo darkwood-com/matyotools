@@ -147,7 +147,7 @@ class ScrapperHearthstonedecksService
     {
         $page = 1;
         do {
-            $crawler = $this->requestRoute('deck_search', array(), array(
+            $crawler = $this->requestRoute('deck_list', array(), array(
                 'etape' => 'RechercheDecks',
                 'colonne' => '',
                 'ordre' => 'undefined',

@@ -4,8 +4,8 @@ card_list:
 card_detail:
     path: /cards/{slug}
 
-deck_search:
-    path: /deck/formulaire
+deck_list:
+    path: /decks
 
 deck_detail:
-    path: /deck/voir/{slug}
+    path: /decks/{slug}

@@ -18,48 +18,18 @@ class DeckHearthpwn extends Deck
      *
      * @var \DateTime
      */
-    protected $createdAt;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     *
-     * @var \DateTime
-     */
     protected $updatedAt;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="vote_up", type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      */
-    private $voteUp;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="vote_down", type="integer", nullable=true)
-     */
-    private $voteDown;
+    private $rating;
 
     public function getSource()
     {
         return 'hearthpwn';
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
     }
 
     /**
@@ -81,32 +51,16 @@ class DeckHearthpwn extends Deck
     /**
      * @return int
      */
-    public function getVoteUp()
+    public function getRating()
     {
-        return $this->voteUp;
+        return $this->rating;
     }
 
     /**
-     * @param int $voteUp
+     * @param int $rating
      */
-    public function setVoteUp($voteUp)
+    public function setRating($rating)
     {
-        $this->voteUp = $voteUp;
-    }
-
-    /**
-     * @return int
-     */
-    public function getVoteDown()
-    {
-        return $this->voteDown;
-    }
-
-    /**
-     * @param int $voteDown
-     */
-    public function setVoteDown($voteDown)
-    {
-        $this->voteDown = $voteDown;
+        $this->rating = $rating;
     }
 }

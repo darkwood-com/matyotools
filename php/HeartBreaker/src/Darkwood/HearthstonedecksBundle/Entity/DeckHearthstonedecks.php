@@ -30,14 +30,14 @@ class DeckHearthstonedecks extends Deck
     /**
      * @var int
      *
-     * @ORM\Column(name="vote_up", type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $voteUp;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="vote_down", type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $voteDown;
 

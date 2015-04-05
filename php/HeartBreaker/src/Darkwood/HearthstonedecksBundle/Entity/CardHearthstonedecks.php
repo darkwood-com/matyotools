@@ -23,7 +23,7 @@ class CardHearthstonedecks extends Card
     /**
      * @var string
      *
-     * @ORM\Column(name="name_en", type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      */
     private $nameEn;
 

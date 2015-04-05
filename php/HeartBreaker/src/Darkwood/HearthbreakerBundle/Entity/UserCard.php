@@ -22,7 +22,7 @@ class UserCard
     /**
      * @var int
      *
-     * @ORM\Column(name="id", type="integer")
+     * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -47,14 +47,14 @@ class UserCard
     /**
      * @var bool
      *
-     * @ORM\Column(name="isGolden", type="boolean")
+     * @ORM\Column(type="boolean")
      */
     private $isGolden;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="quantity", type="integer")
+     * @ORM\Column(type="integer")
      */
     private $quantity;
 

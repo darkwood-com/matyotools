@@ -4,7 +4,7 @@ card_list:
 card_detail:
     path: /carte/voir/{slug}
 
-deck_search:
+deck_list:
     path: /deck/formulaire
 
 deck_detail:

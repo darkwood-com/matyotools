@@ -123,7 +123,7 @@ class ScrapperHearthpwnService
             ));
 
             $crawler
-                ->filter('#content table.listing .col-name > a')
+                ->filter('#content table.listing .col-name a')
                 ->each(function (Crawler $node) use ($force) {
                     try {
                         $href = $node->attr('href');
@@ -136,7 +136,7 @@ class ScrapperHearthpwnService
                     }
                 });
 
-            $hasNext = $crawler->filter('#content .b-pagination-list')->children()
+            $hasNext = $crawler->filter('#content .paging-list')->children()
                 ->reduce(function (Crawler $node) {
                     return $node->text() == 'Next';
                 })->count() > 0;
@@ -149,20 +149,10 @@ class ScrapperHearthpwnService
     {
         $page = 1;
         do {
-            $crawler = $this->requestRoute('deck_search', array(), array(
-                'etape' => 'RechercheDecks',
-                'colonne' => '',
-                'ordre' => 'undefined',
-                'page_demandee' => $page,
-                'keyword' => null,
-                'auteur' => null,
-                'classe' => null,
-                'top' => 'semaine',
-                'extension' => 'undefined',
-            ));
+            $crawler = $this->requestRoute('deck_list', array('page' => $page));
 
             $crawler
-                ->filter('.nom_deck > a')
+                ->filter('#content table.listing .col-name a')
                 ->each(function (Crawler $node) use (&$slugs, $force) {
                     try {
                         $href = $node->attr('href');
@@ -175,10 +165,10 @@ class ScrapperHearthpwnService
                     }
                 });
 
-            $hasNext = $crawler->filter('.pagination')->children()
-                    ->reduce(function (Crawler $node) {
-                        return $node->text() == 'Suiv';
-                    })->count() > 0;
+            $hasNext = $crawler->filter('#content .paging-list')->children()
+                ->reduce(function (Crawler $node) {
+                    return $node->text() == 'Suiv';
+                })->count() > 0;
 
             $page += 1;
         } while ($hasNext);
@@ -196,7 +186,7 @@ class ScrapperHearthpwnService
 
         $crawler = $this->requestRoute('card_detail', array('slug' => $slug));
 
-        $card->setName($crawler->filter('#content .details h2.caption')->first()->text());
+        $card->setName($crawler->filter('#content .details h2')->first()->text());
         $textNode = $crawler->filter('#content .details .card-info p');
         if(count($textNode)) {
             $card->setText($textNode->text());
@@ -251,7 +241,7 @@ class ScrapperHearthpwnService
 
         $crawler = $this->requestRoute('deck_detail', array('slug' => $slug));
 
-        $deck->setName($crawler->filter('#content h3')->first()->text());
+        $deck->setName($crawler->filter('#content .details h2')->first()->text());
 
         $attr = null;
         $crawler

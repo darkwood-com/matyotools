@@ -21,7 +21,7 @@ class DeckCard
     /**
      * @var int
      *
-     * @ORM\Column(name="id", type="integer")
+     * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -46,7 +46,7 @@ class DeckCard
     /**
      * @var int
      *
-     * @ORM\Column(name="quantity", type="integer")
+     * @ORM\Column(type="integer")
      */
     private $quantity;
 
