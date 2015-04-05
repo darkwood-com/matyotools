@@ -225,9 +225,9 @@ class ScrapperHearthpwnService
             });
 
         if (!$card->getImageName()) {
-            $imageSrc = $crawler->filter('#content .details .hscard-static')->first()->attr('src');
+            $imageSrc = trim($crawler->filter('#content .details .hscard-static')->first()->attr('src'));
             $guzzle = $this->getClient()->getClient();
-            $response = $guzzle->get(trim($imageSrc));
+            $response = $guzzle->get($imageSrc);
             $filePath = tempnam(sys_get_temp_dir(), 'HB_');
             file_put_contents($filePath, $response->getBody());
             $card->setImage(new UploadedFile($filePath, $imageSrc, null, null, null, true));

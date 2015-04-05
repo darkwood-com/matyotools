@@ -65,9 +65,9 @@ class CardService
         return $this->cardRepository->findBySlug($slug, $source);
     }
 
-    public function count()
+    public function count($source = null)
     {
-        return $this->cardRepository->count();
+        return $this->cardRepository->count($source);
     }
 
     public function search($search)

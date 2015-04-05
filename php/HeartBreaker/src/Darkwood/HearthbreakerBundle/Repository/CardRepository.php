@@ -26,11 +26,15 @@ class CardRepository extends EntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function count()
+    public function count($source = null)
     {
         $qb = $this->createQueryBuilder('c')
             ->select('COUNT(c.id) as nb')
         ;
+
+        if($source) {
+            $qb->andWhere('c INSTANCE OF :source')->setParameter('source', $source);
+        }
 
         $count = $qb->getQuery()->getScalarResult();
 

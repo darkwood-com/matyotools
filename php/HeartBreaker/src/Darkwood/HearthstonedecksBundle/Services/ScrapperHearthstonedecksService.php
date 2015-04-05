@@ -140,7 +140,7 @@ class ScrapperHearthstonedecksService
                 })->count() > 0;
 
             $page += 1;
-        } while ($hasNext && ($this->cardService->count() < $cardsNumber || $force));
+        } while ($hasNext && ($this->cardService->count('hearthstonedecks') < $cardsNumber || $force));
     }
 
     public function syncDeckList($force = false)
@@ -219,9 +219,9 @@ class ScrapperHearthstonedecksService
             });
 
         if (!$card->getImageName()) {
-            $imageSrc = $crawler->filter('#visuelcarte')->first()->attr('src');
+            $imageSrc = trim($crawler->filter('#visuelcarte')->first()->attr('src'));
             $guzzle = $this->getClient()->getClient();
-            $response = $guzzle->get(trim($imageSrc));
+            $response = $guzzle->get($imageSrc);
             $filePath = tempnam(sys_get_temp_dir(), 'HB_');
             file_put_contents($filePath, $response->getBody());
             $card->setImage(new UploadedFile($filePath, $imageSrc, null, null, null, true));
