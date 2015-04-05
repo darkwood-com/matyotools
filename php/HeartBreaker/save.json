@@ -1694,7 +1694,7 @@
 			"slug": "char-de-force-max",
 			"source": "hearthstonedecks",
 			"isGolden": false,
-			"quantity": 1
+			"quantity": 2
 		},{
 			"slug": "kel-thuzad",
 			"source": "hearthstonedecks",
@@ -1724,7 +1724,7 @@
 			"slug": "vierge-guerriere",
 			"source": "hearthstonedecks",
 			"isGolden": false,
-			"quantity": 1
+			"quantity": 2
 		},{
 			"slug": "client-sinistre",
 			"source": "hearthstonedecks",
@@ -1760,6 +1760,26 @@
 			"source": "hearthstonedecks",
 			"isGolden": false,
 			"quantity": 2
+		},{
+			"slug": "maitresse-de-douleur",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 1
+		},{
+			"slug": "cle-de-maitre-des-rouages",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 1
+		},{
+			"slug": "masse-de-puissance",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 1
+		},{
+			"slug": "troggzor-le-terreminator",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 1
 		}
 	]
 }
