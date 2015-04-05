@@ -123,13 +123,12 @@ class ScrapperHearthpwnService
             ));
 
             $crawler
-                ->filter('#content table.listing tr')
+                ->filter('#content table.listing .col-name > a')
                 ->each(function (Crawler $node) use ($force) {
                     try {
-                        $href = $node->filter('.col-name > a')->attr('href');
-                        $type = $node->filter('.col-type')->text();
+                        $href = $node->attr('href');
                         $match = $this->router->match($href);
-                        if ($match['_route'] == 'card_detail' && $type != 'Hero Power') {
+                        if ($match['_route'] == 'card_detail') {
                             $this->syncCard($match['slug'], $force);
                         }
                     } catch (ResourceNotFoundException $e) {
