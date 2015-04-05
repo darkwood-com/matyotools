@@ -34,6 +34,13 @@ class Card
     private $id;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $identifier;
+
+    /**
      * @var string
      *
      * @ORM\Column(type="string", length=255)
@@ -139,13 +146,6 @@ class Card
     protected $imageName;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $identifier;
-
-    /**
      * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\DeckCard", mappedBy="card", cascade={"all"})
      */
     private $decks;
@@ -177,6 +177,29 @@ class Card
     public function getSource()
     {
         return 'none';
+    }
+
+    /**
+     * Set identifier
+     *
+     * @param integer $identifier
+     * @return Card
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
+
+        return $this;
+    }
+
+    /**
+     * Get identifier
+     *
+     * @return integer
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
     }
 
     /**
@@ -445,29 +468,6 @@ class Card
     public function getImageName()
     {
         return $this->imageName;
-    }
-
-    /**
-     * Set identifier
-     *
-     * @param integer $identifier
-     * @return Card
-     */
-    public function setIdentifier($identifier)
-    {
-        $this->identifier = $identifier;
-
-        return $this;
-    }
-
-    /**
-     * Get identifier
-     *
-     * @return integer
-     */
-    public function getIdentifier()
-    {
-        return $this->identifier;
     }
 
     /**
