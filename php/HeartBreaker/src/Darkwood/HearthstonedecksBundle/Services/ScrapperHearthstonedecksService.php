@@ -133,7 +133,7 @@ class ScrapperHearthstonedecksService
                     }
                 });
 
-            $cardsNumber = intval($crawler->filter('#liste_cartes strong')->first()->text());
+            $cardsNumber = intval($crawler->filter('#liste_cartes strong')->text());
             $hasNext = $crawler->filter('#liste_cartes .pagination')->children()
                 ->reduce(function (Crawler $node) {
                     return $node->text() == 'Suiv';
@@ -219,7 +219,7 @@ class ScrapperHearthstonedecksService
             });
 
         if (!$card->getImageName()) {
-            $imageSrc = trim($crawler->filter('#visuelcarte')->first()->attr('src'));
+            $imageSrc = trim($crawler->filter('#visuelcarte')->attr('src'));
             $guzzle = $this->getClient()->getClient();
             $response = $guzzle->get($imageSrc);
             $filePath = tempnam(sys_get_temp_dir(), 'HB_');
@@ -245,7 +245,7 @@ class ScrapperHearthstonedecksService
 
         $crawler = $this->requestRoute('deck_detail', array('slug' => $slug));
 
-        $deck->setName($crawler->filter('#content h3')->first()->text());
+        $deck->setName($crawler->filter('#content h3')->text());
 
         $attr = null;
         $crawler
@@ -272,13 +272,13 @@ class ScrapperHearthstonedecksService
 
         $crawler
             ->filter('#liste_cartes tbody tr')
-            ->each(function (Crawler $node, $i) use ($deck, &$attr, $force) {
+            ->each(function (Crawler $node) use ($deck, $force) {
                 try {
-                    $href = $node->filter('a')->first()->attr('href');
+                    $href = $node->filter('a')->attr('href');
                     $match = $this->router->match($href);
                     if ($match['_route'] == 'card_detail') {
                         $card = $this->syncCard($match['slug'], $force);
-                        $quantity = intval($node->filter('td')->first()->text());
+                        $quantity = intval($node->filter('td')->text());
 
                         $deckCard = $this->deckCardService->findByDeckAndCard($deck, $card);
                         if (!$deckCard) {

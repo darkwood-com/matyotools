@@ -167,7 +167,7 @@ class ScrapperHearthpwnService
 
             $hasNext = $crawler->filter('#content .paging-list')->children()
                 ->reduce(function (Crawler $node) {
-                    return $node->text() == 'Suiv';
+                    return $node->text() == 'Next';
                 })->count() > 0;
 
             $page += 1;
@@ -186,14 +186,14 @@ class ScrapperHearthpwnService
 
         $crawler = $this->requestRoute('card_detail', array('slug' => $slug));
 
-        $card->setName($crawler->filter('#content .details h2')->first()->text());
+        $card->setName($crawler->filter('#content .details h2')->text());
         $textNode = $crawler->filter('#content .details .card-info p');
         if(count($textNode)) {
             $card->setText($textNode->text());
         }
         $flavorNode = $crawler->filter('#content .details .card-flavor-text p');
         if(count($flavorNode)) {
-            $card->setFlavor($flavorNode->first()->text());
+            $card->setFlavor($flavorNode->text());
         }
 
         $crawler
@@ -215,7 +215,7 @@ class ScrapperHearthpwnService
             });
 
         if (!$card->getImageName()) {
-            $imageSrc = trim($crawler->filter('#content .details .hscard-static')->first()->attr('src'));
+            $imageSrc = trim($crawler->filter('#content .details .hscard-static')->attr('src'));
             $guzzle = $this->getClient()->getClient();
             $response = $guzzle->get($imageSrc);
             $filePath = tempnam(sys_get_temp_dir(), 'HB_');
@@ -241,40 +241,19 @@ class ScrapperHearthpwnService
 
         $crawler = $this->requestRoute('deck_detail', array('slug' => $slug));
 
-        $deck->setName($crawler->filter('#content .details h2')->first()->text());
-
-        $attr = null;
-        $crawler
-            ->filter('#creation-deck-etape1 td')
-            ->each(function (Crawler $node, $i) use ($deck, &$attr) {
-                $text = trim($node->text());
-                if ($i % 2 == 0) {
-                    $attr = $text;
-                } else {
-                    switch ($attr) {
-                        case 'Note':
-                            $deck->setVoteUp(intval($node->filter('.up_vert')->text()));
-                            $deck->setVoteDown(intval($node->filter('.up_rouge')->text()));
-                            break;
-                        case 'Création':
-                            $deck->setCreatedAt($this->guessDate($text));
-                            break;
-                        case 'Mise à jour':
-                            $deck->setUpdatedAt($this->guessDate($text));
-                            break;
-                    }
-                }
-            });
+        $deck->setName($crawler->filter('#content .details h2')->text());
+        $deck->setRating(intval($crawler->filter('#content .details .t-deck-rating .rating-average')->text()));
+        $deck->setUpdatedAt($this->guessDate($crawler->filter('#content .details .t-deck-header .standard-date')->text()));
 
         $crawler
-            ->filter('#liste_cartes tbody tr')
-            ->each(function (Crawler $node, $i) use ($deck, &$attr, $force) {
+            ->filter('#content .details .t-deck-details-card-list .col-name')
+            ->each(function (Crawler $node) use ($deck, $force) {
                 try {
-                    $href = $node->filter('a')->first()->attr('href');
+                    $href = $node->filter('a')->attr('href');
                     $match = $this->router->match($href);
                     if ($match['_route'] == 'card_detail') {
                         $card = $this->syncCard($match['slug'], $force);
-                        $quantity = intval($node->filter('td')->first()->text());
+                        $quantity = intval(substr($node->text(), -3, 1));
 
                         $deckCard = $this->deckCardService->findByDeckAndCard($deck, $card);
                         if (!$deckCard) {
