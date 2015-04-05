@@ -39,7 +39,7 @@ class UserCard
     /**
      * @var \Darkwood\HearthbreakerBundle\Entity\Card
      *
-     * @ORM\ManyToOne(targetEntity="\Darkwood\HearthbreakerBundle\Entity\CardUnity", inversedBy="users")
+     * @ORM\ManyToOne(targetEntity="\Darkwood\HearthbreakerBundle\Entity\Card", inversedBy="users")
      * @ORM\JoinColumn(name="card_id", referencedColumnName="id")
      */
     protected $card;

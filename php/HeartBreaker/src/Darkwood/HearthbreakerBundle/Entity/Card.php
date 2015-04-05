@@ -11,8 +11,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *
  * @ORM\Table(name="card",
  * 	uniqueConstraints={
- *      @ORM\UniqueConstraint(name="unique_slug", columns={"slug","source"}),
- *      @ORM\UniqueConstraint(name="unique_card", columns={"card_id","source"})
+ *      @ORM\UniqueConstraint(name="unique_slug", columns={"slug","source"})
  * })
  * @ORM\Entity(repositoryClass="Darkwood\HearthbreakerBundle\Repository\CardRepository")
  * @ORM\InheritanceType("JOINED")
@@ -140,17 +139,21 @@ class Card
     protected $imageName;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $identifier;
+
+    /**
      * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\DeckCard", mappedBy="card", cascade={"all"})
      */
     private $decks;
 
     /**
-     * @var \Darkwood\HearthbreakerBundle\Entity\Card
-     *
-     * @ORM\ManyToOne(targetEntity="\Darkwood\HearthbreakerBundle\Entity\CardUnity", inversedBy="cards")
-     * @ORM\JoinColumn(name="card_id", referencedColumnName="id")
+     * @ORM\OneToMany(targetEntity="Darkwood\HearthbreakerBundle\Entity\UserCard", mappedBy="card", cascade={"all"})
      */
-    protected $card;
+    private $users;
 
     /**
      * Constructor.
@@ -479,26 +482,36 @@ class Card
     }
 
     /**
-     * Set card
+     * Add users
      *
-     * @param \Darkwood\HearthbreakerBundle\Entity\CardUnity $card
+     * @param \Darkwood\HearthbreakerBundle\Entity\UserCard $users
      * @return Card
      */
-    public function setCard(\Darkwood\HearthbreakerBundle\Entity\CardUnity $card = null)
+    public function addUser(\Darkwood\HearthbreakerBundle\Entity\UserCard $users)
     {
-        $this->card = $card;
+        $this->users[] = $users;
 
         return $this;
     }
 
     /**
-     * Get card
+     * Remove users
      *
-     * @return \Darkwood\HearthbreakerBundle\Entity\CardUnity
+     * @param \Darkwood\HearthbreakerBundle\Entity\UserCard $users
      */
-    public function getCard()
+    public function removeUser(\Darkwood\HearthbreakerBundle\Entity\UserCard $users)
     {
-        return $this->card;
+        $this->users->removeElement($users);
+    }
+
+    /**
+     * Get users
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUsers()
+    {
+        return $this->users;
     }
 
     public function getBuy($golden = false)
