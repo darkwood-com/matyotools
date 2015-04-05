@@ -14,7 +14,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="source", type="string")
  * @ORM\DiscriminatorMap({
- *      "hearthstonedecks" = "Darkwood\HearthstonedecksBundle\Entity\DeckHearthstonedecks"
+ *      "hearthstonedecks" = "Darkwood\HearthstonedecksBundle\Entity\DeckHearthstonedecks",
+ *      "hearthpwn" = "Darkwood\HearthpwnBundle\Entity\DeckHearthpwn"
  * })
  */
 class Deck

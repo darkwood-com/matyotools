@@ -18,7 +18,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="source", type="string")
  * @ORM\DiscriminatorMap({
- *      "hearthstonedecks" = "Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks"
+ *      "hearthstonedecks" = "Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks",
+ *      "hearthpwn" = "Darkwood\HearthpwnBundle\Entity\CardHearthpwn"
  * })
  * @Vich\Uploadable
  */

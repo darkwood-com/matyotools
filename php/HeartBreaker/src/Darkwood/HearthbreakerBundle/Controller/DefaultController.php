@@ -104,7 +104,7 @@ class DefaultController extends Controller
 
     public function cardDetailAction($slug)
     {
-        $card = $this->get('hb.card')->findBySlug($slug);
+        $card = $this->get('hb.card')->findBySlug($slug, 'hearthstonedecks');
 
         if (!$card) {
             throw new NotFoundHttpException();
@@ -222,7 +222,7 @@ class DefaultController extends Controller
         }
 
         /** @var Deck $deck */
-        $deck = $this->get('hb.deck')->findBySlug($slug);
+        $deck = $this->get('hb.deck')->findBySlug($slug, 'hearthstonedecks');
 
         if (!$deck) {
             throw new NotFoundHttpException();
@@ -275,7 +275,7 @@ class DefaultController extends Controller
             throw new AccessDeniedHttpException();
         }
 
-        $card = $this->get('hb.card')->findBySlug($slug);
+        $card = $this->get('hb.card')->findBySlug($slug, 'hearthstonedecks');
 
         if (!$card) {
             throw new NotFoundHttpException();

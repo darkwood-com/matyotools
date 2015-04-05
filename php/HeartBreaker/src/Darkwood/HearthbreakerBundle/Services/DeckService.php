@@ -56,12 +56,13 @@ class DeckService
 
     /**
      * @param $slug
+     * @param null $source
      *
      * @return null|Deck
      */
-    public function findBySlug($slug)
+    public function findBySlug($slug, $source = null)
     {
-        return $this->deckRepository->findBySlug($slug);
+        return $this->deckRepository->findBySlug($slug, $source);
     }
 
     public function search($search)

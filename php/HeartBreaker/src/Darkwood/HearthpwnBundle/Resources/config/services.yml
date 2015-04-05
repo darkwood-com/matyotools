@@ -1,0 +1,31 @@
+parameters:
+    hb.hearthpwn.scrapper.class: Darkwood\HearthpwnBundle\Services\ScrapperHearthpwnService
+    hb.hearthpwn.router.class: Symfony\Component\Routing\Router
+    hb.hearthpwn.router.request_context.class: Symfony\Component\Routing\RequestContext
+    hb.hearthpwn.routing.loader.class: Symfony\Component\Routing\Loader\YamlFileLoader
+
+services:
+    hb.hearthpwn.scrapper:
+        class: %hb.hearthpwn.scrapper.class%
+        arguments:
+          - @aequasi_cache.instance.scrapper
+          - @hb.hearthpwn.router
+          - @hb.card
+          - @hb.deck
+          - @hb.deckCard
+
+    hb.hearthpwn.router:
+        class: %hb.hearthpwn.router.class%
+        arguments:
+          - @hb.hearthpwn.routing.loader
+          - "%kernel.root_dir%/../src/Darkwood/HearthpwnBundle/Resources/config/host_routing.yml"
+          - []
+          - @hb.hearthpwn.router.request_context
+
+    hb.hearthpwn.router.request_context:
+        class: %hb.hearthpwn.router.request_context.class%
+        arguments: ["", "GET", "www.hearthpwn.com"]
+
+    hb.hearthpwn.routing.loader:
+        class: %routing.loader.yml.class%
+        arguments: [@file_locator]

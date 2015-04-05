@@ -54,19 +54,15 @@ class CardService
         return $this->cardRepository->findAll();
     }
 
-    public function findAllWithUser($user)
-    {
-        return $this->cardRepository->findAllWithUser($user);
-    }
-
     /**
      * @param $slug
+     * @param null $source
      *
      * @return null|Card
      */
-    public function findBySlug($slug)
+    public function findBySlug($slug, $source = null)
     {
-        return $this->cardRepository->findOneBy(array('slug' => $slug));
+        return $this->cardRepository->findBySlug($slug, $source);
     }
 
     public function count()

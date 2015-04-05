@@ -23,12 +23,13 @@ class DeckRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findBySlug($slug)
+    public function findBySlug($slug, $source = null)
     {
         $qb = $this->createQueryBuilder('d')
             ->select('d, dc, c')
             ->leftJoin('d.cards', 'dc')
             ->leftJoin('dc.card', 'c')
+            ->andWhere('d.slug = :slug')->setParameter('source', $source)
             ->andWhere('d.slug = :slug')->setParameter('slug', $slug)
             ->orderBy('c.cost')
         ;

@@ -12,6 +12,23 @@ use Doctrine\ORM\EntityRepository;
  */
 class CardRepository extends EntityRepository
 {
+    public function findBySlug($slug, $source = null)
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->select('c')
+            ->andWhere('c.slug = :slug')->setParameter('slug', $slug)
+        ;
+
+        if($source) {
+            $source = $this->getClassMetadata()->discriminatorMap[$source];
+            $qb->andWhere('c INSTANCE OF :source')
+                ->setParameter('source', $source)
+            ;
+        }
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
     public function count()
     {
         $qb = $this->createQueryBuilder('c')

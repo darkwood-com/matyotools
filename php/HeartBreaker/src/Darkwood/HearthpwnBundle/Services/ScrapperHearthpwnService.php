@@ -1,13 +1,13 @@
 <?php
 
-namespace Darkwood\HearthstonedecksBundle\Services;
+namespace Darkwood\HearthpwnBundle\Services;
 
 use Darkwood\HearthbreakerBundle\Services\CardService;
 use Darkwood\HearthbreakerBundle\Services\DeckCardService;
 use Darkwood\HearthbreakerBundle\Services\DeckService;
-use Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks;
+use Darkwood\HearthpwnBundle\Entity\CardHearthpwn;
 use Darkwood\HearthbreakerBundle\Entity\DeckCard;
-use Darkwood\HearthstonedecksBundle\Entity\DeckHearthstonedecks;
+use Darkwood\HearthpwnBundle\Entity\DeckHearthpwn;
 use Darkwood\HearthbreakerBundle\Subscriber\Cache\CacheStorage;
 use Doctrine\Common\Cache\Cache;
 use Goutte\Client;
@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Router;
 
-class ScrapperHearthstonedecksService
+class ScrapperHearthpwnService
 {
     /**
      * @var Cache
@@ -117,10 +117,13 @@ class ScrapperHearthstonedecksService
     {
         $page = 1;
         do {
-            $crawler = $this->requestRoute('card_list', array('page' => $page));
+            $crawler = $this->requestRoute('card_list', array(
+                'display' => 1,
+                'page' => $page
+            ));
 
             $crawler
-                ->filter('#liste_cartes .carte_galerie_container > a')
+                ->filter('#content table.listing .col-name > a')
                 ->each(function (Crawler $node) use (&$slugs, $force) {
                     try {
                         $href = $node->attr('href');
@@ -133,14 +136,13 @@ class ScrapperHearthstonedecksService
                     }
                 });
 
-            $cardsNumber = intval($crawler->filter('#liste_cartes strong')->first()->text());
-            $hasNext = $crawler->filter('#liste_cartes .pagination')->children()
+            $hasNext = $crawler->filter('#content .b-pagination-list')->children()
                 ->reduce(function (Crawler $node) {
-                    return $node->text() == 'Suiv';
+                    return $node->text() == 'Next';
                 })->count() > 0;
 
             $page += 1;
-        } while ($hasNext && ($this->cardService->count() < $cardsNumber || $force));
+        } while ($hasNext);
     }
 
     public function syncDeckList($force = false)
@@ -184,9 +186,9 @@ class ScrapperHearthstonedecksService
 
     public function syncCard($slug, $force = false)
     {
-        $card = $this->cardService->findBySlug($slug, 'hearthstonedecks');
+        $card = $this->cardService->findBySlug($slug, 'hearthpwn');
         if (!$card) {
-            $card = new CardHearthstonedecks();
+            $card = new CardHearthpwn();
             $card->setSlug($slug);
         } elseif (!$force) {
             return $card;
@@ -194,32 +196,30 @@ class ScrapperHearthstonedecksService
 
         $crawler = $this->requestRoute('card_detail', array('slug' => $slug));
 
-        $attr = null;
+        $card->setName($crawler->filter('#content .details h2.caption')->first()->text());
+        $card->setText($crawler->filter('#content .details .card-info p')->first()->text());
+        $card->setFlavor($crawler->filter('#content .details .card-flavor-text p')->first()->text());
+
         $crawler
-            ->filter('#informations-cartes td')
-            ->each(function (Crawler $node, $i) use ($card, &$attr) {
+            ->filter('#content .details .infobox li')
+            ->each(function (Crawler $node, $i) use ($card) {
                 $text = trim($node->text());
-                if ($i % 2 == 0) {
-                    $attr = $text;
-                } else {
-                    switch ($attr) {
-                        case 'Nom': $card->setName($text); break;
-                        case 'Nom original': $card->setNameEn($text); break;
-                        case 'Coût en mana': $card->setCost(intval($text)); break;
-                        case 'Attaque': $card->setAttack(intval($text)); break;
-                        case 'Vie': $card->setHealth(intval($text)); break;
-                        case 'Race': $card->setRace($text); break;
-                        case 'Description': $card->setText($text); break;
-                        case "Texte d'ambiance": $card->setFlavor($text); break;
-                        case 'Rareté': $card->setRarity($text); break;
-                        case 'Classe': $card->setPlayerClass($text); break;
-                        case 'Type': $card->setType($text); break;
-                    }
+
+                if(preg_match('/^Type: (.*)$/', $text, $m)) {
+                    $card->setType($m[1]);
+                } else if(preg_match('/^Rarity: (.*)$/', $text, $m)) {
+                    $card->setRarity($m[1]);
+                } else if(preg_match('/^Race: (.*)$/', $text, $m)) {
+                    $card->setRace($m[1]);
+                } else if(preg_match('/^Class: (.*)$/', $text, $m)) {
+                    $card->setPlayerClass($m[1]);
+                } else if(preg_match('/^Faction: (.*)$/', $text, $m)) {
+                    $card->setFaction($m[1]);
                 }
             });
 
         if (!$card->getImageName()) {
-            $imageSrc = $crawler->filter('#visuelcarte')->first()->attr('src');
+            $imageSrc = $crawler->filter('#content .details .hscard-static')->first()->attr('src');
             $guzzle = $this->getClient()->getClient();
             $response = $guzzle->get(trim($imageSrc));
             $filePath = tempnam(sys_get_temp_dir(), 'HB_');
@@ -235,9 +235,9 @@ class ScrapperHearthstonedecksService
 
     public function syncDeck($slug, $force = false)
     {
-        $deck = $this->deckService->findBySlug($slug, 'hearthstonedecks');
+        $deck = $this->deckService->findBySlug($slug, 'hearthpwn');
         if (!$deck) {
-            $deck = new DeckHearthstonedecks();
+            $deck = new DeckHearthpwn();
             $deck->setSlug($slug);
         } elseif (!$force) {
             return $deck;
