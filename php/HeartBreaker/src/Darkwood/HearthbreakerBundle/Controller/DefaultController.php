@@ -7,6 +7,7 @@ use Darkwood\HearthbreakerBundle\Entity\Deck;
 use Darkwood\HearthbreakerBundle\Entity\DeckCard;
 use Darkwood\HearthbreakerBundle\Entity\UserCard;
 use Darkwood\HearthbreakerBundle\Services\CardService;
+use Darkwood\HearthbreakerBundle\Services\DeckService;
 use Darkwood\HearthbreakerBundle\Services\UserCardService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -239,12 +240,15 @@ class DefaultController extends Controller
             throw new AccessDeniedHttpException();
         }
 
-        /** @var Deck $deck */
-        $deck = $this->get('hb.deck')->findBySlug($slug, $source);
+        /** @var DeckService $deckService */
+        $deckService = $this->get('hb.deck');
+        $deck = $deckService->findBySlug($slug, $source);
 
         if (!$deck) {
             throw new NotFoundHttpException();
         }
+
+        $url = $deckService->getUrl($deck);
 
         $cardsQuantity = $this->cardQuantity($user, $deck);
 
@@ -281,6 +285,7 @@ class DefaultController extends Controller
         return $this->render('HearthbreakerBundle:Default:deckDetail.html.twig', array(
             'nav' => 'deck',
             'deck' => $deck,
+            'url' => $url,
             'cardsByClass' => $cardsByClass,
             'cardsQuantity' => $cardsQuantity,
         ));

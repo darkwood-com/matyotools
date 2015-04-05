@@ -5,8 +5,9 @@ namespace Darkwood\HearthbreakerBundle\Services;
 use Darkwood\HearthbreakerBundle\Entity\Deck;
 use Doctrine\ORM\EntityManager;
 use Darkwood\HearthbreakerBundle\Repository\DeckRepository;
+use Symfony\Component\DependencyInjection\ContainerAware;
 
-class DeckService
+class DeckService extends ContainerAware
 {
     /**
      * @var EntityManager
@@ -68,5 +69,16 @@ class DeckService
     public function search($search)
     {
         return $this->deckRepository->search($search);
+    }
+
+    /**
+     * @param Deck $deck
+     * @return string
+     */
+    public function getUrl($deck)
+    {
+        /** @var \Symfony\Component\Routing\Router $router */
+        $router = $this->container->get(sprintf('hb.%s.router', $deck->getSource()));
+        return $router->generate('deck_detail', array('slug' => $deck->getSlug()), true);
     }
 }

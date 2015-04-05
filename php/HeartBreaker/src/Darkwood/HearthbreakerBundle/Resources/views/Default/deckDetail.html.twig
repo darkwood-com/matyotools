@@ -4,6 +4,18 @@
 	<div class="panel panel-default">
 		<div class="panel-heading">{{ deck.name }}</div>
 		<div class="panel-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <table class="table table-striped">
+                        <tbody>
+                        <tr>
+                            <td>Link</td>
+                            <td><a href="{{ url }}" target="_blank">{{ url }}</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 			<div class="row">
 				{% for class, cards in cardsByClass %}
 				<div class="col-xs-6">
@@ -30,7 +42,7 @@
 								data-html="true"
 								data-content="<img src='{{ vich_uploader_asset(deckcard.card, 'image') | imagine_filter('card_small') }}' />">
 								<td>{{ deckcard.quantity }}</td>
-								<td><a href="{{ path('card_detail', {'slug': deckcard.card.slug}) }}">{{ deckcard.card.name }}</a></td>
+								<td><a href="{{ path('card_detail', {'source': deckcard.card.source, 'slug': deckcard.card.slug}) }}">{{ deckcard.card.name }}</a></td>
 								<td>{{ deckcard.card.type }}</td>
 								<td>{{ deckcard.card.cost }}</td>
 								<td>{{ cardsQuantity[deckcard.card.id][0] | default(0) }}</td>

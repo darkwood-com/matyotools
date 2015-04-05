@@ -20,12 +20,12 @@ class ScrapperCommand extends ContainerAwareCommand
     {
         /** @var \Darkwood\HearthstonedecksBundle\Services\ScrapperHearthstonedecksService $scrapperService */
         $scrapperService = $this->getContainer()->get('hb.hearthstonedecks.scrapper');
-        $scrapperService->syncCardList();
-        //$scrapperService->syncDeckList();
+        //$scrapperService->syncCardList();
+        $scrapperService->syncDeckList();
 
         /** @var \Darkwood\HearthpwnBundle\Services\ScrapperHearthpwnService $scrapperService */
-        $scrapperService = $this->getContainer()->get('hb.hearthpwn.scrapper');
-        $scrapperService->syncCardList();
+        //$scrapperService = $this->getContainer()->get('hb.hearthpwn.scrapper');
+        //$scrapperService->syncCardList();
         //$scrapperService->syncDeckList();
     }
 }

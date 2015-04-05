@@ -20,6 +20,8 @@ services:
     hb.deck:
         class: %hb.deck.class%
         arguments: [@doctrine.orm.entity_manager]
+        calls:
+          - [ setContainer, [@service_container] ]
 
     hb.deckCard:
         class: %hb.deckCard.class%
