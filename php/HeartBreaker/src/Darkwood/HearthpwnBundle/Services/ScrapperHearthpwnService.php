@@ -198,8 +198,14 @@ class ScrapperHearthpwnService
         $crawler = $this->requestRoute('card_detail', array('slug' => $slug));
 
         $card->setName($crawler->filter('#content .details h2.caption')->first()->text());
-        $card->setText($crawler->filter('#content .details .card-info p')->first()->text());
-        $card->setFlavor($crawler->filter('#content .details .card-flavor-text p')->first()->text());
+        $textNode = $crawler->filter('#content .details .card-info p');
+        if(count($textNode)) {
+            $card->setText($textNode->text());
+        }
+        $flavorNode = $crawler->filter('#content .details .card-flavor-text p');
+        if(count($flavorNode)) {
+            $card->setFlavor($flavorNode->first()->text());
+        }
 
         $crawler
             ->filter('#content .details .infobox li')
