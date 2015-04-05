@@ -13,10 +13,6 @@ services:
         calls:
           - [ setContainer, [@service_container] ]
 
-    hb.cardUnity:
-        class: %hb.cardUnity.class%
-        arguments: [@doctrine.orm.entity_manager]
-
     hb.deck:
         class: %hb.deck.class%
         arguments: [@doctrine.orm.entity_manager]

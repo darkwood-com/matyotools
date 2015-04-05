@@ -30,8 +30,7 @@ class UserCardRepository extends EntityRepository
     public function findByUser($user, $isGolden = null)
     {
         $qb = $this->createQueryBuilder('uc')
-            ->select('uc, cu')
-            ->leftJoin('uc.card', 'cu')
+            ->select('uc')
             ->andWhere('uc.user = :user')->setParameter('user', $user)
         ;
 
@@ -45,9 +44,8 @@ class UserCardRepository extends EntityRepository
     public function findByUserAndDeck($user, $deck = null, $isGolden = null)
     {
         $qb = $this->createQueryBuilder('uc')
-            ->select('uc, cu')
-            ->leftJoin('uc.card', 'cu')
-            ->leftJoin('cu.cards', 'c')
+            ->select('uc')
+            ->leftJoin('uc.card', 'c')
             ->leftJoin('c.decks', 'dc')
             ->andWhere('uc.user = :user')->setParameter('user', $user)
         ;
@@ -80,9 +78,8 @@ class UserCardRepository extends EntityRepository
     public function findAll()
     {
         $qb = $this->createQueryBuilder('uc')
-            ->select('uc, cu, c, u')
-            ->leftJoin('uc.card', 'cu')
-            ->leftJoin('cu.cards', 'c')
+            ->select('uc, c, u')
+            ->leftJoin('uc.card', 'c')
             ->leftJoin('uc.user', 'u')
         ;
 
