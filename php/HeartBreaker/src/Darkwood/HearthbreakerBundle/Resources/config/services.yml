@@ -10,6 +10,8 @@ services:
     hb.card:
         class: %hb.card.class%
         arguments: [@doctrine.orm.entity_manager]
+        calls:
+          - [ setContainer, [@service_container] ]
 
     hb.cardUnity:
         class: %hb.cardUnity.class%

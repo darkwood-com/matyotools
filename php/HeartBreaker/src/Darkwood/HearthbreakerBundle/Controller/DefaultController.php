@@ -6,6 +6,7 @@ use Darkwood\HearthbreakerBundle\Entity\Card;
 use Darkwood\HearthbreakerBundle\Entity\Deck;
 use Darkwood\HearthbreakerBundle\Entity\DeckCard;
 use Darkwood\HearthbreakerBundle\Entity\UserCard;
+use Darkwood\HearthbreakerBundle\Services\CardService;
 use Darkwood\HearthbreakerBundle\Services\UserCardService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -110,15 +111,20 @@ class DefaultController extends Controller
 
     public function cardDetailAction($source, $slug)
     {
-        $card = $this->get('hb.card')->findBySlug($slug, $source);
+        /** @var CardService $cardService */
+        $cardService = $this->get('hb.card');
+        $card = $cardService->findBySlug($slug, $source);
 
         if (!$card) {
             throw new NotFoundHttpException();
         }
 
+        $url = $cardService->getUrl($card);
+
         return $this->render('HearthbreakerBundle:Default:cardDetail.html.twig', array(
             'nav' => 'card',
             'card' => $card,
+            'url' => $url,
         ));
     }
 

@@ -5,8 +5,9 @@ namespace Darkwood\HearthbreakerBundle\Services;
 use Darkwood\HearthbreakerBundle\Entity\Card;
 use Doctrine\ORM\EntityManager;
 use Darkwood\HearthbreakerBundle\Repository\CardRepository;
+use Symfony\Component\DependencyInjection\ContainerAware;
 
-class CardService
+class CardService extends ContainerAware
 {
     /**
      * @var EntityManager
@@ -73,5 +74,16 @@ class CardService
     public function search($search)
     {
         return $this->cardRepository->search($search);
+    }
+
+    /**
+     * @param Card $card
+     * @return string
+     */
+    public function getUrl($card)
+    {
+        /** @var \Symfony\Component\Routing\Router $router */
+        $router = $this->container->get(sprintf('hb.%s.router', $card->getSource()));
+        return $router->generate('card_detail', array('slug' => $card->getSlug()), true);
     }
 }
