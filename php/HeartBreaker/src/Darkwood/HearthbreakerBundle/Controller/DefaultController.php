@@ -43,6 +43,13 @@ class DefaultController extends Controller
         }
 
         $form = $this->createFormBuilder()
+            ->add('source', 'choice', array(
+                'choices'   => array(
+                    'hearthstonedecks' => 'Hearthstone Decks',
+                    'hearthpwn' => 'Hearthpwn',
+                ),
+                'required' => false,
+            ))
             ->add('title', 'text', array('required' => false))
             ->add('type', 'choice', array(
                 'choices'   => array(
@@ -80,7 +87,6 @@ class DefaultController extends Controller
             ->add('cost', 'integer', array('required' => false))
             ->add('attack', 'integer', array('required' => false))
             ->add('health', 'integer', array('required' => false))
-            ->add('submit', 'submit')
             ->getForm()
         ;
 
@@ -133,6 +139,13 @@ class DefaultController extends Controller
         }
 
         $form = $this->createFormBuilder()
+            ->add('source', 'choice', array(
+                'choices'   => array(
+                    'hearthstonedecks' => 'Hearthstone Decks',
+                    'hearthpwn' => 'Hearthpwn',
+                ),
+                'required' => false,
+            ))
             ->add('title', 'text', array('required' => false))
             ->add('class', 'choice', array(
                 'choices'   => array(
@@ -153,7 +166,6 @@ class DefaultController extends Controller
             ->add('buy', 'integer', array('required' => false))
             ->add('card_percent', 'integer', array('required' => false))
             ->add('buy_percent', 'integer', array('required' => false))
-            ->add('submit', 'submit')
             ->getForm()
         ;
 

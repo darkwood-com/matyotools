@@ -41,6 +41,10 @@ class CardRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('c');
 
+        if(isset($search['source']) && $search['source'] != null) {
+            $qb->andWhere('c INSTANCE OF :source')->setParameter('source', $search['source']);
+        }
+
         if (isset($search['title']) && $search['title'] != null) {
             $qb->andWhere('c.name LIKE :name')->setParameter('name', '%'.$search['title'].'%');
         }

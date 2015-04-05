@@ -48,6 +48,10 @@ class DeckRepository extends EntityRepository
             ->leftJoin('dc.card', 'c')
         ;
 
+        if(isset($search['source']) && $search['source'] != null) {
+            $qb->andWhere('c INSTANCE OF :source')->setParameter('source', $search['source']);
+        }
+
         if (isset($search['title']) && $search['title'] != null) {
             $qb->andWhere('d.name LIKE :name')->setParameter('name', '%'.$search['title'].'%');
         }

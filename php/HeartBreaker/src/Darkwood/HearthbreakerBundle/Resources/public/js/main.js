@@ -18,4 +18,8 @@ $(window).load(function() {
 		trigger: 'hover',
 		placement: 'auto'
 	});
+
+    $('form.form-auto-submit :input').on('change', function() {
+        $(this).closest('form').submit();
+    });
 });
