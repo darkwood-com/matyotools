@@ -34,7 +34,7 @@ class UserLoadCommand extends ContainerAwareCommand
             $user = $container->get('hb.user')->findOneByUsername($username);
 
             foreach ($cards as $card) {
-                $card['card'] = $container->get('hb.card')->findBySourceAndSlug('hearthstonedecks', $card['card']);
+                $card['card'] = $container->get('hb.card')->findBySlug($card['slug'], $card['source']);
 
                 /** @var \Darkwood\HearthbreakerBundle\Entity\UserCard $userCard */
                 $userCard = $userCardService->findOneByUserAndCard($user, $card['card'], $card['isGolden']);

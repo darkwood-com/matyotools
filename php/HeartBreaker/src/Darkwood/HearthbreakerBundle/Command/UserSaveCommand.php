@@ -73,9 +73,10 @@ class UserSaveCommand extends ContainerAwareCommand
             $user = $userCard->getUser();
             $card = $userCard->getCard();
             $data[$user->getUsername()][] = array(
+                'slug' => $card->getSlug(),
+                'source' => $card->getSource(),
                 'isGolden' => $userCard->getIsGolden(),
                 'quantity' => $userCard->getQuantity(),
-                'card' => $card->getSlug(),
             );
         }
 
