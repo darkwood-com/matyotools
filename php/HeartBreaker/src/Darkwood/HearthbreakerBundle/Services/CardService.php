@@ -92,6 +92,8 @@ class CardService extends ContainerAware
     /**
      * @param Card $iCard
      * @param Card $jCard
+     *
+     * @return integer
      */
     public function compare($iCard, $jCard)
     {
@@ -110,34 +112,66 @@ class CardService extends ContainerAware
     public function identify()
     {
         $cards = $this->findAll();
-
-        $id = 1;
-
-        /** @var Card $iCard */
-        $iCard = array_shift($cards);
-        while($iCard)
+        foreach($cards as $card)
         {
-            $iCard->setIdentifier(null);
+            /** @var Card $card */
+            $card->setIdentifier(null);
+        }
 
-            $keys = array();
-            foreach($cards as $key => $jCard)
+        $identifier = 1;
+
+        $leftCards = array_values($cards);
+        for($lvl = 0; $lvl < 8; $lvl++)
+        {
+            foreach($leftCards as $i => $iCard)
             {
-                $lev = $this->compare($iCard, $jCard);
-                if($lev != -1 && $lev < 3) {
-                    $keys[] = $key;
+                /** @var Card $iCard */
+                if($iCard->getIdentifier()) {
+                    unset($leftCards[$i]);
+                    continue;
+                }
+
+                $mCards = array();
+                foreach($cards as $jCard)
+                {
+                    if($iCard === $jCard) continue;
+
+                    $cmp = $this->compare($iCard, $jCard);
+                    if($cmp != -1 && $cmp < pow(2, $lvl)) {
+                        $mCards[] = $jCard;
+                    }
+                }
+
+                if(count($mCards) > 0) {
+                    $mIdentifier = null;
+                    foreach($mCards as $mCard) {
+                        /** @var Card $mCard */
+                        $cIdentifier = $mCard->getIdentifier();
+                        if(!is_null($cIdentifier)) {
+                            if($cIdentifier != $mIdentifier) {
+                                unset($leftCards[$i]);
+                                continue;
+                            }
+
+                            $mIdentifier = $cIdentifier;
+                        }
+                    }
+
+                    $cIdentifier = $identifier;
+                    if(!is_null($mIdentifier)) {
+                        $cIdentifier = $mIdentifier;
+                    } else {
+                        $identifier ++;
+                    }
+
+                    $iCard->setIdentifier($cIdentifier);
+                    foreach($mCards as $mCard) {
+                        $mCard->setIdentifier($cIdentifier);
+                    }
+
+                    unset($leftCards[$i]);
                 }
             }
-
-            if(count($keys) > 0) {
-                $iCard->setIdentifier($id);
-                foreach($keys as $key) {
-                    $cards[$key]->setIdentifier($id);
-                    unset($cards[$key]);
-                }
-                $id ++;
-            }
-
-            $iCard = array_shift($cards);
         }
 
         $this->em->flush();
