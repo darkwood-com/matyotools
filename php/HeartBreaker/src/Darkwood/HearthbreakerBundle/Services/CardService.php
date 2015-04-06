@@ -89,6 +89,24 @@ class CardService extends ContainerAware
         return $router->generate('card_detail', array('slug' => $card->getSlug()), true);
     }
 
+    /**
+     * @param Card $iCard
+     * @param Card $jCard
+     */
+    public function compare($iCard, $jCard)
+    {
+        $names = array_map(function($card) {
+            if($card instanceof CardHearthstonedecks) {
+                return $card->getNameEn();
+            } else if($card instanceof CardHearthpwn) {
+                return $card->getName();
+            }
+            return $card->getName();
+        }, array($iCard, $jCard));
+
+        return levenshtein($names[0], $names[1]);
+    }
+
     public function identify()
     {
         $cards = $this->findAll();
@@ -104,16 +122,7 @@ class CardService extends ContainerAware
             $keys = array();
             foreach($cards as $key => $jCard)
             {
-                $names = array_map(function($card) {
-                    if($card instanceof CardHearthstonedecks) {
-                        return $card->getNameEn();
-                    } else if($card instanceof CardHearthpwn) {
-                        return $card->getName();
-                    }
-                    return $card->getName();
-                }, array($iCard, $jCard));
-
-                $lev = levenshtein($names[0], $names[1]);
+                $lev = $this->compare($iCard, $jCard);
                 if($lev != -1 && $lev < 3) {
                     $keys[] = $key;
                 }
