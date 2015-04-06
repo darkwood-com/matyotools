@@ -18,7 +18,8 @@ class ScrapperCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $limit = 1000;
+
+        $limit = 50;
 
         /** @var \Darkwood\HearthstonedecksBundle\Services\ScrapperHearthstonedecksService $scrapperService */
         $scrapperService = $this->getContainer()->get('hb.hearthstonedecks.scrapper');
@@ -29,5 +30,7 @@ class ScrapperCommand extends ContainerAwareCommand
         $scrapperService = $this->getContainer()->get('hb.hearthpwn.scrapper');
         $scrapperService->syncCardList();
         $scrapperService->syncDeckList($limit);
+
+        $this->getContainer()->get('hb.card')->identify();
     }
 }

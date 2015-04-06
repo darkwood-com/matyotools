@@ -3,6 +3,8 @@
 namespace Darkwood\HearthbreakerBundle\Services;
 
 use Darkwood\HearthbreakerBundle\Entity\Card;
+use Darkwood\HearthpwnBundle\Entity\CardHearthpwn;
+use Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks;
 use Doctrine\ORM\EntityManager;
 use Darkwood\HearthbreakerBundle\Repository\CardRepository;
 use Symfony\Component\DependencyInjection\ContainerAware;
@@ -85,5 +87,50 @@ class CardService extends ContainerAware
         /** @var \Symfony\Component\Routing\Router $router */
         $router = $this->container->get(sprintf('hb.%s.router', $card->getSource()));
         return $router->generate('card_detail', array('slug' => $card->getSlug()), true);
+    }
+
+    public function identify()
+    {
+        $cards = $this->findAll();
+
+        $id = 1;
+
+        /** @var Card $iCard */
+        $iCard = array_shift($cards);
+        while($iCard)
+        {
+            $iCard->setIdentifier(null);
+
+            $keys = array();
+            foreach($cards as $key => $jCard)
+            {
+                $names = array_map(function($card) {
+                    if($card instanceof CardHearthstonedecks) {
+                        return $card->getNameEn();
+                    } else if($card instanceof CardHearthpwn) {
+                        return $card->getName();
+                    }
+                    return $card->getName();
+                }, array($iCard, $jCard));
+
+                $lev = levenshtein($names[0], $names[1]);
+                if($lev != -1 && $lev < 3) {
+                    $keys[] = $key;
+                }
+            }
+
+            if(count($keys) > 0) {
+                $iCard->setIdentifier($id);
+                foreach($keys as $key) {
+                    $cards[$key]->setIdentifier($id);
+                    unset($cards[$key]);
+                }
+                $id ++;
+            }
+
+            $iCard = array_shift($cards);
+        }
+
+        $this->em->flush();
     }
 }
