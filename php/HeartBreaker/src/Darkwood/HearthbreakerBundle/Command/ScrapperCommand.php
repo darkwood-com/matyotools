@@ -18,14 +18,16 @@ class ScrapperCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $limit = 1000;
+
         /** @var \Darkwood\HearthstonedecksBundle\Services\ScrapperHearthstonedecksService $scrapperService */
         $scrapperService = $this->getContainer()->get('hb.hearthstonedecks.scrapper');
         $scrapperService->syncCardList();
-        //$scrapperService->syncDeckList();
+        $scrapperService->syncDeckList($limit);
 
         /** @var \Darkwood\HearthpwnBundle\Services\ScrapperHearthpwnService $scrapperService */
         $scrapperService = $this->getContainer()->get('hb.hearthpwn.scrapper');
         $scrapperService->syncCardList();
-        //$scrapperService->syncDeckList();
+        $scrapperService->syncDeckList($limit);
     }
 }

@@ -27,19 +27,33 @@
 					<tr>
 						<th>Title</th>
 						<th>Buy</th>
-						{#<th>Note</th>#}
 						<th>Card %</th>
 						<th>Buy %</th>
-					</tr>
+                        <th>Note</th>
+                        <th>Last update</th>
+                    </tr>
 				</thead>
 				<tbody>
 				{% for deck in decks %}
 					<tr>
 						<td><a href="{{ path('deck_detail', {'source': deck.deck.source, 'slug': deck.deck.slug}) }}">{{ deck.deck.name }}</a></td>
 						<td>{{ deck.deck.buy }}</td>
-						{#<td>{{ deck.deck.voteUp }} - {{ deck.deck.voteDown }}</td>#}
 						<td>{{ deck.cardPercent }} %</td>
 						<td>{{ deck.buyPercent }} %</td>
+                        <td>
+                        {% if deck.deck.source == "hearthstonedecks" %}
+                            {{ deck.deck.voteUp }} - {{ deck.deck.voteDown }}
+                        {% elseif deck.deck.source == "hearthpwn" %}
+                            {{ deck.deck.rating }}
+                        {% endif %}
+                        </td>
+                        <td>
+                        {% if deck.deck.source == "hearthstonedecks" %}
+                            {{ deck.deck.updatedAt | date('Y-m-d') }}
+                        {% elseif deck.deck.source == "hearthpwn" %}
+                            {{ deck.deck.updatedAt | date('Y-m-d') }}
+                        {% endif %}
+                        </td>
 					</tr>
 				{% endfor %}
 				</tbody>

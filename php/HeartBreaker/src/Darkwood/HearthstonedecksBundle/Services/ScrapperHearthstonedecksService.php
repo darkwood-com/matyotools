@@ -143,9 +143,11 @@ class ScrapperHearthstonedecksService
         } while ($hasNext && ($this->cardService->count('hearthstonedecks') < $cardsNumber || $force));
     }
 
-    public function syncDeckList($force = false)
+    public function syncDeckList($limit = null, $force = false)
     {
         $page = 1;
+        $deckCount = 0;
+
         do {
             $crawler = $this->requestRoute('deck_list', array(), array(
                 'etape' => 'RechercheDecks',
@@ -159,19 +161,32 @@ class ScrapperHearthstonedecksService
                 'extension' => 'undefined',
             ));
 
-            $crawler
+            $slugs = $crawler
                 ->filter('.nom_deck > a')
-                ->each(function (Crawler $node) use ($force) {
+                ->each(function (Crawler $node) {
                     try {
                         $href = $node->attr('href');
                         $match = $this->router->match($href);
                         if ($match['_route'] == 'deck_detail') {
-                            $this->syncDeck($match['slug'], $force);
+                            return $match['slug'];
                         }
                     } catch (ResourceNotFoundException $e) {
                     } catch (MethodNotAllowedException $e) {
                     }
+
+                    return false;
                 });
+            $slugs = array_filter($slugs);
+            foreach($slugs as $slug)
+            {
+                if($limit && $deckCount >= $limit)
+                {
+                    return $deckCount;
+                }
+
+                $this->syncDeck($slug, $force);
+                $deckCount ++;
+            }
 
             $hasNext = $crawler->filter('.pagination')->children()
                     ->reduce(function (Crawler $node) {
@@ -180,6 +195,8 @@ class ScrapperHearthstonedecksService
 
             $page += 1;
         } while ($hasNext);
+
+        return $deckCount;
     }
 
     public function syncCard($slug, $force = false)

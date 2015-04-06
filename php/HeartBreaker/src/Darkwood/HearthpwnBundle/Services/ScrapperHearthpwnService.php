@@ -145,25 +145,40 @@ class ScrapperHearthpwnService
         } while ($hasNext);
     }
 
-    public function syncDeckList($force = false)
+    public function syncDeckList($limit = null, $force = false)
     {
         $page = 1;
+        $deckCount = 0;
+
         do {
             $crawler = $this->requestRoute('deck_list', array('page' => $page));
 
-            $crawler
+            $slugs = $crawler
                 ->filter('#content table.listing .col-name a')
-                ->each(function (Crawler $node) use (&$slugs, $force) {
+                ->each(function (Crawler $node) {
                     try {
                         $href = $node->attr('href');
                         $match = $this->router->match($href);
                         if ($match['_route'] == 'deck_detail') {
-                            $this->syncDeck($match['slug'], $force);
+                            return $match['slug'];
                         }
                     } catch (ResourceNotFoundException $e) {
                     } catch (MethodNotAllowedException $e) {
                     }
+
+                    return false;
                 });
+            $slugs = array_filter($slugs);
+            foreach($slugs as $slug)
+            {
+                if($limit && $deckCount >= $limit)
+                {
+                    return $deckCount;
+                }
+
+                $this->syncDeck($slug, $force);
+                $deckCount ++;
+            }
 
             $hasNext = $crawler->filter('#content .paging-list')->children()
                 ->reduce(function (Crawler $node) {
@@ -172,6 +187,8 @@ class ScrapperHearthpwnService
 
             $page += 1;
         } while ($hasNext);
+
+        return $deckCount;
     }
 
     public function syncCard($slug, $force = false)
