@@ -168,11 +168,13 @@ class DefaultController extends Controller
                 ),
                 'required' => false,
             ))
-            ->add('vote_up', 'integer', array('required' => false))
-            ->add('vote_down', 'integer', array('required' => false))
             ->add('buy', 'integer', array('required' => false))
             ->add('card_percent', 'integer', array('required' => false))
             ->add('buy_percent', 'integer', array('required' => false))
+            ->add('vote_up', 'integer', array('required' => false))
+            ->add('vote_down', 'integer', array('required' => false))
+            ->add('rating', 'integer', array('required' => false))
+            ->add('since', 'integer', array('required' => false))
             ->getForm()
         ;
 

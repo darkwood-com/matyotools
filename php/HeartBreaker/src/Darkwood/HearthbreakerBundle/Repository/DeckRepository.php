@@ -3,6 +3,7 @@
 namespace Darkwood\HearthbreakerBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr;
 
 /**
  * DeckRepository.
@@ -49,19 +50,58 @@ class DeckRepository extends EntityRepository
         ;
 
         if(isset($search['source']) && $search['source'] != null) {
-            $qb->andWhere('c INSTANCE OF :source')->setParameter('source', $search['source']);
+            $qb->andWhere('d INSTANCE OF :source')->setParameter('source', $search['source']);
         }
 
         if (isset($search['title']) && $search['title'] != null) {
             $qb->andWhere('d.name LIKE :name')->setParameter('name', '%'.$search['title'].'%');
         }
 
+        $sources = array();
         if (isset($search['vote_up']) && $search['vote_up'] != null) {
-            $qb->andWhere('d.voteUp > :vote_up')->setParameter('vote_up', $search['vote_up']);
+            $sources['hearthstonedecks'][] = 'd_hearthstonedecks.voteUp >= :vote_up';
+            $qb->setParameter('vote_up', $search['vote_up']);
         }
 
         if (isset($search['vote_down']) && $search['vote_down'] != null) {
-            $qb->andWhere('d.voteDown > :vote_down')->setParameter('vote_down', $search['vote_down']);
+            $sources['hearthstonedecks'][] = 'd_hearthstonedecks.voteDown >= :vote_down';
+            $qb->setParameter('vote_down', $search['vote_down']);
+        }
+
+        if (isset($search['rating']) && $search['rating'] != null) {
+            $sources['hearthpwn'][] = 'd_hearthpwn.rating >= :rating';
+            $qb->setParameter('rating', $search['rating']);
+        }
+
+        if (isset($search['since']) && $search['since'] != null) {
+            $search['since'] = new \DateTime($search['since'] . ' days ago');
+            $sources['hearthstonedecks'][] = 'd_hearthstonedecks.updatedAt >= :since';
+            $sources['hearthpwn'][] = 'd_hearthpwn.updatedAt >= :since';
+            $qb->setParameter('since', $search['since']);
+        }
+
+        if(count($sources) > 0) {
+            $sources = array_map(function($exprs) {
+                return array_reduce($exprs, function($carry , $item) {
+                    /** @var Expr\Composite $carry */
+                    $carry->add($item);
+                    return $carry;
+                }, new Expr\Andx());
+            }, $sources);
+
+            $or = new Expr\Orx();
+            foreach($sources as $source => $expr)
+            {
+                $souceClass = $this->getClassMetadata()->discriminatorMap[$source];
+                $qb->leftJoin($souceClass, 'd_'.$source, 'WITH', 'd_'.$source.'.id = d.id');
+
+                /** @var Expr\Composite $expr */
+                //$expr->add('d INSTANCE OF :source_filter');
+                //$qb->setParameter('source_filter', $source);
+                $or->add($expr);
+            }
+
+            $qb->andWhere($or);
         }
 
         return $qb->getQuery()->getResult();
