@@ -1790,6 +1790,26 @@
 			"source": "hearthstonedecks",
 			"isGolden": true,
 			"quantity": 1
+		},{
+			"slug": "druidesse-de-la-flamme",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 2
+		},{
+			"slug": "chef-du-gang-des-diablotins",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 2
+		},{
+			"slug": "technicienne-de-laile-noire",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 2
+		},{
+			"slug": "chambellan-executus",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 1
 		}
 	]
 }
