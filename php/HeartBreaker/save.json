@@ -1810,6 +1810,16 @@
 			"source": "hearthstonedecks",
 			"isGolden": false,
 			"quantity": 1
+		},{
+			"slug": "lanceur-de-hache",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 2
+		},{
+			"slug": "horion-de-lave",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 2
 		}
 	]
 }
