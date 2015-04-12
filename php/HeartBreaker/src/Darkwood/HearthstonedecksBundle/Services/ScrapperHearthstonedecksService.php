@@ -21,9 +21,9 @@ use Symfony\Component\Routing\Router;
 class ScrapperHearthstonedecksService
 {
     /**
-     * @var Cache
+     * @var Client
      */
-    private $cache;
+    private $client;
 
     /**
      * @var Router
@@ -45,9 +45,9 @@ class ScrapperHearthstonedecksService
      */
     private $deckCardService;
 
-    public function __construct(Cache $cache, Router $router, CardService $cardService, DeckService $deckService, DeckCardService $deckCardService)
+    public function __construct(Client $client, Router $router, CardService $cardService, DeckService $deckService, DeckCardService $deckCardService)
     {
-        $this->cache = $cache;
+        $this->client = $client;
         $this->router = $router;
         $this->cardService = $cardService;
         $this->deckService = $deckService;
@@ -76,41 +76,8 @@ class ScrapperHearthstonedecksService
     private function requestRoute($name, $parameters = array(), $data = null)
     {
         $url = $this->router->generate($name, $parameters, true);
-        $client = $this->getClient($url, $data);
 
-        return $data ? $client->request('POST', $url, $data) : $client->request('GET', $url);
-    }
-
-    private function getClient()
-    {
-        static $client = null;
-
-        if (!$client) {
-            $client = new Client();
-
-            $guzzle = $client->getClient();
-            $guzzle->setDefaultOption('debug', true);
-
-            CacheSubscriber::attach($guzzle, array(
-                'storage' => new CacheStorage($this->cache),
-                'validate' => false,
-                'can_cache' => function () {
-                    return true;
-                },
-            ));
-
-            $guzzle->getEmitter()->on(
-                'complete',
-                function (\GuzzleHttp\Event\CompleteEvent $event) {
-                    $response = $event->getResponse();
-                    $response->setHeader('Cache-Control', 'max-age=604800'); //1 week
-                    //$response->setHeader('Cache-Control', 'max-age=86400'); //1 day
-                },
-                'first'
-            );
-        }
-
-        return $client;
+        return $data ? $this->client->request('POST', $url, $data) : $this->client->request('GET', $url);
     }
 
     public function syncCardList($force = false)
@@ -237,7 +204,7 @@ class ScrapperHearthstonedecksService
 
         if (!$card->getImageName()) {
             $imageSrc = trim($crawler->filter('#visuelcarte')->attr('src'));
-            $guzzle = $this->getClient()->getClient();
+            $guzzle = $this->client->getClient();
             $response = $guzzle->get($imageSrc);
             $filePath = tempnam(sys_get_temp_dir(), 'HB_');
             file_put_contents($filePath, $response->getBody());

@@ -5,6 +5,7 @@ parameters:
     hb.deckCard.class: Darkwood\HearthbreakerBundle\Services\DeckCardService
     hb.userCard.class: Darkwood\HearthbreakerBundle\Services\UserCardService
     bh.namer_card.class: Darkwood\HearthbreakerBundle\Naming\CardNamer
+    bh.client.class: Darkwood\HearthbreakerBundle\Goutte\Client
 
 services:
     hb.card:
@@ -29,3 +30,7 @@ services:
 
     bh.namer_card:
         class: %bh.namer_card.class%
+
+    hb.client:
+        class: %bh.client.class%
+        arguments: [@aequasi_cache.instance.scrapper, 604800]

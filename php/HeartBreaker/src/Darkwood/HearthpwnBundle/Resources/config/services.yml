@@ -8,7 +8,7 @@ services:
     hb.hearthpwn.scrapper:
         class: %hb.hearthpwn.scrapper.class%
         arguments:
-          - @aequasi_cache.instance.scrapper
+          - @hb.client
           - @hb.hearthpwn.router
           - @hb.card
           - @hb.deck
