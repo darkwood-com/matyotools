@@ -100,11 +100,15 @@ class DefaultController extends Controller
         }
 
         $url = $cardService->getUrl($card);
+        $buy = $cardService->getBuy($card);
+        $sell = $cardService->getSell($card);
 
         return $this->render('HearthbreakerBundle:Default:cardDetail.html.twig', array(
             'nav' => 'card',
             'card' => $card,
             'url' => $url,
+            'buy' => $buy,
+            'sell' => $sell,
         ));
     }
 
