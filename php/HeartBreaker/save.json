@@ -1825,6 +1825,11 @@
 			"source": "hearthstonedecks",
 			"isGolden": true,
 			"quantity": 1
+		},{
+			"slug": "boxeur-de-lombre",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 1
 		}
 	]
 }
