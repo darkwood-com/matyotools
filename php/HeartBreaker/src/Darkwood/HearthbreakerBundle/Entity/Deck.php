@@ -175,42 +175,4 @@ class Deck
     {
         return $this->cards;
     }
-
-    public function getBuy()
-    {
-        $cristal = 0;
-
-        foreach ($this->cards as $deckCard) {
-            /* @var DeckCard $deckCard */
-            $cristal += $deckCard->getCard()->getBuy() * $deckCard->getQuantity();
-        }
-
-        return $cristal;
-    }
-
-    public function getSell()
-    {
-        $cristal = 0;
-
-        foreach ($this->cards as $deckCard) {
-            /* @var DeckCard $deckCard */
-            $cristal += $deckCard->getCard()->getSell() * $deckCard->getQuantity();
-        }
-
-        return $cristal;
-    }
-
-    public function getClass()
-    {
-        $classes = array_map(function ($deckCard) {
-            /* @var DeckCard $deckCard */
-            return $deckCard->getCard()->getPlayerClass();
-        }, $this->cards->toArray());
-        $classes = array_filter($classes, function ($class) {
-            return $class != 'Neutre';
-        });
-        $classes = array_unique($classes);
-
-        return current($classes);
-    }
 }

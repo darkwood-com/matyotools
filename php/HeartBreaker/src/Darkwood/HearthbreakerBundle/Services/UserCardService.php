@@ -80,4 +80,24 @@ class UserCardService
     {
         return $this->userCardRepository->findAll();
     }
+
+    public function cardQuantity($user, $deck = null)
+    {
+        $cardsQuantity = array();
+        $userCards = $this->findByUserAndDeck($user, $deck);
+        foreach ($userCards as $userCard) {
+            /* @var UserCard $userCard */
+            $id = $userCard->getCard()->getId();
+
+            if (!isset($cardsQuantity[$id])) {
+                $cardsQuantity[$id] = array('0' => 0, '1' => 0, 'total' => 0);
+            }
+
+            $isGolden = $userCard->getIsGolden() ? '1' : '0';
+            $cardsQuantity[$id][$isGolden] = $userCard->getQuantity();
+            $cardsQuantity[$id]['total'] += $userCard->getQuantity();
+        }
+
+        return $cardsQuantity;
+    }
 }

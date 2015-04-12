@@ -176,4 +176,54 @@ class CardService extends ContainerAware
 
         $this->em->flush();
     }
+
+    /**
+     * @param Card $card
+     * @param bool $golden
+     * @return int
+     */
+    public function getBuy($card, $golden = false)
+    {
+        switch ($card->getRarity()) {
+            case 'Légendaire':
+                return $golden ? 3200 : 1600;
+                break;
+            case 'Epique':
+                return $golden ? 1600 : 400;
+                break;
+            case 'Rare':
+                return $golden ? 800 : 100;
+                break;
+            case 'Commune':
+                return $golden ? 400 : 40;
+                break;
+        }
+
+        return 0;
+    }
+
+    /**
+     * @param Card $card
+     * @param bool $golden
+     * @return int
+     */
+    public function getSell($card, $golden = false)
+    {
+        switch ($card->getRarity()) {
+            case 'Légendaire':
+                return $golden ? 1600 : 400;
+                break;
+            case 'Epique':
+                return $golden ? 400 : 100;
+                break;
+            case 'Rare':
+                return $golden ? 100 : 20;
+                break;
+            case 'Commune':
+                return $golden ? 50 : 5;
+                break;
+        }
+
+        return 0;
+    }
 }
