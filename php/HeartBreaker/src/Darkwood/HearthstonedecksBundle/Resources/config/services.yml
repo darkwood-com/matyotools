@@ -2,7 +2,6 @@ parameters:
     hb.hearthstonedecks.scrapper.class: Darkwood\HearthstonedecksBundle\Services\ScrapperHearthstonedecksService
     hb.hearthstonedecks.router.class: Symfony\Component\Routing\Router
     hb.hearthstonedecks.router.request_context.class: Symfony\Component\Routing\RequestContext
-    hb.hearthstonedecks.routing.loader.class: Symfony\Component\Routing\Loader\YamlFileLoader
 
 services:
     hb.hearthstonedecks.scrapper:
@@ -17,7 +16,7 @@ services:
     hb.hearthstonedecks.router:
         class: %hb.hearthstonedecks.router.class%
         arguments:
-          - @hb.hearthstonedecks.routing.loader
+          - @hb.routing.loader
           - "%kernel.root_dir%/../src/Darkwood/HearthstonedecksBundle/Resources/config/host_routing.yml"
           - []
           - @hb.hearthstonedecks.router.request_context
@@ -25,7 +24,3 @@ services:
     hb.hearthstonedecks.router.request_context:
         class: %hb.hearthstonedecks.router.request_context.class%
         arguments: ["", "GET", "www.hearthstone-decks.com"]
-
-    hb.hearthstonedecks.routing.loader:
-        class: %routing.loader.yml.class%
-        arguments: [@file_locator]

@@ -13,7 +13,7 @@ class Client extends \Goutte\Client
         parent::__construct();
 
         $guzzle = $this->getClient();
-        $guzzle->setDefaultOption('debug', true);
+        //$guzzle->setDefaultOption('debug', true);
 
         CacheSubscriber::attach($guzzle, array(
             'storage' => new CacheStorage($cache),
