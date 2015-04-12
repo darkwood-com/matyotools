@@ -294,4 +294,10 @@ class ScrapperHearthpwnService
 
         return $deck;
     }
+
+    public function sync($limit = null)
+    {
+        $this->syncCardList();
+        $this->syncDeckList($limit);
+    }
 }
