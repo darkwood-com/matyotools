@@ -8,7 +8,7 @@ use Doctrine\Common\Cache\Cache;
 
 class Client extends \Goutte\Client
 {
-    function __construct(Cache $cache, $ttl)
+    public function __construct(Cache $cache, $ttl)
     {
         parent::__construct();
 

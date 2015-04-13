@@ -34,7 +34,7 @@ class DeckRepository extends EntityRepository
             ->orderBy('c.cost')
         ;
 
-        if($source) {
+        if ($source) {
             $qb->andWhere('d INSTANCE OF :source')->setParameter('source', $source);
         }
 
@@ -49,7 +49,7 @@ class DeckRepository extends EntityRepository
             ->leftJoin('dc.card', 'c')
         ;
 
-        if(isset($search['source']) && $search['source'] != null) {
+        if (isset($search['source']) && $search['source'] != null) {
             $qb->andWhere('d INSTANCE OF :source')->setParameter('source', $search['source']);
         }
 
@@ -74,28 +74,28 @@ class DeckRepository extends EntityRepository
         }
 
         if (isset($search['since']) && $search['since'] != null) {
-            $search['since'] = new \DateTime($search['since'] . ' days ago');
+            $search['since'] = new \DateTime($search['since'].' days ago');
             $sources['hearthstonedecks'][] = 'd_hearthstonedecks.updatedAt >= :since';
             $sources['hearthpwn'][] = 'd_hearthpwn.updatedAt >= :since';
             $qb->setParameter('since', $search['since']);
         }
 
-        if(count($sources) > 0) {
-            $sources = array_map(function($exprs) {
-                return array_reduce($exprs, function($carry , $item) {
-                    /** @var Expr\Composite $carry */
+        if (count($sources) > 0) {
+            $sources = array_map(function ($exprs) {
+                return array_reduce($exprs, function ($carry, $item) {
+                    /* @var Expr\Composite $carry */
                     $carry->add($item);
+
                     return $carry;
                 }, new Expr\Andx());
             }, $sources);
 
             $or = new Expr\Orx();
-            foreach($sources as $source => $expr)
-            {
+            foreach ($sources as $source => $expr) {
                 $souceClass = $this->getClassMetadata()->discriminatorMap[$source];
                 $qb->leftJoin($souceClass, 'd_'.$source, 'WITH', 'd_'.$source.'.id = d.id');
 
-                /** @var Expr\Composite $expr */
+                /* @var Expr\Composite $expr */
                 //$expr->add('d INSTANCE OF :source_filter');
                 //$qb->setParameter('source_filter', $source);
                 $or->add($expr);

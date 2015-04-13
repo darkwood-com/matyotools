@@ -4,12 +4,11 @@ namespace Darkwood\HearthbreakerBundle\Naming;
 
 use Darkwood\HearthbreakerBundle\Entity\Card;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-
 use Vich\UploaderBundle\Mapping\PropertyMapping;
 use Vich\UploaderBundle\Naming\NamerInterface;
 
 /**
- * CardNamer
+ * CardNamer.
  */
 class CardNamer implements NamerInterface
 {
@@ -20,10 +19,10 @@ class CardNamer implements NamerInterface
     {
         $file = $mapping->getFile($object);
 
-        /** @var $file UploadedFile */
+        /* @var $file UploadedFile */
         $name = $file->getClientOriginalName();
 
-        if($object instanceof Card) {
+        if ($object instanceof Card) {
             $name = $object->getSource().'-'.$object->getSlug();
         }
 
@@ -46,6 +45,6 @@ class CardNamer implements NamerInterface
             return $extension;
         }
 
-        return null;
+        return;
     }
 }

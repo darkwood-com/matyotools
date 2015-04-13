@@ -15,24 +15,24 @@ class UserCardService
      */
     private $em;
 
-	/**
-	 * @var CacheService
-	 */
-	private $cacheService;
+    /**
+     * @var CacheService
+     */
+    private $cacheService;
 
     /**
      * @var UserCardRepository
      */
     private $userCardRepository;
 
-	/**
-	 * @param EntityManager $em
-	 * @param CacheService $cacheService
-	 */
+    /**
+     * @param EntityManager $em
+     * @param CacheService  $cacheService
+     */
     public function __construct(EntityManager $em, CacheService $cacheService)
     {
         $this->em = $em;
-		$this->cacheService = $cacheService;
+        $this->cacheService = $cacheService;
         $this->userCardRepository = $em->getRepository('HearthbreakerBundle:UserCard');
     }
 
@@ -90,32 +90,33 @@ class UserCardService
         return $this->userCardRepository->findAll();
     }
 
-	/**
-	 * @param User $user
-	 * @param Deck|null $deck
-	 * @return mixed
-	 */
+    /**
+     * @param User      $user
+     * @param Deck|null $deck
+     *
+     * @return mixed
+     */
     public function cardQuantity($user, $deck = null)
     {
-		$key = implode('-', array('user-card-quantity', $user->getId()));
+        $key = implode('-', array('user-card-quantity', $user->getId()));
 
-		return $this->cacheService->fetch($key, function() use ($user, $deck) {
-			$cardsQuantity = array();
-			$userCards = $this->findByUserAndDeck($user, $deck);
-			foreach ($userCards as $userCard) {
-				/* @var UserCard $userCard */
-				$id = $userCard->getCard()->getId();
+        return $this->cacheService->fetch($key, function () use ($user, $deck) {
+            $cardsQuantity = array();
+            $userCards = $this->findByUserAndDeck($user, $deck);
+            foreach ($userCards as $userCard) {
+                /* @var UserCard $userCard */
+                $id = $userCard->getCard()->getId();
 
-				if (!isset($cardsQuantity[$id])) {
-					$cardsQuantity[$id] = array('0' => 0, '1' => 0, 'total' => 0);
-				}
+                if (!isset($cardsQuantity[$id])) {
+                    $cardsQuantity[$id] = array('0' => 0, '1' => 0, 'total' => 0);
+                }
 
-				$isGolden = $userCard->getIsGolden() ? '1' : '0';
-				$cardsQuantity[$id][$isGolden] = $userCard->getQuantity();
-				$cardsQuantity[$id]['total'] += $userCard->getQuantity();
-			}
+                $isGolden = $userCard->getIsGolden() ? '1' : '0';
+                $cardsQuantity[$id][$isGolden] = $userCard->getQuantity();
+                $cardsQuantity[$id]['total'] += $userCard->getQuantity();
+            }
 
-			return $cardsQuantity;
-		}, 'user');
+            return $cardsQuantity;
+        }, 'user');
     }
 }

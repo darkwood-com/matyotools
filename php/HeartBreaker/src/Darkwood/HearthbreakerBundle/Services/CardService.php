@@ -16,24 +16,24 @@ class CardService extends ContainerAware
      */
     private $em;
 
-	/**
-	 * @var CacheService
-	 */
-	private $cacheService;
+    /**
+     * @var CacheService
+     */
+    private $cacheService;
 
     /**
      * @var CardRepository
      */
     private $cardRepository;
 
-	/**
-	 * @param EntityManager $em
-	 * @param CacheService $cacheService
-	 */
+    /**
+     * @param EntityManager $em
+     * @param CacheService  $cacheService
+     */
     public function __construct(EntityManager $em, CacheService $cacheService)
     {
         $this->em = $em;
-		$this->cacheService = $cacheService;
+        $this->cacheService = $cacheService;
         $this->cardRepository = $em->getRepository('HearthbreakerBundle:Card');
     }
 
@@ -87,12 +87,14 @@ class CardService extends ContainerAware
 
     /**
      * @param Card $card
+     *
      * @return string
      */
     public function getUrl($card)
     {
         /** @var \Symfony\Component\Routing\Router $router */
         $router = $this->container->get(sprintf('hb.%s.router', $card->getSource()));
+
         return $router->generate('card_detail', array('slug' => $card->getSlug()), true);
     }
 
@@ -100,16 +102,17 @@ class CardService extends ContainerAware
      * @param Card $iCard
      * @param Card $jCard
      *
-     * @return integer
+     * @return int
      */
     public function compare($iCard, $jCard)
     {
-        $names = array_map(function($card) {
-            if($card instanceof CardHearthstonedecks) {
+        $names = array_map(function ($card) {
+            if ($card instanceof CardHearthstonedecks) {
                 return $card->getNameEn();
-            } else if($card instanceof CardHearthpwn) {
+            } elseif ($card instanceof CardHearthpwn) {
                 return $card->getName();
             }
+
             return $card->getName();
         }, array($iCard, $jCard));
 
@@ -119,43 +122,41 @@ class CardService extends ContainerAware
     public function identify()
     {
         $cards = $this->findAll();
-        foreach($cards as $card)
-        {
-            /** @var Card $card */
+        foreach ($cards as $card) {
+            /* @var Card $card */
             $card->setIdentifier(null);
         }
 
         $identifier = 1;
 
         $leftCards = array_values($cards);
-        for($lvl = 0; $lvl < 8; $lvl++)
-        {
-            foreach($leftCards as $i => $iCard)
-            {
+        for ($lvl = 0; $lvl < 8; $lvl++) {
+            foreach ($leftCards as $i => $iCard) {
                 /** @var Card $iCard */
-                if($iCard->getIdentifier()) {
+                if ($iCard->getIdentifier()) {
                     unset($leftCards[$i]);
                     continue;
                 }
 
                 $mCards = array();
-                foreach($cards as $jCard)
-                {
-                    if($iCard === $jCard) continue;
+                foreach ($cards as $jCard) {
+                    if ($iCard === $jCard) {
+                        continue;
+                    }
 
                     $cmp = $this->compare($iCard, $jCard);
-                    if($cmp != -1 && $cmp < $lvl) {
+                    if ($cmp != -1 && $cmp < $lvl) {
                         $mCards[] = $jCard;
                     }
                 }
 
-                if(count($mCards) > 0) {
+                if (count($mCards) > 0) {
                     $mIdentifier = null;
-                    foreach($mCards as $mCard) {
-                        /** @var Card $mCard */
+                    foreach ($mCards as $mCard) {
+                        /* @var Card $mCard */
                         $cIdentifier = $mCard->getIdentifier();
-                        if(!is_null($cIdentifier)) {
-                            if($cIdentifier != $mIdentifier) {
+                        if (!is_null($cIdentifier)) {
+                            if ($cIdentifier != $mIdentifier) {
                                 unset($leftCards[$i]);
                                 continue;
                             }
@@ -165,14 +166,14 @@ class CardService extends ContainerAware
                     }
 
                     $cIdentifier = $identifier;
-                    if(!is_null($mIdentifier)) {
+                    if (!is_null($mIdentifier)) {
                         $cIdentifier = $mIdentifier;
                     } else {
                         $identifier ++;
                     }
 
                     $iCard->setIdentifier($cIdentifier);
-                    foreach($mCards as $mCard) {
+                    foreach ($mCards as $mCard) {
                         $mCard->setIdentifier($cIdentifier);
                     }
 
@@ -187,58 +188,60 @@ class CardService extends ContainerAware
     /**
      * @param Card $card
      * @param bool $golden
+     *
      * @return int
      */
     public function getBuy($card, $golden = false)
     {
-		$key = implode('-', array('card-buy', $card->getSource(), $card->getSlug()));
+        $key = implode('-', array('card-buy', $card->getSource(), $card->getSlug()));
 
-		return $this->cacheService->fetch($key, function() use ($card, $golden) {
-			switch ($card->getRarity()) {
-				case 'Légendaire':
-					return $golden ? 3200 : 1600;
-					break;
-				case 'Epique':
-					return $golden ? 1600 : 400;
-					break;
-				case 'Rare':
-					return $golden ? 800 : 100;
-					break;
-				case 'Commune':
-					return $golden ? 400 : 40;
-					break;
-			}
+        return $this->cacheService->fetch($key, function () use ($card, $golden) {
+            switch ($card->getRarity()) {
+                case 'Légendaire':
+                    return $golden ? 3200 : 1600;
+                    break;
+                case 'Epique':
+                    return $golden ? 1600 : 400;
+                    break;
+                case 'Rare':
+                    return $golden ? 800 : 100;
+                    break;
+                case 'Commune':
+                    return $golden ? 400 : 40;
+                    break;
+            }
 
-			return 0;
-		}, 'card');
+            return 0;
+        }, 'card');
     }
 
     /**
      * @param Card $card
      * @param bool $golden
+     *
      * @return int
      */
     public function getSell($card, $golden = false)
     {
-		$key = implode('-', array('card-sell', $card->getSource(), $card->getSlug()));
+        $key = implode('-', array('card-sell', $card->getSource(), $card->getSlug()));
 
-		return $this->cacheService->fetch($key, function() use ($card, $golden) {
-			switch ($card->getRarity()) {
-				case 'Légendaire':
-					return $golden ? 1600 : 400;
-					break;
-				case 'Epique':
-					return $golden ? 400 : 100;
-					break;
-				case 'Rare':
-					return $golden ? 100 : 20;
-					break;
-				case 'Commune':
-					return $golden ? 50 : 5;
-					break;
-			}
+        return $this->cacheService->fetch($key, function () use ($card, $golden) {
+            switch ($card->getRarity()) {
+                case 'Légendaire':
+                    return $golden ? 1600 : 400;
+                    break;
+                case 'Epique':
+                    return $golden ? 400 : 100;
+                    break;
+                case 'Rare':
+                    return $golden ? 100 : 20;
+                    break;
+                case 'Commune':
+                    return $golden ? 50 : 5;
+                    break;
+            }
 
-			return 0;
-		}, 'card');
+            return 0;
+        }, 'card');
     }
 }

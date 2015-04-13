@@ -15,10 +15,10 @@ class DeckService extends ContainerAware
      */
     private $em;
 
-	/**
-	 * @var CacheService
-	 */
-	private $cacheService;
+    /**
+     * @var CacheService
+     */
+    private $cacheService;
 
     /**
      * @var DeckRepository
@@ -35,16 +35,16 @@ class DeckService extends ContainerAware
      */
     private $userCardService;
 
-	/**
-	 * @param EntityManager $em
-	 * @param CacheService $cacheService
-	 * @param CardService $cardService
-	 * @param UserCardService $userCardService
-	 */
+    /**
+     * @param EntityManager   $em
+     * @param CacheService    $cacheService
+     * @param CardService     $cardService
+     * @param UserCardService $userCardService
+     */
     public function __construct(EntityManager $em, CacheService $cacheService, CardService $cardService, UserCardService $userCardService)
     {
         $this->em = $em;
-		$this->cacheService = $cacheService;
+        $this->cacheService = $cacheService;
         $this->deckRepository = $em->getRepository('HearthbreakerBundle:Deck');
         $this->cardService = $cardService;
         $this->userCardService = $userCardService;
@@ -147,76 +147,81 @@ class DeckService extends ContainerAware
 
     /**
      * @param Deck $deck
+     *
      * @return string
      */
     public function getUrl($deck)
     {
         /** @var \Symfony\Component\Routing\Router $router */
         $router = $this->container->get(sprintf('hb.%s.router', $deck->getSource()));
+
         return $router->generate('deck_detail', array('slug' => $deck->getSlug()), true);
     }
 
     /**
      * @param Deck $deck
+     *
      * @return int
      */
     public function getBuy($deck)
     {
-		$key = implode('-', array('deck-buy', $deck->getSource(), $deck->getSlug()));
+        $key = implode('-', array('deck-buy', $deck->getSource(), $deck->getSlug()));
 
-		return $this->cacheService->fetch($key, function() use ($deck) {
-			$cristal = 0;
+        return $this->cacheService->fetch($key, function () use ($deck) {
+            $cristal = 0;
 
-			$cards = $deck->getCards();
-			foreach ($cards as $deckCard) {
-				/* @var DeckCard $deckCard */
-				$cristal += $this->cardService->getBuy($deckCard->getCard()) * $deckCard->getQuantity();
-			}
+            $cards = $deck->getCards();
+            foreach ($cards as $deckCard) {
+                /* @var DeckCard $deckCard */
+                $cristal += $this->cardService->getBuy($deckCard->getCard()) * $deckCard->getQuantity();
+            }
 
-			return $cristal;
-		}, 'deck');
+            return $cristal;
+        }, 'deck');
     }
 
     /**
      * @param Deck $deck
+     *
      * @return int
      */
     public function getSell($deck)
     {
-		$key = implode('-', array('deck-sell', $deck->getSource(), $deck->getSlug()));
+        $key = implode('-', array('deck-sell', $deck->getSource(), $deck->getSlug()));
 
-		return $this->cacheService->fetch($key, function() use ($deck) {
-			$cristal = 0;
+        return $this->cacheService->fetch($key, function () use ($deck) {
+            $cristal = 0;
 
-			$cards = $deck->getCards();
-			foreach ($cards as $deckCard) {
-				/* @var DeckCard $deckCard */
-				$cristal += $this->cardService->getSell($deckCard->getCard()) * $deckCard->getQuantity();
-			}
+            $cards = $deck->getCards();
+            foreach ($cards as $deckCard) {
+                /* @var DeckCard $deckCard */
+                $cristal += $this->cardService->getSell($deckCard->getCard()) * $deckCard->getQuantity();
+            }
 
-			return $cristal;
-		}, 'deck');
+            return $cristal;
+        }, 'deck');
     }
 
     /**
      * @param Deck $deck
+     *
      * @return string
      */
     public function getClass($deck)
     {
-		$key = implode('-', array('deck-class', $deck->getSource(), $deck->getSlug()));
+        $key = implode('-', array('deck-class', $deck->getSource(), $deck->getSlug()));
 
-		return $this->cacheService->fetch($key, function() use ($deck) {
-			$classes = array_map(function ($deckCard) {
-				/* @var DeckCard $deckCard */
-				return $deckCard->getCard()->getPlayerClass();
-			}, $deck->getCards()->toArray());
-			$classes = array_filter($classes, function ($class) {
-				return $class != 'Neutre';
-			});
-			$classes = array_unique($classes);
+        return $this->cacheService->fetch($key, function () use ($deck) {
+            $classes = array_map(function ($deckCard) {
+                /* @var DeckCard $deckCard */
+                return $deckCard->getCard()->getPlayerClass();
+            }, $deck->getCards()->toArray());
+            $classes = array_filter($classes, function ($class) {
+                return $class != 'Neutre';
+            });
+            $classes = array_unique($classes);
 
-			return current($classes);
-		}, 'deck');
+            return current($classes);
+        }, 'deck');
     }
 }

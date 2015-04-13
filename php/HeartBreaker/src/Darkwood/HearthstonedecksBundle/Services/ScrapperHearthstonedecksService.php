@@ -8,10 +8,7 @@ use Darkwood\HearthbreakerBundle\Services\DeckService;
 use Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks;
 use Darkwood\HearthbreakerBundle\Entity\DeckCard;
 use Darkwood\HearthstonedecksBundle\Entity\DeckHearthstonedecks;
-use Darkwood\HearthbreakerBundle\Subscriber\Cache\CacheStorage;
-use Doctrine\Common\Cache\Cache;
 use Goutte\Client;
-use GuzzleHttp\Subscriber\Cache\CacheSubscriber;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
@@ -144,10 +141,8 @@ class ScrapperHearthstonedecksService
                     return false;
                 });
             $slugs = array_filter($slugs);
-            foreach($slugs as $slug)
-            {
-                if($limit && $deckCount >= $limit)
-                {
+            foreach ($slugs as $slug) {
+                if ($limit && $deckCount >= $limit) {
                     return $deckCount;
                 }
 

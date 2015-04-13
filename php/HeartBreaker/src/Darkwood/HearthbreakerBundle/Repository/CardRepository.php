@@ -19,7 +19,7 @@ class CardRepository extends EntityRepository
             ->andWhere('c.slug = :slug')->setParameter('slug', $slug)
         ;
 
-        if($source) {
+        if ($source) {
             $qb->andWhere('c INSTANCE OF :source')->setParameter('source', $source);
         }
 
@@ -32,7 +32,7 @@ class CardRepository extends EntityRepository
             ->select('COUNT(c.id) as nb')
         ;
 
-        if($source) {
+        if ($source) {
             $qb->andWhere('c INSTANCE OF :source')->setParameter('source', $source);
         }
 
@@ -45,7 +45,7 @@ class CardRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('c');
 
-        if(isset($search['source']) && $search['source'] != null) {
+        if (isset($search['source']) && $search['source'] != null) {
             $qb->andWhere('c INSTANCE OF :source')->setParameter('source', $search['source']);
         }
 

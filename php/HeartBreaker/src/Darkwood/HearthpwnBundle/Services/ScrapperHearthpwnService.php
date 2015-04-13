@@ -8,10 +8,7 @@ use Darkwood\HearthbreakerBundle\Services\DeckService;
 use Darkwood\HearthpwnBundle\Entity\CardHearthpwn;
 use Darkwood\HearthbreakerBundle\Entity\DeckCard;
 use Darkwood\HearthpwnBundle\Entity\DeckHearthpwn;
-use Darkwood\HearthbreakerBundle\Subscriber\Cache\CacheStorage;
-use Doctrine\Common\Cache\Cache;
 use Goutte\Client;
-use GuzzleHttp\Subscriber\Cache\CacheSubscriber;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
@@ -86,7 +83,7 @@ class ScrapperHearthpwnService
         do {
             $crawler = $this->requestRoute('card_list', array(
                 'display' => 1,
-                'page' => $page
+                'page' => $page,
             ));
 
             $crawler
@@ -136,10 +133,8 @@ class ScrapperHearthpwnService
                     return false;
                 });
             $slugs = array_filter($slugs);
-            foreach($slugs as $slug)
-            {
-                if($limit && $deckCount >= $limit)
-                {
+            foreach ($slugs as $slug) {
+                if ($limit && $deckCount >= $limit) {
                     return $deckCount;
                 }
 
@@ -172,11 +167,11 @@ class ScrapperHearthpwnService
 
         $card->setName($crawler->filter('#content .details h2')->text());
         $textNode = $crawler->filter('#content .details .card-info p');
-        if(count($textNode)) {
+        if (count($textNode)) {
             $card->setText($textNode->text());
         }
         $flavorNode = $crawler->filter('#content .details .card-flavor-text p');
-        if(count($flavorNode)) {
+        if (count($flavorNode)) {
             $card->setFlavor($flavorNode->text());
         }
 
@@ -185,15 +180,15 @@ class ScrapperHearthpwnService
             ->each(function (Crawler $node, $i) use ($card) {
                 $text = trim($node->text());
 
-                if(preg_match('/^Type: (.*)$/', $text, $m)) {
+                if (preg_match('/^Type: (.*)$/', $text, $m)) {
                     $card->setType($m[1]);
-                } else if(preg_match('/^Rarity: (.*)$/', $text, $m)) {
+                } elseif (preg_match('/^Rarity: (.*)$/', $text, $m)) {
                     $card->setRarity($m[1]);
-                } else if(preg_match('/^Race: (.*)$/', $text, $m)) {
+                } elseif (preg_match('/^Race: (.*)$/', $text, $m)) {
                     $card->setRace($m[1]);
-                } else if(preg_match('/^Class: (.*)$/', $text, $m)) {
+                } elseif (preg_match('/^Class: (.*)$/', $text, $m)) {
                     $card->setPlayerClass($m[1]);
-                } else if(preg_match('/^Faction: (.*)$/', $text, $m)) {
+                } elseif (preg_match('/^Faction: (.*)$/', $text, $m)) {
                     $card->setFaction($m[1]);
                 }
             });

@@ -180,9 +180,10 @@ class Card
     }
 
     /**
-     * Set identifier
+     * Set identifier.
      *
-     * @param integer $identifier
+     * @param int $identifier
+     *
      * @return Card
      */
     public function setIdentifier($identifier)
@@ -193,9 +194,9 @@ class Card
     }
 
     /**
-     * Get identifier
+     * Get identifier.
      *
-     * @return integer
+     * @return int
      */
     public function getIdentifier()
     {
@@ -505,9 +506,10 @@ class Card
     }
 
     /**
-     * Add users
+     * Add users.
      *
      * @param \Darkwood\HearthbreakerBundle\Entity\UserCard $users
+     *
      * @return Card
      */
     public function addUser(\Darkwood\HearthbreakerBundle\Entity\UserCard $users)
@@ -518,7 +520,7 @@ class Card
     }
 
     /**
-     * Remove users
+     * Remove users.
      *
      * @param \Darkwood\HearthbreakerBundle\Entity\UserCard $users
      */
@@ -528,7 +530,7 @@ class Card
     }
 
     /**
-     * Get users
+     * Get users.
      *
      * @return \Doctrine\Common\Collections\Collection
      */

@@ -13,24 +13,24 @@ class DeckCardService
      */
     private $em;
 
-	/**
-	 * @var CacheService
-	 */
-	private $cacheService;
+    /**
+     * @var CacheService
+     */
+    private $cacheService;
 
     /**
      * @var DeckCardRepository
      */
     private $deckCardRepository;
 
-	/**
-	 * @param EntityManager $em
-	 * @param CacheService $cacheService
-	 */
+    /**
+     * @param EntityManager $em
+     * @param CacheService  $cacheService
+     */
     public function __construct(EntityManager $em, CacheService $cacheService)
     {
         $this->em = $em;
-		$this->cacheService = $cacheService;
+        $this->cacheService = $cacheService;
         $this->deckCardRepository = $em->getRepository('HearthbreakerBundle:DeckCard');
     }
 

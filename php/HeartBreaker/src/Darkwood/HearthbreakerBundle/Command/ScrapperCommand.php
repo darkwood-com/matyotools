@@ -16,7 +16,7 @@ class ScrapperCommand extends ContainerAwareCommand
         $this
             ->setName('scrapper:run')
             ->setDescription('run scrapper')
-			->addOption('limit', null, InputOption::VALUE_OPTIONAL, '', 50)
+            ->addOption('limit', null, InputOption::VALUE_OPTIONAL, '', 50)
         ;
     }
 
@@ -26,7 +26,7 @@ class ScrapperCommand extends ContainerAwareCommand
 
         /** @var Client $client */
         $client = $this->getContainer()->get('hb.client');
-        $client->getClient()->getEmitter()->on('before', function(BeforeEvent $event) use ($output) {
+        $client->getClient()->getEmitter()->on('before', function (BeforeEvent $event) use ($output) {
             $output->writeln($event->getRequest()->getUrl());
         }, 'last');
 

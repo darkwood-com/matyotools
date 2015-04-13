@@ -158,7 +158,7 @@ class DefaultController extends Controller
             $search = $form->getData();
         }
 
-        /** @var DeckService $deckService */
+        /* @var DeckService $deckService */
         $decks = $this->get('hb.deck')->search($search, $user);
 
         return $this->render('HearthbreakerBundle:Default:deck.html.twig', array(
