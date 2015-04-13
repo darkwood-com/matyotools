@@ -28,7 +28,7 @@ class ScrapperCommand extends ContainerAwareCommand
         $client = $this->getContainer()->get('hb.client');
         $client->getClient()->getEmitter()->on('before', function(BeforeEvent $event) use ($output) {
             $output->writeln($event->getRequest()->getUrl());
-        });
+        }, 'last');
 
         $this->getContainer()->get('hb.hearthstonedecks.scrapper')->sync($limit);
         $this->getContainer()->get('hb.hearthpwn.scrapper')->sync($limit);
