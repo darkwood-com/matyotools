@@ -234,32 +234,48 @@ class ScrapperHearthpwnService
         $deck->setRating(intval($crawler->filter('#content .details .t-deck-rating .rating-average')->text()));
         $deck->setUpdatedAt($this->guessDate($crawler->filter('#content .details .t-deck-header .standard-date')->text()));
 
-        $crawler
+        $cards = $crawler
             ->filter('#content .details .t-deck-details-card-list .col-name')
-            ->each(function (Crawler $node) use ($deck, $force) {
+            ->each(function (Crawler $node) use ($force) {
                 try {
                     $href = $node->filter('a')->attr('href');
                     $match = $this->router->match($href);
                     if ($match['_route'] == 'card_detail') {
-                        $card = $this->syncCard($match['slug'], $force);
-                        $quantity = intval(substr($node->text(), -3, 1));
-
-                        $deckCard = $this->deckCardService->findByDeckAndCard($deck, $card);
-                        if (!$deckCard) {
-                            $deckCard = new DeckCard();
-                            $deckCard->setDeck($deck);
-                            $deckCard->setCard($card);
-                        } elseif (!$force) {
-                            return;
-                        }
-
-                        $deckCard->setQuantity($quantity);
-                        $deck->addCard($deckCard);
+                        return array(
+                            'card' => $this->syncCard($match['slug'], $force),
+                            'quantity' => intval(substr($node->text(), -3, 1)),
+                        );
                     }
                 } catch (ResourceNotFoundException $e) {
                 } catch (MethodNotAllowedException $e) {
                 }
+
+                return false;
             });
+        $cards = array_filter($cards);
+        $cards = array_reduce($cards, function($carry , $item) {
+            $cardId = $item['card']->getId();
+            if(isset($carry[$cardId])) {
+                $carry[$cardId]['quantity'] += $item['quantity'];
+            } else {
+                $carry[$cardId] = $item;
+            }
+            return $carry;
+        }, array());
+
+        foreach($cards as $item) {
+            $deckCard = $this->deckCardService->findByDeckAndCard($deck, $item['card']);
+            if (!$deckCard) {
+                $deckCard = new DeckCard();
+                $deckCard->setDeck($deck);
+                $deckCard->setCard($item['card']);
+            } elseif (!$force) {
+                continue;
+            }
+
+            $deckCard->setQuantity($item['quantity']);
+            $deck->addCard($deckCard);
+        }
 
         $deck->setSyncedAt(new \DateTime());
         $this->deckService->save($deck);
