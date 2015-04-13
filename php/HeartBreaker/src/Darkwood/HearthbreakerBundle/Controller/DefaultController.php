@@ -17,26 +17,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DefaultController extends Controller
 {
-    private function cardQuantity($user, $deck = null)
-    {
-        $cardsQuantity = array();
-        $userCards = $this->get('hb.userCard')->findByUserAndDeck($user, $deck);
-        foreach ($userCards as $userCard) {
-            /* @var UserCard $userCard */
-            $id = $userCard->getCard()->getId();
-
-            if (!isset($cardsQuantity[$id])) {
-                $cardsQuantity[$id] = array('0' => 0, '1' => 0, 'total' => 0);
-            }
-
-            $isGolden = $userCard->getIsGolden() ? '1' : '0';
-            $cardsQuantity[$id][$isGolden] = $userCard->getQuantity();
-            $cardsQuantity[$id]['total'] += $userCard->getQuantity();
-        }
-
-        return $cardsQuantity;
-    }
-
     public function cardAction(Request $request)
     {
         $user = $this->getUser();
@@ -99,8 +79,7 @@ class DefaultController extends Controller
         }
 
         $cards = $this->get('hb.card')->search($search);
-
-        $cardsQuantity = $this->cardQuantity($user);
+        $cardsQuantity = $this->get('hb.userCard')->cardQuantity($user);
 
         return $this->render('HearthbreakerBundle:Default:card.html.twig', array(
             'nav' => 'card',
@@ -121,21 +100,16 @@ class DefaultController extends Controller
         }
 
         $url = $cardService->getUrl($card);
+        $buy = $cardService->getBuy($card);
+        $sell = $cardService->getSell($card);
 
         return $this->render('HearthbreakerBundle:Default:cardDetail.html.twig', array(
             'nav' => 'card',
             'card' => $card,
             'url' => $url,
+            'buy' => $buy,
+            'sell' => $sell,
         ));
-    }
-
-    private function percent($percent)
-    {
-        if ($percent['total'] > 0) {
-            return number_format($percent['value'] / $percent['total'] * 100, 1);
-        }
-
-        return 0;
     }
 
     public function deckAction(Request $request)
@@ -184,49 +158,8 @@ class DefaultController extends Controller
             $search = $form->getData();
         }
 
-        $decks = $this->get('hb.deck')->search($search);
-
-        $cardsQuantity = $this->cardQuantity($user);
-
-        $decks = array_map(function ($deck) use ($cardsQuantity) {
-            /* @var Deck $deck */
-
-            $cardPercent = array('value' => 0, 'total' => 0);
-            $buyPercent = array('value' => 0, 'total' => $deck->getBuy());
-
-            $deckCards = $deck->getCards();
-            foreach ($deckCards as $deckCard) {
-                /* @var DeckCard $deckCard */
-                $card = $deckCard->getCard();
-                $cardId = $card->getId();
-
-                if (isset($cardsQuantity[$cardId])) {
-                    $userQuantity = min($cardsQuantity[$cardId]['total'], $deckCard->getQuantity());
-
-                    $cardPercent['value'] += $userQuantity;
-                    $buyPercent['value'] += $userQuantity * $card->getBuy();
-                }
-
-                $cardPercent['total'] += $deckCard->getQuantity();
-            }
-
-            return array(
-                'cardPercent' => $this->percent($cardPercent),
-                'buyPercent' => $this->percent($buyPercent),
-                'deck' => $deck,
-            );
-        }, $decks);
-
-        $decks = array_filter($decks, function ($deck) use ($search) {
-            if ((isset($search['class']) && $search['class'] != null && $deck['deck']->getClass() != $search['class'])
-            || (isset($search['buy']) && $search['buy'] != null && $deck['deck']->getBuy() < $search['buy'])
-            || (isset($search['card_percent']) && $search['card_percent'] != null && $deck['cardPercent'] < $search['card_percent'])
-            || (isset($search['buy_percent']) && $search['buy_percent'] != null && $deck['buyPercent'] < $search['buy_percent'])) {
-                return false;
-            }
-
-            return true;
-        });
+        /** @var DeckService $deckService */
+        $decks = $this->get('hb.deck')->search($search, $user);
 
         return $this->render('HearthbreakerBundle:Default:deck.html.twig', array(
             'nav' => 'deck',
@@ -252,7 +185,7 @@ class DefaultController extends Controller
 
         $url = $deckService->getUrl($deck);
 
-        $cardsQuantity = $this->cardQuantity($user, $deck);
+        $cardsQuantity = $this->get('hb.userCard')->cardQuantity($user, $deck);
 
         $cards = $deck->getCards();
         $cardsByClass = array();

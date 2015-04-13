@@ -5,6 +5,7 @@ parameters:
     hb.deckCard.class: Darkwood\HearthbreakerBundle\Services\DeckCardService
     hb.userCard.class: Darkwood\HearthbreakerBundle\Services\UserCardService
     bh.namer_card.class: Darkwood\HearthbreakerBundle\Naming\CardNamer
+    bh.client.class: Darkwood\HearthbreakerBundle\Goutte\Client
 
 services:
     hb.card:
@@ -15,7 +16,7 @@ services:
 
     hb.deck:
         class: %hb.deck.class%
-        arguments: [@doctrine.orm.entity_manager]
+        arguments: [@doctrine.orm.entity_manager, @hb.card, @hb.userCard]
         calls:
           - [ setContainer, [@service_container] ]
 
@@ -29,3 +30,11 @@ services:
 
     bh.namer_card:
         class: %bh.namer_card.class%
+
+    hb.client:
+        class: %bh.client.class%
+        arguments: [@aequasi_cache.instance.scrapper, 604800]
+
+    hb.routing.loader:
+        class: %routing.loader.yml.class%
+        arguments: [@file_locator]
