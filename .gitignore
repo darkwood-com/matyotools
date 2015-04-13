@@ -55,6 +55,7 @@ php/HeartBreaker/composer.phar
 php/HeartBreaker/vendor/
 php/HeartBreaker/web/bundles/
 php/HeartBreaker/web/media/
+php/HeartBreaker/phpMemcachedAdmin
 
 
 # SearchReplace

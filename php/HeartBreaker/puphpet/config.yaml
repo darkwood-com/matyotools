@@ -88,7 +88,7 @@ apache:
     modules:
         - rewrite
     vhosts:
-        srz2snv7qvyd:
+        host01:
             servername: heartbreaker.dev
             docroot: /var/www/web
             port: '80'
@@ -98,6 +98,32 @@ apache:
                 zdgepd5zgh9u:
                     provider: directory
                     path: /var/www
+                    options:
+                        - Indexes
+                        - FollowSymlinks
+                        - MultiViews
+                    allow_override:
+                        - All
+                    require:
+                        - all
+                        - granted
+                    custom_fragment: ''
+            engine: php
+            custom_fragment: ''
+            ssl_cert: ''
+            ssl_key: ''
+            ssl_chain: ''
+            ssl_certs_dir: ''
+        host02:
+            servername: php-memcached-admin.heartbreaker.dev
+            docroot: /var/www/phpMemcachedAdmin
+            port: '80'
+            setenv:
+                - 'APP_ENV dev'
+            directories:
+                zdgepd5zgh9u:
+                    provider: directory
+                    path: /var/www/phpMemcachedAdmin
                     options:
                         - Indexes
                         - FollowSymlinks
