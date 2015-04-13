@@ -137,7 +137,7 @@ class CardService extends ContainerAware
                     if($iCard === $jCard) continue;
 
                     $cmp = $this->compare($iCard, $jCard);
-                    if($cmp != -1 && $cmp < pow(2, $lvl)) {
+                    if($cmp != -1 && $cmp < $lvl) {
                         $mCards[] = $jCard;
                     }
                 }
