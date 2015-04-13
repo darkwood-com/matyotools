@@ -4,29 +4,34 @@ parameters:
     hb.deck.class: Darkwood\HearthbreakerBundle\Services\DeckService
     hb.deckCard.class: Darkwood\HearthbreakerBundle\Services\DeckCardService
     hb.userCard.class: Darkwood\HearthbreakerBundle\Services\UserCardService
+    hb.cache.class: Darkwood\HearthbreakerBundle\Services\CacheService
     bh.namer_card.class: Darkwood\HearthbreakerBundle\Naming\CardNamer
     bh.client.class: Darkwood\HearthbreakerBundle\Goutte\Client
 
 services:
     hb.card:
         class: %hb.card.class%
-        arguments: [@doctrine.orm.entity_manager]
+        arguments: [@doctrine.orm.entity_manager, @hb.cache]
         calls:
           - [ setContainer, [@service_container] ]
 
     hb.deck:
         class: %hb.deck.class%
-        arguments: [@doctrine.orm.entity_manager, @hb.card, @hb.userCard]
+        arguments: [@doctrine.orm.entity_manager, @hb.cache, @hb.card, @hb.userCard]
         calls:
           - [ setContainer, [@service_container] ]
 
     hb.deckCard:
         class: %hb.deckCard.class%
-        arguments: [@doctrine.orm.entity_manager]
+        arguments: [@doctrine.orm.entity_manager, @hb.cache]
 
     hb.userCard:
         class: %hb.userCard.class%
-        arguments: [@doctrine.orm.entity_manager]
+        arguments: [@doctrine.orm.entity_manager, @hb.cache]
+
+    hb.cache:
+        class: %hb.cache.class%
+        arguments: [@aequasi_cache.instance.default, %hb.cache%]
 
     bh.namer_card:
         class: %bh.namer_card.class%

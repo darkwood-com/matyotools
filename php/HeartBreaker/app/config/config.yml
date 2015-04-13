@@ -3,6 +3,15 @@ imports:
     - { resource: security.yml }
     - { resource: services.yml }
 
+parameters:
+    hb.cache:
+        random_percent: 10  # +/- random_pourcent %
+        # durees de mises en caches en secondes
+        keys:
+            card: 3600
+            deck: 3600
+            user: 3600
+
 framework:
     #esi:             ~
     #translator:      { fallbacks: ["%locale%"] }
@@ -109,9 +118,27 @@ fos_user:
 
 aequasi_cache:
     instances:
+        default:
+            persistent: true
+            namespace: mc
+            type: memcached
+            hosts:
+                - { host: localhost, port: 11211 }
         scrapper:
             type: file_system
             directory: %kernel.root_dir%/../.cache/scrapper
+    doctrine:
+        enabled: true
+        metadata:
+            instance: default
+            entity_managers:   [ default ]
+            document_managers: [ default ]
+        result:
+            instance: default
+            entity_managers:   [ default ]
+        query:
+            instance: default
+            entity_managers: [ default ]
 
 vich_uploader:
     db_driver: orm

@@ -16,17 +16,24 @@ class CardService extends ContainerAware
      */
     private $em;
 
+	/**
+	 * @var CacheService
+	 */
+	private $cacheService;
+
     /**
      * @var CardRepository
      */
     private $cardRepository;
 
-    /**
-     * @param EntityManager $em
-     */
-    public function __construct(EntityManager $em)
+	/**
+	 * @param EntityManager $em
+	 * @param CacheService $cacheService
+	 */
+    public function __construct(EntityManager $em, CacheService $cacheService)
     {
         $this->em = $em;
+		$this->cacheService = $cacheService;
         $this->cardRepository = $em->getRepository('HearthbreakerBundle:Card');
     }
 
@@ -184,22 +191,26 @@ class CardService extends ContainerAware
      */
     public function getBuy($card, $golden = false)
     {
-        switch ($card->getRarity()) {
-            case 'Légendaire':
-                return $golden ? 3200 : 1600;
-                break;
-            case 'Epique':
-                return $golden ? 1600 : 400;
-                break;
-            case 'Rare':
-                return $golden ? 800 : 100;
-                break;
-            case 'Commune':
-                return $golden ? 400 : 40;
-                break;
-        }
+		$key = implode('-', array('card-buy', $card->getSource(), $card->getSlug()));
 
-        return 0;
+		return $this->cacheService->fetch($key, function() use ($card, $golden) {
+			switch ($card->getRarity()) {
+				case 'Légendaire':
+					return $golden ? 3200 : 1600;
+					break;
+				case 'Epique':
+					return $golden ? 1600 : 400;
+					break;
+				case 'Rare':
+					return $golden ? 800 : 100;
+					break;
+				case 'Commune':
+					return $golden ? 400 : 40;
+					break;
+			}
+
+			return 0;
+		}, 'card');
     }
 
     /**
@@ -209,21 +220,25 @@ class CardService extends ContainerAware
      */
     public function getSell($card, $golden = false)
     {
-        switch ($card->getRarity()) {
-            case 'Légendaire':
-                return $golden ? 1600 : 400;
-                break;
-            case 'Epique':
-                return $golden ? 400 : 100;
-                break;
-            case 'Rare':
-                return $golden ? 100 : 20;
-                break;
-            case 'Commune':
-                return $golden ? 50 : 5;
-                break;
-        }
+		$key = implode('-', array('card-sell', $card->getSource(), $card->getSlug()));
 
-        return 0;
+		return $this->cacheService->fetch($key, function() use ($card, $golden) {
+			switch ($card->getRarity()) {
+				case 'Légendaire':
+					return $golden ? 1600 : 400;
+					break;
+				case 'Epique':
+					return $golden ? 400 : 100;
+					break;
+				case 'Rare':
+					return $golden ? 100 : 20;
+					break;
+				case 'Commune':
+					return $golden ? 50 : 5;
+					break;
+			}
+
+			return 0;
+		}, 'card');
     }
 }

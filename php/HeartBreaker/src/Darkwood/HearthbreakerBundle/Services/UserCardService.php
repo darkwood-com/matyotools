@@ -2,7 +2,9 @@
 
 namespace Darkwood\HearthbreakerBundle\Services;
 
+use Darkwood\HearthbreakerBundle\Entity\Deck;
 use Darkwood\HearthbreakerBundle\Entity\UserCard;
+use Darkwood\UserBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
 use Darkwood\HearthbreakerBundle\Repository\UserCardRepository;
 
@@ -13,17 +15,24 @@ class UserCardService
      */
     private $em;
 
+	/**
+	 * @var CacheService
+	 */
+	private $cacheService;
+
     /**
      * @var UserCardRepository
      */
     private $userCardRepository;
 
-    /**
-     * @param EntityManager $em
-     */
-    public function __construct(EntityManager $em)
+	/**
+	 * @param EntityManager $em
+	 * @param CacheService $cacheService
+	 */
+    public function __construct(EntityManager $em, CacheService $cacheService)
     {
         $this->em = $em;
+		$this->cacheService = $cacheService;
         $this->userCardRepository = $em->getRepository('HearthbreakerBundle:UserCard');
     }
 
@@ -81,23 +90,32 @@ class UserCardService
         return $this->userCardRepository->findAll();
     }
 
+	/**
+	 * @param User $user
+	 * @param Deck|null $deck
+	 * @return mixed
+	 */
     public function cardQuantity($user, $deck = null)
     {
-        $cardsQuantity = array();
-        $userCards = $this->findByUserAndDeck($user, $deck);
-        foreach ($userCards as $userCard) {
-            /* @var UserCard $userCard */
-            $id = $userCard->getCard()->getId();
+		$key = implode('-', array('user-card-quantity', $user->getId()));
 
-            if (!isset($cardsQuantity[$id])) {
-                $cardsQuantity[$id] = array('0' => 0, '1' => 0, 'total' => 0);
-            }
+		return $this->cacheService->fetch($key, function() use ($user, $deck) {
+			$cardsQuantity = array();
+			$userCards = $this->findByUserAndDeck($user, $deck);
+			foreach ($userCards as $userCard) {
+				/* @var UserCard $userCard */
+				$id = $userCard->getCard()->getId();
 
-            $isGolden = $userCard->getIsGolden() ? '1' : '0';
-            $cardsQuantity[$id][$isGolden] = $userCard->getQuantity();
-            $cardsQuantity[$id]['total'] += $userCard->getQuantity();
-        }
+				if (!isset($cardsQuantity[$id])) {
+					$cardsQuantity[$id] = array('0' => 0, '1' => 0, 'total' => 0);
+				}
 
-        return $cardsQuantity;
+				$isGolden = $userCard->getIsGolden() ? '1' : '0';
+				$cardsQuantity[$id][$isGolden] = $userCard->getQuantity();
+				$cardsQuantity[$id]['total'] += $userCard->getQuantity();
+			}
+
+			return $cardsQuantity;
+		}, 'user');
     }
 }
