@@ -7,6 +7,7 @@ services:
     hb.hearthstonedecks.scrapper:
         class: %hb.hearthstonedecks.scrapper.class%
         arguments:
+          - @event_dispatcher
           - @hb.client
           - @hb.hearthstonedecks.router
           - @hb.card

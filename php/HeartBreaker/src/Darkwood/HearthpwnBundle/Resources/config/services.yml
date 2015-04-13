@@ -7,6 +7,7 @@ services:
     hb.hearthpwn.scrapper:
         class: %hb.hearthpwn.scrapper.class%
         arguments:
+          - @event_dispatcher
           - @hb.client
           - @hb.hearthpwn.router
           - @hb.card

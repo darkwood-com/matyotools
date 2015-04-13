@@ -2,6 +2,7 @@
 
 namespace Darkwood\HearthpwnBundle\Services;
 
+use Darkwood\HearthbreakerBundle\Events;
 use Darkwood\HearthbreakerBundle\Services\CardService;
 use Darkwood\HearthbreakerBundle\Services\DeckCardService;
 use Darkwood\HearthbreakerBundle\Services\DeckService;
@@ -10,6 +11,8 @@ use Darkwood\HearthbreakerBundle\Entity\DeckCard;
 use Darkwood\HearthpwnBundle\Entity\DeckHearthpwn;
 use Goutte\Client;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -17,6 +20,11 @@ use Symfony\Component\Routing\Router;
 
 class ScrapperHearthpwnService
 {
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
     /**
      * @var Client
      */
@@ -42,8 +50,9 @@ class ScrapperHearthpwnService
      */
     private $deckCardService;
 
-    public function __construct(Client $client, Router $router, CardService $cardService, DeckService $deckService, DeckCardService $deckCardService)
+    public function __construct(EventDispatcherInterface $dispatcher, Client $client, Router $router, CardService $cardService, DeckService $deckService, DeckCardService $deckCardService)
     {
+        $this->dispatcher = $dispatcher;
         $this->client = $client;
         $this->router = $router;
         $this->cardService = $cardService;
@@ -204,6 +213,7 @@ class ScrapperHearthpwnService
 
         $card->setSyncedAt(new \DateTime());
         $this->cardService->save($card);
+        $this->dispatcher->dispatch(Events::SYNC_CARD, new GenericEvent($card));
 
         return $card;
     }
@@ -253,6 +263,7 @@ class ScrapperHearthpwnService
 
         $deck->setSyncedAt(new \DateTime());
         $this->deckService->save($deck);
+        $this->dispatcher->dispatch(Events::SYNC_CARD, new GenericEvent($deck));
 
         return $deck;
     }
