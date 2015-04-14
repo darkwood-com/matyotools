@@ -24,4 +24,4 @@ services:
 
     hb.hearthstats.router.request_context:
         class: %hb.hearthstats.router.request_context.class%
-        arguments: ["", "GET", "www.hearthstats.com"]
+        arguments: ["", "GET", "hearthstats.net", "https"]

@@ -5,7 +5,7 @@ card_detail:
     path: /cards/{slug}
 
 deck_list:
-    path: /decks
+    path: /decks/public
 
 deck_detail:
     path: /decks/{slug}

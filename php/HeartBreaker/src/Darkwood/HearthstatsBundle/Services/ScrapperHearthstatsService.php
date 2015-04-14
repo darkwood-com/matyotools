@@ -120,7 +120,7 @@ class ScrapperHearthstatsService
 
     public function syncDeckList($limit = null, $force = false)
     {
-        $page = 1;
+        /*$page = 1;
         $deckCount = 0;
 
         do {
@@ -159,7 +159,7 @@ class ScrapperHearthstatsService
             $page += 1;
         } while ($hasNext);
 
-        return $deckCount;
+        return $deckCount;*/
     }
 
     public function syncCard($slug, $force = false)
@@ -286,7 +286,6 @@ class ScrapperHearthstatsService
 
     public function sync($limit = null)
     {
-        $this->syncCardList();
         $this->syncDeckList($limit);
     }
 }
