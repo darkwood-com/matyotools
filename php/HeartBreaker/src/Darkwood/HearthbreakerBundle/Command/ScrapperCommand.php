@@ -42,7 +42,6 @@ class ScrapperCommand extends ContainerAwareCommand
 
         /** @var EventDispatcher $dispatcher */
         $dispatcher = $container->get('event_dispatcher');
-        $dispatcher->addListener(Events::SYNC_CARD, $flushHandler);
         $dispatcher->addListener(Events::SYNC_DECK, $flushHandler);
 
         /** @var Client $client */
