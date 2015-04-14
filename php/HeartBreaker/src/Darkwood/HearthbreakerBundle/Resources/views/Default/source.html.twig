@@ -1,0 +1,48 @@
+{% extends "HearthbreakerBundle::layout.html.twig" %}
+
+{% block content %}
+	<div class="panel panel-default">
+		<div class="panel-body">
+			{{ form_start(form, {'attr': {'class': 'form-auto-submit'} }) }}
+			{{ form_row(form.title) }}
+			{{ form_end(form) }}
+		</div>
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<table id="sources" class="table table-striped">
+				<thead>
+					<tr>
+						<th>Title</th>
+						<th>Type</th>
+						<th>Class</th>
+						<th>Rarity</th>
+						<th>Cost</th>
+						<th>Attack</th>
+						<th>Health</th>
+						<th></th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for cardByIdentifier in cards %}
+					{% for card in cardByIdentifier %}
+					<tr class="{% if loop.first %}space{% endif %}" data-toggle="popover" data-html="true" data-content="<img src='{{ vich_uploader_asset(card, 'image') | imagine_filter('card_small') }}' />">
+						<td><a href="{{ path('card_detail', {'source': card.source, 'slug': card.slug}) }}">{{ card.name }}</a></td>
+						<td>{{ card.type }}</td>
+						<td>{{ card.playerClass }}</td>
+						<td>{{ card.rarity }}</td>
+						<td>{{ card.cost }}</td>
+						<td>{{ card.attack }}</td>
+						<td>{{ card.health }}</td>
+						<td class="user-card" data-source="{{ card.source }}" data-slug="{{ card.slug }}" data-is-golden="0">{{ cardsQuantity[card.id][0] | default(0) }}</td>
+                        <td class="user-card" data-source="{{ card.source }}" data-slug="{{ card.slug }}" data-is-golden="1">{{ cardsQuantity[card.id][1] | default(0) }}</td>
+					</tr>
+					{% endfor %}
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+{% endblock %}

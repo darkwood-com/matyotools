@@ -18,6 +18,10 @@ deck_detail:
     path: /deck/{source}/{slug}
     defaults: { _controller: HearthbreakerBundle:Default:deckDetail }
 
+source_list:
+    path: /source
+    defaults: { _controller: HearthbreakerBundle:Default:source }
+
 user_card:
     path: /joueur/carte/{source}/{slug}/{isGolden}
     defaults: { _controller: HearthbreakerBundle:Default:userCard }

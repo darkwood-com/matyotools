@@ -19,7 +19,9 @@ class ScrapperCommand extends ContainerAwareCommand
         $this
             ->setName('scrapper:run')
             ->setDescription('run scrapper')
-            ->addOption('limit', null, InputOption::VALUE_OPTIONAL, '', 50)
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, '', 50)
+			->addOption('sync', null, InputOption::VALUE_OPTIONAL)
+			->addOption('identify', 'i', InputOption::VALUE_OPTIONAL)
         ;
     }
 
@@ -50,8 +52,22 @@ class ScrapperCommand extends ContainerAwareCommand
             $output->writeln($event->getRequest()->getUrl());
         }, 'last');
 
-        $container->get('hb.hearthstonedecks.scrapper')->sync($limit);
-        $container->get('hb.hearthpwn.scrapper')->sync($limit);
-        $container->get('hb.card')->identify();
+		$tasks = array('sync' => true, 'identify' => true);
+		if($input->getOption('sync')) {
+			$tasks = array('sync' => true);
+		}
+		if($input->getOption('identify')) {
+			$tasks = array('sync' => true);
+		}
+
+		if(isset($tasks['sync']) && $tasks['sync']) {
+			$container->get('hb.hearthstonedecks.scrapper')->sync($limit);
+			$container->get('hb.hearthpwn.scrapper')->sync($limit);
+		}
+
+		if(isset($tasks['identify']) && $tasks['identify']) {
+			$output->writeln('Identify cards ...');
+			$container->get('hb.card')->identify();
+		}
     }
 }

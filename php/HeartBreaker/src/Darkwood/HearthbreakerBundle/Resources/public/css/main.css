@@ -6,3 +6,7 @@ body {
 .navbar {
 	margin-bottom: 20px;
 }
+
+#sources .space {
+	border-top: 2px solid #808080;
+}

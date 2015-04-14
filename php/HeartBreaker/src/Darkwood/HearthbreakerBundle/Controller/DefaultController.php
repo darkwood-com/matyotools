@@ -9,6 +9,7 @@ use Darkwood\HearthbreakerBundle\Entity\Deck;
 use Darkwood\HearthbreakerBundle\Entity\DeckCard;
 use Darkwood\HearthbreakerBundle\Entity\UserCard;
 use Darkwood\HearthbreakerBundle\Form\DeckType;
+use Darkwood\HearthbreakerBundle\Form\SourceType;
 use Darkwood\HearthbreakerBundle\Services\CardService;
 use Darkwood\HearthbreakerBundle\Services\DeckService;
 use Darkwood\HearthbreakerBundle\Services\UserCardService;
@@ -151,6 +152,37 @@ class DefaultController extends Controller
             'cardsQuantity' => $cardsQuantity,
         ));
     }
+
+	public function sourceAction(Request $request)
+	{
+		$user = $this->getUser();
+		if (!$user) {
+			throw new AccessDeniedHttpException();
+		}
+
+		$form = $this->createForm(new SourceType());
+
+		$search = array();
+		$form->handleRequest($request);
+		if ($form->isValid()) {
+			$search = $form->getData();
+		}
+
+		/** @var Card[] $cards */
+		$cards = $this->get('hb.card')->search($search);
+		$cardsQuantity = $this->get('hb.userCard')->cardQuantity($user);
+		$cardsByIdentifier = array();
+		foreach($cards as $card) {
+			$cardsByIdentifier[$card->getIdentifier()][] = $card;
+		}
+
+		return $this->render('HearthbreakerBundle:Default:source.html.twig', array(
+			'nav' => 'source',
+			'cards' => $cardsByIdentifier,
+			'form' => $form->createView(),
+			'cardsQuantity' => $cardsQuantity,
+		));
+	}
 
     public function userCardAction($source, $slug, $isGolden)
     {

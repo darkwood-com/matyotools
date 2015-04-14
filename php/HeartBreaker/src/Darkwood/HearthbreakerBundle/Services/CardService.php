@@ -143,7 +143,7 @@ class CardService extends ContainerAware
         $identifier = 1;
 
         $leftCards = array_values($cards);
-        for ($lvl = 0; $lvl < 8; $lvl++) {
+        for ($lvl = 0; $lvl < 2; $lvl++) {
             foreach ($leftCards as $i => $iCard) {
                 /** @var Card $iCard */
                 if ($iCard->getIdentifier()) {
