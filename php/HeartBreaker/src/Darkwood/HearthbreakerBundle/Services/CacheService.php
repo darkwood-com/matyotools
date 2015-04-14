@@ -34,7 +34,7 @@ class CacheService
     public function fetch($id, $data, $lifeTime = null, $rand = true)
     {
         $d = $this->cache->fetch($id);
-        if (!$d) {
+        if ($d === false) {
             $d = $data();
 
             if (!is_null($lifeTime)) {
