@@ -193,7 +193,7 @@ class CardService extends ContainerAware
      */
     public function getBuy($card, $golden = false)
     {
-        $key = implode('-', array('card-buy', $card->getSource(), $card->getSlug()));
+        $key = implode('-', array('card-buy', $card->getSource(), $card->getSlug(), $golden));
 
         return $this->cacheService->fetch($key, function () use ($card, $golden) {
             switch ($card->getRarity()) {
@@ -223,7 +223,7 @@ class CardService extends ContainerAware
      */
     public function getSell($card, $golden = false)
     {
-        $key = implode('-', array('card-sell', $card->getSource(), $card->getSlug()));
+        $key = implode('-', array('card-sell', $card->getSource(), $card->getSlug(), $golden));
 
         return $this->cacheService->fetch($key, function () use ($card, $golden) {
             switch ($card->getRarity()) {
