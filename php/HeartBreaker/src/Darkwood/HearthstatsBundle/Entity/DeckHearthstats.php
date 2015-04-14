@@ -20,13 +20,6 @@ class DeckHearthstats extends Deck
      */
     protected $updatedAt;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $matches;
-
 	/**
 	 * @var int
 	 *
@@ -60,29 +53,6 @@ class DeckHearthstats extends Deck
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
-    }
-
-    /**
-     * Set matches
-     *
-     * @param integer $matches
-     * @return DeckHearthstats
-     */
-    public function setMatches($matches)
-    {
-        $this->matches = $matches;
-
-        return $this;
-    }
-
-    /**
-     * Get matches
-     *
-     * @return integer
-     */
-    public function getMatches()
-    {
-        return $this->matches;
     }
 
     /**

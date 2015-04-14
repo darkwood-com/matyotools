@@ -127,7 +127,7 @@ class ScrapperHearthstatsService
             $crawler = $this->requestRoute('deck_list', array('page' => $page));
 
             $slugs = $crawler
-                ->filter('#content table.listing .col-name a')
+                ->filter('.decklist .name a')
                 ->each(function (Crawler $node) {
                     try {
                         $href = $node->attr('href');
@@ -279,7 +279,7 @@ class ScrapperHearthstatsService
 
         $deck->setSyncedAt(new \DateTime());
         $this->deckService->save($deck);
-        $this->dispatcher->dispatch(Events::SYNC_CARD, new GenericEvent($deck));
+        $this->dispatcher->dispatch(Events::SYNC_DECK, new GenericEvent($deck));
 
         return $deck;
     }
