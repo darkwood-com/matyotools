@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\DiscriminatorColumn(name="source", type="string")
  * @ORM\DiscriminatorMap({
  *      "hearthstonedecks" = "Darkwood\HearthstonedecksBundle\Entity\DeckHearthstonedecks",
+ *      "hearthstats" = "Darkwood\HearthstatsBundle\Entity\DeckHearthstats",
  *      "hearthpwn" = "Darkwood\HearthpwnBundle\Entity\DeckHearthpwn"
  * })
  */

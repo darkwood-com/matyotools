@@ -1,0 +1,27 @@
+parameters:
+    hb.hearthstats.scrapper.class: Darkwood\HearthstatsBundle\Services\ScrapperHearthstatsService
+    hb.hearthstats.router.class: Symfony\Component\Routing\Router
+    hb.hearthstats.router.request_context.class: Symfony\Component\Routing\RequestContext
+
+services:
+    hb.hearthstats.scrapper:
+        class: %hb.hearthstats.scrapper.class%
+        arguments:
+          - @event_dispatcher
+          - @hb.client
+          - @hb.hearthstats.router
+          - @hb.card
+          - @hb.deck
+          - @hb.deckCard
+
+    hb.hearthstats.router:
+        class: %hb.hearthstats.router.class%
+        arguments:
+          - @hb.routing.loader
+          - "%kernel.root_dir%/../src/Darkwood/HearthstatsBundle/Resources/config/host_routing.yml"
+          - []
+          - @hb.hearthstats.router.request_context
+
+    hb.hearthstats.router.request_context:
+        class: %hb.hearthstats.router.request_context.class%
+        arguments: ["", "GET", "www.hearthstats.com"]

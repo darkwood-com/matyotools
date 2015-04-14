@@ -27,6 +27,7 @@ class AppKernel extends Kernel
 
             new Darkwood\HearthbreakerBundle\HearthbreakerBundle(),
 			new Darkwood\HearthstonedecksBundle\HearthstonedecksBundle(),
+			new Darkwood\HearthstatsBundle\HearthstatsBundle(),
             new Darkwood\HearthpwnBundle\HearthpwnBundle(),
 			new Darkwood\UserBundle\UserBundle(),
         );

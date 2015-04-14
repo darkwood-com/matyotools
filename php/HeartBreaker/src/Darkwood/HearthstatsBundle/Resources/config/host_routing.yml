@@ -1,0 +1,11 @@
+card_list:
+    path: /cards
+
+card_detail:
+    path: /cards/{slug}
+
+deck_list:
+    path: /decks
+
+deck_detail:
+    path: /decks/{slug}
