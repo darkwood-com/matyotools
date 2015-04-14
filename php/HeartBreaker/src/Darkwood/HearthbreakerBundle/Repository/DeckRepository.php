@@ -44,9 +44,9 @@ class DeckRepository extends EntityRepository
     public function search($search)
     {
         $qb = $this->createQueryBuilder('d')
-            ->select('d, dc, c')
+            /*->select('d, dc, c')
             ->leftJoin('d.cards', 'dc')
-            ->leftJoin('dc.card', 'c')
+            ->leftJoin('dc.card', 'c')*/
         ;
 
         if (isset($search['source']) && $search['source'] != null) {

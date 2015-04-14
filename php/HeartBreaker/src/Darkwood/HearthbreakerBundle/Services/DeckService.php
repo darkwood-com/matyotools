@@ -109,7 +109,7 @@ class DeckService extends ContainerAware
             $cardPercent = array('value' => 0, 'total' => 0);
             $buyPercent = array('value' => 0, 'total' => $this->getBuy($deck));
 
-            $deckCards = $deck->getCards();
+            $deckCards = $this->getCards($deck);
             foreach ($deckCards as $deckCard) {
                 /* @var DeckCard $deckCard */
                 $card = $deckCard->getCard();
@@ -157,6 +157,19 @@ class DeckService extends ContainerAware
 
         return $router->generate('deck_detail', array('slug' => $deck->getSlug()), true);
     }
+
+	/**
+	 * @param Deck $deck
+	 * @return \Doctrine\Common\Collections\Collection
+	 */
+	public function getCards($deck)
+	{
+		$key = implode('-', array('deck-cards', $deck->getSource(), $deck->getSlug()));
+
+		return $this->cacheService->fetch($key, function () use ($deck) {
+			return $deck->getCards();
+		}, 'deck');
+	}
 
     /**
      * @param Deck $deck
