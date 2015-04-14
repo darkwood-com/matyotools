@@ -2,10 +2,13 @@
 
 namespace Darkwood\HearthbreakerBundle\Controller;
 
+
+use Darkwood\HearthbreakerBundle\Form\CardType;
 use Darkwood\HearthbreakerBundle\Entity\Card;
 use Darkwood\HearthbreakerBundle\Entity\Deck;
 use Darkwood\HearthbreakerBundle\Entity\DeckCard;
 use Darkwood\HearthbreakerBundle\Entity\UserCard;
+use Darkwood\HearthbreakerBundle\Form\DeckType;
 use Darkwood\HearthbreakerBundle\Services\CardService;
 use Darkwood\HearthbreakerBundle\Services\DeckService;
 use Darkwood\HearthbreakerBundle\Services\UserCardService;
@@ -24,53 +27,7 @@ class DefaultController extends Controller
             throw new AccessDeniedHttpException();
         }
 
-        $form = $this->createFormBuilder()
-            ->add('source', 'choice', array(
-                'choices'   => array(
-                    'hearthstonedecks' => 'Hearthstone Decks',
-                    'hearthpwn' => 'Hearthpwn',
-                ),
-                'required' => false,
-            ))
-            ->add('title', 'text', array('required' => false))
-            ->add('type', 'choice', array(
-                'choices'   => array(
-                    'Arme' => 'Arme',
-                    'Serviteur' => 'Serviteur',
-                    'Sort' => 'Sort',
-                ),
-                'required' => false,
-            ))
-            ->add('class', 'choice', array(
-                'choices'   => array(
-                    'Chaman' => 'Chaman',
-                    'Chasseur' => 'Chasseur',
-                    'Démoniste' => 'Démoniste',
-                    'Druide' => 'Druide',
-                    'Guerrier' => 'Guerrier',
-                    'Mage' => 'Mage',
-                    'Neutre' => 'Neutre',
-                    'Paladin' => 'Paladin',
-                    'Prêtre' => 'Prêtre',
-                    'Voleur' => 'Voleur',
-                ),
-                'required' => false,
-            ))
-            ->add('rarity', 'choice', array(
-                'choices'   => array(
-                    'Basique' => 'Basique',
-                    'Commune' => 'Commune',
-                    'Rare' => 'Rare',
-                    'Epique' => 'Epique',
-                    'Légendaire' => 'Légendaire',
-                ),
-                'required' => false,
-            ))
-            ->add('cost', 'integer', array('required' => false))
-            ->add('attack', 'integer', array('required' => false))
-            ->add('health', 'integer', array('required' => false))
-            ->getForm()
-        ;
+        $form = $this->createForm(new CardType());
 
         $search = array();
         $form->handleRequest($request);
@@ -119,38 +76,7 @@ class DefaultController extends Controller
             throw new AccessDeniedHttpException();
         }
 
-        $form = $this->createFormBuilder()
-            ->add('source', 'choice', array(
-                'choices'   => array(
-                    'hearthstonedecks' => 'Hearthstone Decks',
-                    'hearthpwn' => 'Hearthpwn',
-                ),
-                'required' => false,
-            ))
-            ->add('title', 'text', array('required' => false))
-            ->add('class', 'choice', array(
-                'choices'   => array(
-                    'Chaman' => 'Chaman',
-                    'Chasseur' => 'Chasseur',
-                    'Démoniste' => 'Démoniste',
-                    'Druide' => 'Druide',
-                    'Guerrier' => 'Guerrier',
-                    'Mage' => 'Mage',
-                    'Paladin' => 'Paladin',
-                    'Prêtre' => 'Prêtre',
-                    'Voleur' => 'Voleur',
-                ),
-                'required' => false,
-            ))
-            ->add('buy', 'integer', array('required' => false))
-            ->add('card_percent', 'integer', array('required' => false))
-            ->add('buy_percent', 'integer', array('required' => false))
-            ->add('vote_up', 'integer', array('required' => false))
-            ->add('vote_down', 'integer', array('required' => false))
-            ->add('rating', 'integer', array('required' => false))
-            ->add('since', 'integer', array('required' => false))
-            ->getForm()
-        ;
+        $form = $this->createForm(new DeckType());
 
         $search = array();
         $form->handleRequest($request);
