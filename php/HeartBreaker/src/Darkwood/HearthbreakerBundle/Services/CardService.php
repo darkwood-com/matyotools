@@ -33,8 +33,8 @@ class CardService extends ContainerAware
     public function __construct(EntityManager $em, CacheService $cacheService)
     {
         $this->em = $em;
+		$this->cardRepository = $em->getRepository('HearthbreakerBundle:Card');
         $this->cacheService = $cacheService;
-        $this->cardRepository = $em->getRepository('HearthbreakerBundle:Card');
     }
 
     /**
@@ -97,6 +97,19 @@ class CardService extends ContainerAware
 
         return $router->generate('card_detail', array('slug' => $card->getSlug()), true);
     }
+
+	/**
+	 * @param Card $card
+	 * @return array
+	 */
+	public function getSiblings($card)
+	{
+		$key = implode('-', array('card-siblings', $card->getSource(), $card->getSlug()));
+
+		return $this->cacheService->fetch($key, function () use ($card) {
+			return $this->cardRepository->siblings($card);
+		}, 'card');
+	}
 
     /**
      * @param Card $iCard

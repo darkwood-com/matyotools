@@ -27,7 +27,7 @@ services:
 
     hb.userCard:
         class: %hb.userCard.class%
-        arguments: [@doctrine.orm.entity_manager, @hb.cache]
+        arguments: [@doctrine.orm.entity_manager, @hb.cache, @hb.card]
 
     hb.cache:
         class: %hb.cache.class%

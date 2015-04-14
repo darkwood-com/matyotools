@@ -2,6 +2,7 @@
 
 namespace Darkwood\HearthbreakerBundle\Repository;
 
+use Darkwood\HearthbreakerBundle\Entity\Card;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -79,4 +80,17 @@ class CardRepository extends EntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+	/**
+	 * @param Card $card
+	 */
+	public function siblings($card)
+	{
+		$qb = $this->createQueryBuilder('c')
+			->andWhere('c.identifier = :identifier')->setParameter('identifier', $card->getIdentifier())
+			->andWhere('c.id != :id')->setParameter('id', $card->getId())
+		;
+
+		return $qb->getQuery()->getResult();
+	}
 }

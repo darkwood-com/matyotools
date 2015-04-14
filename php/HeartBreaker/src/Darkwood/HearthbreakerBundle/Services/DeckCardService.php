@@ -30,8 +30,8 @@ class DeckCardService
     public function __construct(EntityManager $em, CacheService $cacheService)
     {
         $this->em = $em;
+		$this->deckCardRepository = $em->getRepository('HearthbreakerBundle:DeckCard');
         $this->cacheService = $cacheService;
-        $this->deckCardRepository = $em->getRepository('HearthbreakerBundle:DeckCard');
     }
 
     /**

@@ -44,8 +44,8 @@ class DeckService extends ContainerAware
     public function __construct(EntityManager $em, CacheService $cacheService, CardService $cardService, UserCardService $userCardService)
     {
         $this->em = $em;
+		$this->deckRepository = $em->getRepository('HearthbreakerBundle:Deck');
         $this->cacheService = $cacheService;
-        $this->deckRepository = $em->getRepository('HearthbreakerBundle:Deck');
         $this->cardService = $cardService;
         $this->userCardService = $userCardService;
     }

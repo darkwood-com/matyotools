@@ -2,6 +2,7 @@
 
 namespace Darkwood\HearthbreakerBundle\Services;
 
+use Darkwood\HearthbreakerBundle\Entity\Card;
 use Darkwood\HearthbreakerBundle\Entity\Deck;
 use Darkwood\HearthbreakerBundle\Entity\UserCard;
 use Darkwood\UserBundle\Entity\User;
@@ -20,20 +21,27 @@ class UserCardService
      */
     private $cacheService;
 
+	/**
+	 * @var CardService
+	 */
+	private $cardService;
+
     /**
      * @var UserCardRepository
      */
     private $userCardRepository;
 
-    /**
-     * @param EntityManager $em
-     * @param CacheService  $cacheService
-     */
-    public function __construct(EntityManager $em, CacheService $cacheService)
+	/**
+	 * @param EntityManager $em
+	 * @param CacheService $cacheService
+	 * @param CardService $cardService
+	 */
+    public function __construct(EntityManager $em, CacheService $cacheService, CardService $cardService)
     {
         $this->em = $em;
+		$this->userCardRepository = $em->getRepository('HearthbreakerBundle:UserCard');
         $this->cacheService = $cacheService;
-        $this->userCardRepository = $em->getRepository('HearthbreakerBundle:UserCard');
+		$this->cardService = $cardService;
     }
 
     /**
@@ -104,17 +112,32 @@ class UserCardService
             $cardsQuantity = array();
             $userCards = $this->findByUserAndDeck($user, $deck);
             foreach ($userCards as $userCard) {
-                /* @var UserCard $userCard */
-                $id = $userCard->getCard()->getId();
+				/* @var UserCard $userCard */
+				$card = $userCard->getCard();
 
-                if (!isset($cardsQuantity[$id])) {
-                    $cardsQuantity[$id] = array('0' => 0, '1' => 0, 'total' => 0);
-                }
+                $id = $card->getId();
 
                 $isGolden = $userCard->getIsGolden() ? '1' : '0';
+				if (!isset($cardsQuantity[$id])) {
+					$cardsQuantity[$id] = array('0' => 0, '1' => 0, 'total' => 0);
+				}
                 $cardsQuantity[$id][$isGolden] = $userCard->getQuantity();
                 $cardsQuantity[$id]['total'] += $userCard->getQuantity();
-            }
+
+				/** @var Card[] $cardSiblings */
+				$cardSiblings = $this->cardService->getSiblings($card);
+				foreach($cardSiblings as $sibling)
+				{
+					$siblingId = $sibling->getId();
+					if (!isset($cardsQuantity[$siblingId])) {
+						$cardsQuantity[$siblingId] = array('0' => 0, '1' => 0, 'total' => 0);
+					}
+
+					$cardsQuantity[$siblingId]['0'] = max($cardsQuantity[$siblingId]['0'], $cardsQuantity[$id]['0']);
+					$cardsQuantity[$siblingId]['1'] = max($cardsQuantity[$siblingId]['1'], $cardsQuantity[$id]['1']);
+					$cardsQuantity[$siblingId]['total'] = max($cardsQuantity[$siblingId]['total'], $cardsQuantity[$id]['total']);
+				}
+			}
 
             return $cardsQuantity;
         }, 'user');
