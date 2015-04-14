@@ -30,7 +30,7 @@ class DeckCard
     /**
      * @var \Darkwood\HearthbreakerBundle\Entity\Deck
      *
-     * @ORM\ManyToOne(targetEntity="\Darkwood\HearthbreakerBundle\Entity\Deck", inversedBy="cards", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="\Darkwood\HearthbreakerBundle\Entity\Deck", inversedBy="cards")
      * @ORM\JoinColumn(name="deck_id", referencedColumnName="id")
      */
     protected $deck;
@@ -38,7 +38,7 @@ class DeckCard
     /**
      * @var \Darkwood\HearthbreakerBundle\Entity\Card
      *
-     * @ORM\ManyToOne(targetEntity="\Darkwood\HearthbreakerBundle\Entity\Card", inversedBy="decks", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="\Darkwood\HearthbreakerBundle\Entity\Card", inversedBy="decks")
      * @ORM\JoinColumn(name="card_id", referencedColumnName="id")
      */
     protected $card;

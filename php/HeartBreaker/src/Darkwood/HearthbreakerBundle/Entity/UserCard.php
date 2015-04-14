@@ -31,7 +31,7 @@ class UserCard
     /**
      * @var \Darkwood\UserBundle\Entity\User
      *
-     * @ORM\ManyToOne(targetEntity="\Darkwood\UserBundle\Entity\User", inversedBy="cards", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="\Darkwood\UserBundle\Entity\User", inversedBy="cards")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     protected $user;
@@ -39,7 +39,7 @@ class UserCard
     /**
      * @var \Darkwood\HearthbreakerBundle\Entity\Card
      *
-     * @ORM\ManyToOne(targetEntity="\Darkwood\HearthbreakerBundle\Entity\Card", inversedBy="users", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="\Darkwood\HearthbreakerBundle\Entity\Card", inversedBy="users")
      * @ORM\JoinColumn(name="card_id", referencedColumnName="id")
      */
     protected $card;
