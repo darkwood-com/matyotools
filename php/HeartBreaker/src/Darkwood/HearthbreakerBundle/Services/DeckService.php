@@ -172,7 +172,7 @@ class DeckService extends ContainerAware
 			$cards = $deck->getCards();
 
 			if($siblings) {
-				return new ArrayCollection(array_reduce($cards, function($carry, $deckCard) use ($siblings) {
+				return new ArrayCollection(array_reduce($cards->toArray(), function($carry, $deckCard) use ($siblings) {
 					/** @var DeckCard $deckCard */
 					$cardSiblings = $this->cardService->getSiblings($deckCard->getCard(), $siblings);
 					foreach($cardSiblings as $cardSibling)
