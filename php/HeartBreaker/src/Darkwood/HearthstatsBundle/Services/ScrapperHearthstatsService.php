@@ -113,7 +113,7 @@ class ScrapperHearthstatsService
                 })->count() > 0;
 
             $page += 1;
-        } while ($hasNext);
+        } while ($hasNext && count($slugs) > 0);
 
         return $deckCount;
     }
