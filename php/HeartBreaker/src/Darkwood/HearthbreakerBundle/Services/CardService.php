@@ -101,14 +101,23 @@ class CardService extends ContainerAware
 
 	/**
 	 * @param Card $card
+	 * @param null|string|array $sources
 	 * @return array
 	 */
-	public function getSiblings($card)
+	public function getSiblings($card, $sources = null)
 	{
-		$key = implode('-', array('card-siblings', $card->getSource(), $card->getSlug()));
+		$key = implode('-', array('card-siblings', $card->getSource(), $card->getSlug(), $sources));
 
-		return $this->cacheService->fetch($key, function () use ($card) {
-			return $this->cardRepository->siblings($card);
+		return $this->cacheService->fetch($key, function () use ($card, $sources) {
+			$cards = $this->cardRepository->siblings($card);
+			if(!is_null($sources)) {
+				if(!is_array($sources)) $sources = array($sources);
+				$cards = array_filter($cards, function($c) use ($sources) {
+					/** @var Card $c */
+					return in_array($c->getSource(), $sources);
+				});
+			}
+			return $cards;
 		}, 'card');
 	}
 

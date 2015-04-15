@@ -13,11 +13,13 @@ use Darkwood\HearthbreakerBundle\Form\SourceType;
 use Darkwood\HearthbreakerBundle\Services\CardService;
 use Darkwood\HearthbreakerBundle\Services\DeckService;
 use Darkwood\HearthbreakerBundle\Services\UserCardService;
+use Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class DefaultController extends Controller
 {
@@ -191,11 +193,14 @@ class DefaultController extends Controller
             throw new AccessDeniedHttpException();
         }
 
+		/** @var Card $card */
         $card = $this->get('hb.card')->findBySlug($slug, $source);
 
         if (!$card) {
             throw new NotFoundHttpException();
-        }
+        } else if (!$card instanceof CardHearthstonedecks) {
+			throw new AccessDeniedException();
+		}
 
         $isGolden = boolval($isGolden);
 

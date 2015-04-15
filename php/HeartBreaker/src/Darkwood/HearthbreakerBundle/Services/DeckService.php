@@ -4,6 +4,7 @@ namespace Darkwood\HearthbreakerBundle\Services;
 
 use Darkwood\HearthbreakerBundle\Entity\Deck;
 use Darkwood\HearthbreakerBundle\Entity\DeckCard;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Darkwood\HearthbreakerBundle\Repository\DeckRepository;
 use Symfony\Component\DependencyInjection\ContainerAware;
@@ -160,14 +161,35 @@ class DeckService extends ContainerAware
 
 	/**
 	 * @param Deck $deck
+	 * @param bool $siblings
 	 * @return \Doctrine\Common\Collections\Collection
 	 */
-	public function getCards($deck)
+	public function getCards($deck, $siblings = false)
 	{
-		$key = implode('-', array('deck-cards', $deck->getSource(), $deck->getSlug()));
+		$key = implode('-', array('deck-cards', $deck->getSource(), $deck->getSlug(), $siblings));
 
-		return $this->cacheService->fetch($key, function () use ($deck) {
-			return $deck->getCards();
+		return $this->cacheService->fetch($key, function () use ($deck, $siblings) {
+			$cards = $deck->getCards();
+
+			if($siblings) {
+				return new ArrayCollection(array_reduce($cards, function($carry, $deckCard) use ($siblings) {
+					/** @var DeckCard $deckCard */
+					$cardSiblings = $this->cardService->getSiblings($deckCard->getCard(), $siblings);
+					foreach($cardSiblings as $cardSibling)
+					{
+						$deckCardSibling = new DeckCard();
+						$deckCardSibling->setDeck($deckCard->getDeck());
+						$deckCardSibling->setCard($cardSibling);
+						$deckCardSibling->setQuantity($deckCard->getQuantity());
+
+						$carry[] = $deckCardSibling;
+					}
+
+					return $carry;
+				}, array()));
+			}
+
+			return $cards;
 		}, 'deck');
 	}
 
@@ -183,7 +205,7 @@ class DeckService extends ContainerAware
         return $this->cacheService->fetch($key, function () use ($deck) {
             $cristal = 0;
 
-            $cards = $deck->getCards();
+            $cards = $this->getCards($deck, 'hearthstonedecks');
             foreach ($cards as $deckCard) {
                 /* @var DeckCard $deckCard */
                 $cristal += $this->cardService->getBuy($deckCard->getCard()) * $deckCard->getQuantity();
@@ -205,7 +227,7 @@ class DeckService extends ContainerAware
         return $this->cacheService->fetch($key, function () use ($deck) {
             $cristal = 0;
 
-            $cards = $deck->getCards();
+            $cards = $this->getCards($deck, 'hearthstonedecks');
             foreach ($cards as $deckCard) {
                 /* @var DeckCard $deckCard */
                 $cristal += $this->cardService->getSell($deckCard->getCard()) * $deckCard->getQuantity();
@@ -228,7 +250,7 @@ class DeckService extends ContainerAware
             $classes = array_map(function ($deckCard) {
                 /* @var DeckCard $deckCard */
                 return $deckCard->getCard()->getPlayerClass();
-            }, $deck->getCards()->toArray());
+            }, $this->getCards($deck, 'hearthstonedecks')->toArray());
             $classes = array_filter($classes, function ($class) {
                 return $class != 'Neutre';
             });
