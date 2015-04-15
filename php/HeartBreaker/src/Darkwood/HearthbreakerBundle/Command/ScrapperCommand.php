@@ -61,6 +61,7 @@ class ScrapperCommand extends ContainerAwareCommand
 
 		if(isset($tasks['sync']) && $tasks['sync']) {
 			$container->get('hb.hearthstonedecks.scrapper')->sync($limit);
+			$container->get('hb.hearthstats.scrapper')->sync($limit);
 			$container->get('hb.hearthpwn.scrapper')->sync($limit);
 		}
 

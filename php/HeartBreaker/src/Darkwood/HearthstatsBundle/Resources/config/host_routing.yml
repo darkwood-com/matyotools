@@ -1,8 +1,8 @@
-card_list:
-    path: /cards
+card_image:
+    path: /assets/cards/{image}
 
-card_detail:
-    path: /cards/{slug}
+card_image_min:
+    path: /assets/deck_images/{image}
 
 deck_list:
     path: /decks/public

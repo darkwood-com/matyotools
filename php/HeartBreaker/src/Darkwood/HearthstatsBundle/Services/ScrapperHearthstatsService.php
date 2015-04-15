@@ -86,41 +86,9 @@ class ScrapperHearthstatsService
         return $data ? $this->client->request('POST', $url, $data) : $this->client->request('GET', $url);
     }
 
-    public function syncCardList($force = false)
-    {
-        $page = 1;
-        do {
-            $crawler = $this->requestRoute('card_list', array(
-                'display' => 1,
-                'page' => $page,
-            ));
-
-            $crawler
-                ->filter('#content table.listing .col-name a')
-                ->each(function (Crawler $node) use ($force) {
-                    try {
-                        $href = $node->attr('href');
-                        $match = $this->router->match($href);
-                        if ($match['_route'] == 'card_detail') {
-                            $this->syncCard($match['slug'], $force);
-                        }
-                    } catch (ResourceNotFoundException $e) {
-                    } catch (MethodNotAllowedException $e) {
-                    }
-                });
-
-            $hasNext = $crawler->filter('#content .paging-list')->children()
-                ->reduce(function (Crawler $node) {
-                    return $node->text() == 'Next';
-                })->count() > 0;
-
-            $page += 1;
-        } while ($hasNext);
-    }
-
     public function syncDeckList($limit = null, $force = false)
     {
-        /*$page = 1;
+        $page = 1;
         $deckCount = 0;
 
         do {
@@ -133,6 +101,12 @@ class ScrapperHearthstatsService
                         $href = $node->attr('href');
                         $match = $this->router->match($href);
                         if ($match['_route'] == 'deck_detail') {
+							$pos = strpos($match['slug'], '?');
+							if($pos !== false)
+							{
+								$match['slug'] = substr($match['slug'], 0, $pos);
+							}
+
                             return $match['slug'];
                         }
                     } catch (ResourceNotFoundException $e) {
@@ -151,18 +125,18 @@ class ScrapperHearthstatsService
                 $deckCount ++;
             }
 
-            $hasNext = $crawler->filter('#content .paging-list')->children()
+            $hasNext = $crawler->filter('.pagination')->children()
                 ->reduce(function (Crawler $node) {
-                    return $node->text() == 'Next';
+                    return substr($node->text(), 0, 4) == 'Next';
                 })->count() > 0;
 
             $page += 1;
         } while ($hasNext);
 
-        return $deckCount;*/
+        return $deckCount;
     }
 
-    public function syncCard($slug, $force = false)
+    public function syncCard($slug, $name, $image, $force = false)
     {
         $card = $this->cardService->findBySlug($slug, 'hearthstats');
         if (!$card) {
@@ -172,43 +146,22 @@ class ScrapperHearthstatsService
             return $card;
         }
 
-        $crawler = $this->requestRoute('card_detail', array('slug' => $slug));
-
-        $card->setName($crawler->filter('#content .details h2')->text());
-        $textNode = $crawler->filter('#content .details .card-info p');
-        if (count($textNode)) {
-            $card->setText($textNode->text());
-        }
-        $flavorNode = $crawler->filter('#content .details .card-flavor-text p');
-        if (count($flavorNode)) {
-            $card->setFlavor($flavorNode->text());
-        }
-
-        $crawler
-            ->filter('#content .details .infobox li')
-            ->each(function (Crawler $node, $i) use ($card) {
-                $text = trim($node->text());
-
-                if (preg_match('/^Type: (.*)$/', $text, $m)) {
-                    $card->setType($m[1]);
-                } elseif (preg_match('/^Rarity: (.*)$/', $text, $m)) {
-                    $card->setRarity($m[1]);
-                } elseif (preg_match('/^Race: (.*)$/', $text, $m)) {
-                    $card->setRace($m[1]);
-                } elseif (preg_match('/^Class: (.*)$/', $text, $m)) {
-                    $card->setPlayerClass($m[1]);
-                } elseif (preg_match('/^Faction: (.*)$/', $text, $m)) {
-                    $card->setFaction($m[1]);
-                }
-            });
+		$card->setName($name);
 
         if (!$card->getImageName()) {
-            $imageSrc = trim($crawler->filter('#content .details .hscard-static')->attr('src'));
-            $guzzle = $this->client->getClient();
-            $response = $guzzle->get($imageSrc);
-            $filePath = tempnam(sys_get_temp_dir(), 'HB_');
-            file_put_contents($filePath, $response->getBody());
-            $card->setImage(new UploadedFile($filePath, $imageSrc, null, null, null, true));
+			try {
+				$match = $this->router->match($image);
+				if ($match['_route'] == 'card_image_min') {
+					$imageSrc = $this->router->generate('card_image', array('image' => $slug.'.png'), true);
+					$guzzle = $this->client->getClient();
+					$response = $guzzle->get($imageSrc);
+					$filePath = tempnam(sys_get_temp_dir(), 'HB_');
+					file_put_contents($filePath, $response->getBody());
+					$card->setImage(new UploadedFile($filePath, $imageSrc, null, null, null, true));
+				}
+			} catch (ResourceNotFoundException $e) {
+			} catch (MethodNotAllowedException $e) {
+			}
         }
 
         $card->setSyncedAt(new \DateTime());
@@ -230,27 +183,27 @@ class ScrapperHearthstatsService
 
         $crawler = $this->requestRoute('deck_detail', array('slug' => $slug));
 
-        $deck->setName($crawler->filter('#content .details h2')->text());
-        $deck->setRating(intval($crawler->filter('#content .details .t-deck-rating .rating-average')->text()));
-        $deck->setUpdatedAt($this->guessDate($crawler->filter('#content .details .t-deck-header .standard-date')->text()));
+		$name = $crawler->filter('.page-title')->html();
+		$pos = strpos($name, '<small>');
+		if($pos !== false)
+		{
+			$name = substr($name, 0, $pos);
+		}
+        $deck->setName($name);
+		$deck->setWins(intval($crawler->filter('.win-count')->eq(3)->text()));
+		$deck->setLosses(intval($crawler->filter('.win-count')->eq(4)->text()));
 
-        $cards = $crawler
-            ->filter('#content .details .t-deck-details-card-list .col-name')
+		$cards = $crawler
+            ->filter('.deckbuilderWrapper .card')
             ->each(function (Crawler $node) use ($force) {
-                try {
-                    $href = $node->filter('a')->attr('href');
-                    $match = $this->router->match($href);
-                    if ($match['_route'] == 'card_detail') {
-                        return array(
-                            'card' => $this->syncCard($match['slug'], $force),
-                            'quantity' => intval(substr($node->text(), -3, 1)),
-                        );
-                    }
-                } catch (ResourceNotFoundException $e) {
-                } catch (MethodNotAllowedException $e) {
-                }
+				$cardName = $node->filter('.name')->text();
+				$cardSlug = strtolower($node->filter('.image')->attr('alt'));
+				$cardImage = $node->filter('.image')->attr('src');
 
-                return false;
+				return array(
+					'card' => $this->syncCard($cardSlug, $cardName, $cardImage, $force),
+					'quantity' => $node->filter('.qty')->text(),
+				);
             });
         $cards = array_filter($cards);
         $cards = array_reduce($cards, function($carry , $item) {
