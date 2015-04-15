@@ -10,6 +10,7 @@ use Darkwood\HearthstatsBundle\Entity\CardHearthstats;
 use Darkwood\HearthbreakerBundle\Entity\DeckCard;
 use Darkwood\HearthstatsBundle\Entity\DeckHearthstats;
 use Goutte\Client;
+use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -133,13 +134,14 @@ class ScrapperHearthstatsService
 			try {
 				$match = $this->router->match($image);
 				if ($match['_route'] == 'card_image_min') {
-					$imageSrc = $this->router->generate('card_image', array('image' => $slug.'.png'), true);
+					$imageSrc = $this->router->generate('card_image', array('image' => $slug . '.png'), true);
 					$guzzle = $this->client->getClient();
 					$response = $guzzle->get($imageSrc);
 					$filePath = tempnam(sys_get_temp_dir(), 'HB_');
 					file_put_contents($filePath, $response->getBody());
 					$card->setImage(new UploadedFile($filePath, $imageSrc, null, null, null, true));
 				}
+			} catch (ClientException $e) {
 			} catch (ResourceNotFoundException $e) {
 			} catch (MethodNotAllowedException $e) {
 			}
