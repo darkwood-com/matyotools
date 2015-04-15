@@ -13,13 +13,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class DeckHearthstats extends Deck
 {
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     *
-     * @var \DateTime
-     */
-    protected $updatedAt;
-
 	/**
 	 * @var int
 	 *
@@ -37,22 +30,6 @@ class DeckHearthstats extends Deck
     public function getSource()
     {
         return 'hearthstats';
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
     }
 
     /**
