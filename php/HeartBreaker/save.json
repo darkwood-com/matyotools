@@ -419,7 +419,7 @@
 			"slug": "purificateur-ecarlate",
 			"source": "hearthstonedecks",
 			"isGolden": false,
-			"quantity": 1
+			"quantity": 2
 		},{
 			"slug": "championne-en-vrai-argent",
 			"source": "hearthstonedecks",
@@ -884,7 +884,7 @@
 			"slug": "golem-danima",
 			"source": "hearthstonedecks",
 			"isGolden": false,
-			"quantity": 1
+			"quantity": 2
 		},{
 			"slug": "infernal-de-l-effroi",
 			"source": "hearthstonedecks",
@@ -1829,6 +1829,16 @@
 			"slug": "boxeur-de-lombre",
 			"source": "hearthstonedecks",
 			"isGolden": false,
+			"quantity": 1
+		},{
+			"slug": "tir-des-arcanes",
+			"source": "hearthstonedecks",
+			"isGolden": true,
+			"quantity": 1
+		},{
+			"slug": "bombardier-cingle",
+			"source": "hearthstonedecks",
+			"isGolden": true,
 			"quantity": 1
 		}
 	]
