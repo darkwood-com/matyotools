@@ -60,25 +60,6 @@ class ScrapperHearthstatsService
         $this->deckCardService = $deckCardService;
     }
 
-    private function guessDate($date)
-    {
-        $date = str_replace(array(
-            'lundi', 'mardi', 'mercredi', 'jeudi',
-            'vendredi', 'samedi', 'dimanche', 'janvier',
-            'février', 'mars', 'avril', 'mai',
-            'juin', 'juillet', 'août', 'septembre',
-            'octobre', 'novembre', 'décembre',
-        ), array(
-            'Monday', 'Tuesday', 'Wednesday', 'Thursday',
-            'Friday', 'Saturday', 'Sunday', 'January',
-            'February', 'March', 'April', 'May',
-            'June', 'July', 'August', 'September',
-            'October', 'November', 'December',
-        ), strtolower($date));
-
-        return new \DateTime($date);
-    }
-
     private function requestRoute($name, $parameters = array(), $data = null)
     {
         $url = $this->router->generate($name, $parameters, true);
