@@ -8,7 +8,7 @@ use Doctrine\Common\Cache\Cache;
 
 class Client extends \Goutte\Client
 {
-    public function __construct(Cache $cache, $ttl)
+    public function __construct(Cache $cache, $config)
     {
         parent::__construct();
 
@@ -23,6 +23,7 @@ class Client extends \Goutte\Client
             },
         ));
 
+		$ttl = $config['keys']['scrapper'];
         $guzzle->getEmitter()->on(
             'complete',
             function (\GuzzleHttp\Event\CompleteEvent $event) use ($ttl) {

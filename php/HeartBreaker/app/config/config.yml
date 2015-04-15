@@ -8,6 +8,7 @@ parameters:
         random_percent: 10  # +/- random_pourcent %
         # durees de mises en caches en secondes
         keys:
+            scrapper: 86400 #1 day
             card: 3600
             deck: 3600
             user: 3600

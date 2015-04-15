@@ -38,7 +38,7 @@ services:
 
     hb.client:
         class: %bh.client.class%
-        arguments: [@aequasi_cache.instance.scrapper, 604800]
+        arguments: [@aequasi_cache.instance.scrapper, %hb.cache%]
 
     hb.routing.loader:
         class: %routing.loader.yml.class%
