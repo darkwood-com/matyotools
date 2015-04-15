@@ -20,8 +20,8 @@ class ScrapperCommand extends ContainerAwareCommand
             ->setName('scrapper:run')
             ->setDescription('run scrapper')
             ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, '', 50)
-			->addOption('sync', null, InputOption::VALUE_OPTIONAL, '', true)
-			->addOption('identify', 'i', InputOption::VALUE_OPTIONAL, '', true)
+			->addOption('sync', null, InputOption::VALUE_OPTIONAL)
+			->addOption('identify', 'i', InputOption::VALUE_OPTIONAL)
         ;
     }
 
@@ -56,7 +56,7 @@ class ScrapperCommand extends ContainerAwareCommand
 		if($input->getOption('sync')) {
 			$tasks = array('sync' => true);
 		} else if($input->getOption('identify')) {
-			$tasks = array('sync' => true);
+			$tasks = array('identify' => true);
 		}
 
 		if(isset($tasks['sync']) && $tasks['sync']) {

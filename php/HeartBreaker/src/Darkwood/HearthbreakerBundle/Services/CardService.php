@@ -4,6 +4,7 @@ namespace Darkwood\HearthbreakerBundle\Services;
 
 use Darkwood\HearthbreakerBundle\Entity\Card;
 use Darkwood\HearthpwnBundle\Entity\CardHearthpwn;
+use Darkwood\HearthstatsBundle\Entity\CardHearthstats;
 use Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks;
 use Doctrine\ORM\EntityManager;
 use Darkwood\HearthbreakerBundle\Repository\CardRepository;
@@ -122,7 +123,7 @@ class CardService extends ContainerAware
         $names = array_map(function ($card) {
             if ($card instanceof CardHearthstonedecks) {
                 return $card->getNameEn();
-            } elseif ($card instanceof CardHearthpwn) {
+            } elseif ($card instanceof CardHearthstats || $card instanceof CardHearthpwn) {
                 return $card->getName();
             }
 
