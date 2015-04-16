@@ -138,7 +138,9 @@ class DeckService extends ContainerAware
             if ((isset($search['class']) && $search['class'] != null && $this->getClass($deck['deck']) != $search['class'])
                 || (isset($search['buy']) && $search['buy'] != null && $this->getBuy($deck['deck']) < $search['buy'])
                 || (isset($search['card_percent']) && $search['card_percent'] != null && $deck['cardPercent'] < $search['card_percent'])
-                || (isset($search['buy_percent']) && $search['buy_percent'] != null && $deck['buyPercent'] < $search['buy_percent'])) {
+                || (isset($search['buy_percent']) && $search['buy_percent'] != null && $deck['buyPercent'] < $search['buy_percent'])
+				|| (isset($search['matches']) && $search['matches'] != null && $deck['deck']->getSource() == 'hearthstats' && $deck['deck']->getMatches() < $search['matches'])
+				|| (isset($search['win_rate']) && $search['win_rate'] != null && $deck['deck']->getSource() == 'hearthstats' && $deck['deck']->getWinRate() * 100 < $search['win_rate'])) {
                 return false;
             }
 

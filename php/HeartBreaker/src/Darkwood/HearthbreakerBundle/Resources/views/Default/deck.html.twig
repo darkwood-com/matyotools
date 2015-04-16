@@ -13,9 +13,11 @@
                 <div class="col-xs-4">{{ form_row(form.buy_percent) }}</div>
 			</div>
 			<div class="row">
-                <div class="col-xs-4">{{ form_row(form.vote_up) }}</div>
-                <div class="col-xs-4">{{ form_row(form.vote_down) }}</div>
-                <div class="col-xs-4">{{ form_row(form.rating) }}</div>
+                <div class="col-xs-3">{{ form_row(form.vote_up) }}</div>
+                <div class="col-xs-3">{{ form_row(form.vote_down) }}</div>
+                <div class="col-xs-2">{{ form_row(form.rating) }}</div>
+				<div class="col-xs-2">{{ form_row(form.matches) }}</div>
+				<div class="col-xs-2">{{ form_row(form.win_rate) }}</div>
 			</div>
             {{ form_row(form.since) }}
 			{{ form_end(form) }}

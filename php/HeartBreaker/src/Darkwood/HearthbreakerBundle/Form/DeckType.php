@@ -38,6 +38,8 @@ class DeckType extends AbstractType
 			->add('vote_up', 'integer', array('required' => false))
 			->add('vote_down', 'integer', array('required' => false))
 			->add('rating', 'integer', array('required' => false))
+			->add('matches', 'integer', array('required' => false))
+			->add('win_rate', 'integer', array('required' => false))
 			->add('since', 'integer', array('required' => false))
 		;
 	}
