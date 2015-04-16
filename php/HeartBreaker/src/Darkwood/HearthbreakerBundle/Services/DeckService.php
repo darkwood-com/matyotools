@@ -172,21 +172,26 @@ class DeckService extends ContainerAware
 			$cards = $deck->getCards();
 
 			if($siblings) {
-				return new ArrayCollection(array_reduce($cards->toArray(), function($carry, $deckCard) use ($siblings) {
+				return $cards->map(function($deckCard) use ($siblings) {
 					/** @var DeckCard $deckCard */
-					$cardSiblings = $this->cardService->getSiblings($deckCard->getCard(), $siblings);
-					foreach($cardSiblings as $cardSibling)
-					{
-						$deckCardSibling = new DeckCard();
-						$deckCardSibling->setDeck($deckCard->getDeck());
-						$deckCardSibling->setCard($cardSibling);
-						$deckCardSibling->setQuantity($deckCard->getQuantity());
-
-						$carry[] = $deckCardSibling;
+					if($deckCard->getCard()->getSource() == $siblings) {
+						return $deckCard;
 					}
 
-					return $carry;
-				}, array()));
+					$cardSiblings = $this->cardService->getSiblings($deckCard->getCard(), $siblings);
+					if(count($cardSiblings) > 0) {
+						$deckCardSibling = new DeckCard();
+						$deckCardSibling->setDeck($deckCard->getDeck());
+						$deckCardSibling->setCard(current($cardSiblings));
+						$deckCardSibling->setQuantity($deckCard->getQuantity());
+
+						return $deckCardSibling;
+					}
+
+					return null;
+				})->filter(function($deckCard) {
+					return $deckCard !== null;
+				});
 			}
 
 			return $cards;
@@ -247,14 +252,14 @@ class DeckService extends ContainerAware
         $key = implode('-', array('deck-class', $deck->getSource(), $deck->getSlug()));
 
         return $this->cacheService->fetch($key, function () use ($deck) {
-            $classes = array_map(function ($deckCard) {
+            $classes = $this->getCards($deck, 'hearthstonedecks')
+				->map(function ($deckCard) {
                 /* @var DeckCard $deckCard */
                 return $deckCard->getCard()->getPlayerClass();
-            }, $this->getCards($deck, 'hearthstonedecks')->toArray());
-            $classes = array_filter($classes, function ($class) {
+            })->filter(function ($class) {
                 return $class != 'Neutre';
             });
-            $classes = array_unique($classes);
+            $classes = array_unique($classes->toArray());
 
             return current($classes);
         }, 'deck');

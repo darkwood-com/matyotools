@@ -45,6 +45,8 @@
                         <td>
                         {% if deck.deck.source == "hearthstonedecks" %}
                             {{ deck.deck.voteUp }} - {{ deck.deck.voteDown }}
+						{% elseif deck.deck.source == "hearthstats" %}
+							{{ deck.deck.matches }} - {{ (deck.deck.winRate * 100) | number_format(0, '.', ',') }} %
                         {% elseif deck.deck.source == "hearthpwn" %}
                             {{ deck.deck.rating }}
                         {% endif %}

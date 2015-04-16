@@ -77,4 +77,18 @@ class DeckHearthstats extends Deck
     {
         return $this->losses;
     }
+
+	public function getMatches()
+	{
+		return $this->wins + $this->losses;
+	}
+
+	public function getWinRate()
+	{
+		if($this->getMatches() > 0) {
+			return $this->wins / $this->getMatches();
+		}
+
+		return 0;
+	}
 }
