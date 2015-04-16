@@ -52,12 +52,16 @@ class ScrapperCommand extends ContainerAwareCommand
             $output->writeln($event->getRequest()->getUrl());
         }, 'last');
 
-		$tasks = array('sync' => true, 'identify' => true);
+		$tasks = array();
 		if($input->getOption('sync')) {
-			$tasks = array('sync' => true);
-		} else if($input->getOption('identify')) {
-			$tasks = array('identify' => true);
+			$tasks['sync'] = true;
 		}
+        if($input->getOption('identify')) {
+			$tasks['identify'] = true;
+		}
+        if(count($tasks) == 0) {
+            $tasks = array('sync' => true, 'identify' => true);
+        }
 
 		if(isset($tasks['sync']) && $tasks['sync']) {
 			$container->get('hb.hearthstonedecks.scrapper')->sync($limit);

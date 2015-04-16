@@ -131,15 +131,29 @@ class CardService extends ContainerAware
     {
         $names = array_map(function ($card) {
             if ($card instanceof CardHearthstonedecks) {
-                return $card->getNameEn();
+                return array($card->getNameEn());
             } elseif ($card instanceof CardHearthstats || $card instanceof CardHearthpwn) {
-                return $card->getName();
+                return array($card->getName());
             }
 
-            return $card->getName();
+            /** @var Card $card */
+            return array($card->getName());
         }, array($iCard, $jCard));
 
-        return levenshtein($names[0], $names[1]);
+        foreach($names as &$cNames) {
+            $cNames = array_merge($cNames, array_map(function($name) {
+                return strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $name));
+            }, $cNames));
+        }
+
+        $levs = array();
+        foreach($names[0] as $iName) {
+            foreach($names[1] as $jName) {
+                $levs[] = levenshtein($iName, $jName);
+            }
+        }
+
+        return min($levs);
     }
 
     public function identify()
