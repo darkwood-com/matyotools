@@ -106,11 +106,10 @@ class DeckService extends ContainerAware
 
         $decks = array_map(function ($deck) use ($cardsQuantity) {
             /* @var Deck $deck */
-
             $cardPercent = array('value' => 0, 'total' => 0);
             $buyPercent = array('value' => 0, 'total' => $this->getBuy($deck));
 
-            $deckCards = $this->getCards($deck);
+            $deckCards = $this->getCards($deck, 'hearthstonedecks');
             foreach ($deckCards as $deckCard) {
                 /* @var DeckCard $deckCard */
                 $card = $deckCard->getCard();
