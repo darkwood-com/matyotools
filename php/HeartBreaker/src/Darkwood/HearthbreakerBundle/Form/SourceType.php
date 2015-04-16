@@ -11,6 +11,7 @@ class SourceType extends AbstractType
 	{
 		$builder
 			->add('title', 'text', array('required' => false))
+			->add('missing', 'checkbox', array('required' => false))
 		;
 	}
 

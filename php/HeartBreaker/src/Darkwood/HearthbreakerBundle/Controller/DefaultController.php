@@ -178,6 +178,29 @@ class DefaultController extends Controller
 			$cardsByIdentifier[$card->getIdentifier()][] = $card;
 		}
 
+		if(isset($search['missing']) && $search['missing'] === true) {
+			foreach($cardsByIdentifier as $identifier => &$cards)
+			{
+				$userCards = array_filter($cards, function($card) use ($cardsQuantity) {
+					$cardId = $card->getId();
+					return isset($cardsQuantity[$cardId]) && $cardsQuantity[$cardId]['total'] > 0;
+				});
+
+				$sources = array_unique(array_map(function($card) {
+					return $card->getSource();
+				}, $cards));
+
+				if(!is_null($identifier) && count($sources) == 3) {
+					$cards = null;
+				} else {
+					$cards = $userCards;
+				}
+			}
+			$cardsByIdentifier = array_filter($cardsByIdentifier);
+		}
+
+		ksort($cardsByIdentifier);
+
 		return $this->render('HearthbreakerBundle:Default:source.html.twig', array(
 			'nav' => 'source',
 			'cards' => $cardsByIdentifier,
