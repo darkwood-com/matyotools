@@ -614,7 +614,7 @@
 			"slug": "tricheur-borgne",
 			"source": "hearthstonedecks",
 			"isGolden": false,
-			"quantity": 1
+			"quantity": 2
 		},{
 			"slug": "cle-de-maitre-des-rouages",
 			"source": "hearthstonedecks",
@@ -1839,6 +1839,11 @@
 			"slug": "bombardier-cingle",
 			"source": "hearthstonedecks",
 			"isGolden": true,
+			"quantity": 1
+		},{
+			"slug": "gahz-rilla",
+			"source": "hearthstonedecks",
+			"isGolden": false,
 			"quantity": 1
 		}
 	]
