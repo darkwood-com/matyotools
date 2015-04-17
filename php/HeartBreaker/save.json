@@ -1865,6 +1865,16 @@
 			"source": "hearthstonedecks",
 			"isGolden": false,
 			"quantity": 1
+		},{
+			"slug": "dragonnet-du-crepuscule",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 2
+		},{
+			"slug": "lourdaud-volcanique",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 2
 		}
 	]
 }
