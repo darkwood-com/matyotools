@@ -12,6 +12,7 @@ parameters:
             card: 3600
             deck: 3600
             user: 3600
+            hearthstonejson: 86400 #1 day
 
 framework:
     #esi:             ~
