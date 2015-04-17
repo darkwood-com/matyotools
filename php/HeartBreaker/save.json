@@ -1860,6 +1860,11 @@
 			"source": "hearthstonedecks",
 			"isGolden": false,
 			"quantity": 2
+		},{
+			"slug": "rend-main-noire",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 1
 		}
 	]
 }
