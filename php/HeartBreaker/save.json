@@ -1845,6 +1845,11 @@
 			"source": "hearthstonedecks",
 			"isGolden": false,
 			"quantity": 1
+		},{
+			"slug": "rageur-du-magma",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 2
 		}
 	]
 }
