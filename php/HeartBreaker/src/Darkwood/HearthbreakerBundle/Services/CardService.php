@@ -187,21 +187,26 @@ class CardService extends ContainerAware
 
 		return $this->cacheService->fetch($key, function () use ($iCard, $jCard) {
 			$names = array_map(function ($card) {
-				if ($card instanceof CardHearthstonedecks) {
-					return array_merge(array($card->getNameEn()), $this->findNames($card->getName(), 'frFR', array('enUS', 'enGB')));
-				} elseif ($card instanceof CardHearthstats || $card instanceof CardHearthpwn) {
-					return array($card->getName());
-				}
-
 				/** @var Card $card */
-				return array($card->getName());
-			}, array($iCard, $jCard));
+				$key = implode('-', array('card-compare-names', $card->getSource(), $card->getSlug()));
 
-			foreach ($names as &$cNames) {
-				$cNames = array_merge($cNames, array_map(function ($name) {
-					return strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $name));
-				}, $cNames));
-			}
+				return $this->cacheService->fetch($key, function () use ($card) {
+					$names = array($card->getName());
+
+					if ($card instanceof CardHearthstonedecks) {
+						return $names = array_merge(array($card->getNameEn()), $this->findNames($card->getName(), 'frFR', array('enUS', 'enGB')));
+					} elseif ($card instanceof CardHearthstats || $card instanceof CardHearthpwn) {
+						return $names = array($card->getName());
+					}
+
+					$names = array_merge($names, array_map(function ($name) {
+						return strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $name));
+					}, $names));
+					$names = array_unique($names);
+
+					return $names;
+				}, 'card');
+			}, array($iCard, $jCard));
 
 			$levs = array();
 			foreach ($names[0] as $iName) {
@@ -211,7 +216,7 @@ class CardService extends ContainerAware
 			}
 
 			return min($levs);
-		});
+		}, 'card');
     }
 
     public function identify()
@@ -235,12 +240,13 @@ class CardService extends ContainerAware
 
                 $mCards = array();
                 foreach ($cards as $jCard) {
+					/** @var Card $jCard */
                     if ($iCard === $jCard) {
                         continue;
                     }
 
                     $cmp = $this->compare($iCard, $jCard);
-                    if ($cmp != -1 && $cmp < $lvl) {
+                    if ($cmp != -1 && $cmp <= $lvl) {
                         $mCards[] = $jCard;
                     }
                 }
