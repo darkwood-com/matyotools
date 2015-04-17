@@ -1850,6 +1850,16 @@
 			"source": "hearthstonedecks",
 			"isGolden": false,
 			"quantity": 2
+		},{
+			"slug": "dragon-consort",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 2
+		},{
+			"slug": "oeuf-de-dragon",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 2
 		}
 	]
 }
