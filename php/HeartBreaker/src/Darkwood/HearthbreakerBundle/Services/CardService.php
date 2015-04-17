@@ -132,47 +132,51 @@ class CardService extends ContainerAware
 	 */
 	private function findNames($name, $lang, $toLangs)
 	{
-		$key = implode('-', array('card-hearthstonejson-lang', $lang, implode(':', $toLangs)));
+		$key = implode('-', array('card-names', $name, $lang, implode(':', $toLangs)));
 
-		$langs = $this->cacheService->fetch($key, function () use ($lang, $toLangs) {
-			$key = implode('-', array('card-hearthstonejson-names'));
+		return $this->cacheService->fetch($key, function () use ($name, $lang, $toLangs) {
+			$key = implode('-', array('card-hearthstonejson-lang', $lang, implode(':', $toLangs)));
 
-			$cards = $this->cacheService->fetch($key, function () {
-				$client = new GuzzleClient(array('defaults' => array('allow_redirects' => false, 'cookies' => true)));
-				$response = $client->get('http://hearthstonejson.com/json/AllSetsAllLanguages.json');
-				$json = $response->getBody();
-				$jsonDecode = new JsonDecode(true);
-				$json = $jsonDecode->decode($json, JsonEncoder::FORMAT);
+			$langs = $this->cacheService->fetch($key, function () use ($lang, $toLangs) {
+				$key = implode('-', array('card-hearthstonejson-names'));
 
-				$cardNames = array();
-				foreach($json as $lang => $cardType) {
-					foreach($cardType as $cards) {
-						foreach($cards as $card) {
-							$cardNames[$card['id']][$lang] = $card['name'];
+				$cards = $this->cacheService->fetch($key, function () {
+					$client = new GuzzleClient(array('defaults' => array('allow_redirects' => false, 'cookies' => true)));
+					$response = $client->get('http://hearthstonejson.com/json/AllSetsAllLanguages.json');
+					$json = $response->getBody();
+					$jsonDecode = new JsonDecode(true);
+					$json = $jsonDecode->decode($json, JsonEncoder::FORMAT);
+
+					$cardNames = array();
+					foreach($json as $lang => $cardType) {
+						foreach($cardType as $cards) {
+							foreach($cards as $card) {
+								$cardNames[$card['id']][$lang] = $card['name'];
+							}
 						}
+					}
+
+					return $cardNames;
+				}, 'hearthstonejson');
+
+				$langs = array();
+				foreach($cards as $card) {
+					$name = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $card[$lang]));
+
+					foreach($toLangs as $toLang) {
+						$langs[$name][] = $card[$toLang];
 					}
 				}
 
-				return $cardNames;
+				return array_map(function($l) {
+					return array_unique($l);
+				}, $langs);
 			}, 'hearthstonejson');
 
-			$langs = array();
-			foreach($cards as $card) {
-				$name = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $card[$lang]));
+			$name = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $name));
 
-				foreach($toLangs as $toLang) {
-					$langs[$name][] = $card[$toLang];
-				}
-			}
-
-			return array_map(function($l) {
-				return array_unique($l);
-			}, $langs);
-		}, 'hearthstonejson');
-
-		$name = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $name));
-
-		return isset($langs[$name]) ? $langs[$name] : array();
+			return isset($langs[$name]) ? $langs[$name] : array();
+		}, 'card');
 	}
 
     /**
@@ -183,40 +187,36 @@ class CardService extends ContainerAware
      */
     public function compare($iCard, $jCard)
     {
-		$key = implode('-', array('card-compare', $iCard->getSource(), $iCard->getSlug(), $jCard->getSource(), $jCard->getSlug()));
+		$names = array_map(function ($card) {
+			/** @var Card $card */
+			$key = implode('-', array('card-compare-names', $card->getSource(), $card->getSlug()));
 
-		return $this->cacheService->fetch($key, function () use ($iCard, $jCard) {
-			$names = array_map(function ($card) {
-				/** @var Card $card */
-				$key = implode('-', array('card-compare-names', $card->getSource(), $card->getSlug()));
+			return $this->cacheService->fetch($key, function () use ($card) {
+				$names = array($card->getName());
 
-				return $this->cacheService->fetch($key, function () use ($card) {
-					$names = array($card->getName());
-
-					if ($card instanceof CardHearthstonedecks) {
-						return $names = array_merge(array($card->getNameEn()), $this->findNames($card->getName(), 'frFR', array('enUS', 'enGB')));
-					} elseif ($card instanceof CardHearthstats || $card instanceof CardHearthpwn) {
-						return $names = array($card->getName());
-					}
-
-					$names = array_merge($names, array_map(function ($name) {
-						return strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $name));
-					}, $names));
-					$names = array_unique($names);
-
-					return $names;
-				}, 'card');
-			}, array($iCard, $jCard));
-
-			$levs = array();
-			foreach ($names[0] as $iName) {
-				foreach ($names[1] as $jName) {
-					$levs[] = levenshtein($iName, $jName);
+				if ($card instanceof CardHearthstonedecks) {
+					return $names = array_merge(array($card->getNameEn()), $this->findNames($card->getName(), 'frFR', array('enUS', 'enGB')));
+				} elseif ($card instanceof CardHearthstats || $card instanceof CardHearthpwn) {
+					return $names = array($card->getName());
 				}
-			}
 
-			return min($levs);
-		}, 'card');
+				$names = array_merge($names, array_map(function ($name) {
+					return strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $name));
+				}, $names));
+				$names = array_unique($names);
+
+				return $names;
+			}, 'card');
+		}, array($iCard, $jCard));
+
+		$levs = array();
+		foreach ($names[0] as $iName) {
+			foreach ($names[1] as $jName) {
+				$levs[] = levenshtein($iName, $jName);
+			}
+		}
+
+		return min($levs);
     }
 
     public function identify()

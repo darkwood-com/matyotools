@@ -33,6 +33,7 @@ class CacheService
      */
     public function fetch($id, $data, $lifeTime = null, $rand = true)
     {
+		$id = md5($id);
         $d = $this->cache->fetch($id);
         if ($d === false) {
             $d = $data();
