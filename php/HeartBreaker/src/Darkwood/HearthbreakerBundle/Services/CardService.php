@@ -183,31 +183,35 @@ class CardService extends ContainerAware
      */
     public function compare($iCard, $jCard)
     {
-        $names = array_map(function ($card) {
-            if ($card instanceof CardHearthstonedecks) {
-                return array_merge(array($card->getNameEn()), $this->findNames($card->getName(), 'frFR', array('enUS', 'enGB')));
-            } elseif ($card instanceof CardHearthstats || $card instanceof CardHearthpwn) {
-                return array($card->getName());
-            }
+		$key = implode('-', array('card-compare', $iCard->getSource(), $iCard->getSlug(), $jCard->getSource(), $jCard->getSlug()));
 
-            /** @var Card $card */
-            return array($card->getName());
-        }, array($iCard, $jCard));
+		return $this->cacheService->fetch($key, function () use ($iCard, $jCard) {
+			$names = array_map(function ($card) {
+				if ($card instanceof CardHearthstonedecks) {
+					return array_merge(array($card->getNameEn()), $this->findNames($card->getName(), 'frFR', array('enUS', 'enGB')));
+				} elseif ($card instanceof CardHearthstats || $card instanceof CardHearthpwn) {
+					return array($card->getName());
+				}
 
-        foreach($names as &$cNames) {
-            $cNames = array_merge($cNames, array_map(function($name) {
-                return strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $name));
-            }, $cNames));
-        }
+				/** @var Card $card */
+				return array($card->getName());
+			}, array($iCard, $jCard));
 
-        $levs = array();
-        foreach($names[0] as $iName) {
-            foreach($names[1] as $jName) {
-                $levs[] = levenshtein($iName, $jName);
-            }
-        }
+			foreach ($names as &$cNames) {
+				$cNames = array_merge($cNames, array_map(function ($name) {
+					return strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $name));
+				}, $cNames));
+			}
 
-        return min($levs);
+			$levs = array();
+			foreach ($names[0] as $iName) {
+				foreach ($names[1] as $jName) {
+					$levs[] = levenshtein($iName, $jName);
+				}
+			}
+
+			return min($levs);
+		});
     }
 
     public function identify()
