@@ -180,6 +180,7 @@ class CardService extends ContainerAware
 		}, 'card');
 	}
 
+    private $cache = array();
     /**
      * @param Card $iCard
      * @param Card $jCard
@@ -192,22 +193,24 @@ class CardService extends ContainerAware
 			/** @var Card $card */
 			$key = implode('-', array('card-compare-names', $card->getSource(), $card->getSlug()));
 
-			return $this->cacheService->fetch($key, function () use ($card) {
-				$names = array($card->getName());
+            if(!isset($this->cache[$key])) {
+                $names = array($card->getName());
 
-				if ($card instanceof CardHearthstonedecks) {
-					return $names = array_merge(array($card->getNameEn()), $this->findNames($card->getName(), 'frFR', array('enUS', 'enGB')));
-				} elseif ($card instanceof CardHearthstats || $card instanceof CardHearthpwn) {
-					return $names = array($card->getName());
-				}
+                if ($card instanceof CardHearthstonedecks) {
+                    $names = array_merge(array($card->getNameEn()), $this->findNames($card->getName(), 'frFR', array('enUS', 'enGB')));
+                } elseif ($card instanceof CardHearthstats || $card instanceof CardHearthpwn) {
+                    $names = array($card->getName());
+                }
 
-				$names = array_merge($names, array_map(function ($name) {
-					return strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $name));
-				}, $names));
-				$names = array_unique($names);
+                $names = array_merge($names, array_map(function ($name) {
+                    return strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $name));
+                }, $names));
+                $names = array_unique($names);
 
-				return $names;
-			}, 'card');
+                $this->cache[$key] = $names;
+            }
+
+            return $this->cache[$key];
 		}, array($iCard, $jCard));
 
 		$levs = array();
