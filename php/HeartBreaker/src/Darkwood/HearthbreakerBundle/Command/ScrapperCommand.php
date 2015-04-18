@@ -72,7 +72,7 @@ class ScrapperCommand extends ContainerAwareCommand
 
 		if(isset($tasks['identify']) && $tasks['identify']) {
 			$output->writeln('Identify cards ...');
-			$container->get('hb.card')->identify();
+			$container->get('hb.card')->identify(new ProgressBar($output));
 		}
     }
 }

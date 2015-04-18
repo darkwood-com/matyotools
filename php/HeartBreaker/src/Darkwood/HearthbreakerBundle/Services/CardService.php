@@ -8,6 +8,7 @@ use Darkwood\HearthstatsBundle\Entity\CardHearthstats;
 use Darkwood\HearthstonedecksBundle\Entity\CardHearthstonedecks;
 use Doctrine\ORM\EntityManager;
 use Darkwood\HearthbreakerBundle\Repository\CardRepository;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use GuzzleHttp\Client as GuzzleClient;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
@@ -219,68 +220,42 @@ class CardService extends ContainerAware
 		return min($levs);
     }
 
-    public function identify()
+    public function identify(ProgressBar $progressBar)
     {
+        /** @var Card[] $cards */
         $cards = $this->findAll();
-        foreach ($cards as $card) {
-            /* @var Card $card */
-            $card->setIdentifier(null);
-        }
 
-        $identifier = 1;
+        $progressBar->start(count($cards));
 
-        $leftCards = array_values($cards);
-        for ($lvl = 0; $lvl < 2; $lvl++) {
-            foreach ($leftCards as $i => $iCard) {
-                /** @var Card $iCard */
-                if ($iCard->getIdentifier()) {
-                    unset($leftCards[$i]);
-                    continue;
-                }
+        $id = 1;
 
-                $mCards = array();
-                foreach ($cards as $jCard) {
-					/** @var Card $jCard */
-                    if ($iCard === $jCard) {
-                        continue;
-                    }
+        /** @var Card $iCard */
+        $iCard = array_shift($cards);
+        while($iCard)
+        {
+            $iCard->setIdentifier(null);
 
-                    $cmp = $this->compare($iCard, $jCard);
-                    if ($cmp != -1 && $cmp <= $lvl) {
-                        $mCards[] = $jCard;
-                    }
-                }
-
-                if (count($mCards) > 0) {
-                    $mIdentifier = null;
-                    foreach ($mCards as $mCard) {
-                        /* @var Card $mCard */
-                        $cIdentifier = $mCard->getIdentifier();
-                        if (!is_null($cIdentifier)) {
-                            if ($cIdentifier != $mIdentifier) {
-                                unset($leftCards[$i]);
-                                continue;
-                            }
-
-                            $mIdentifier = $cIdentifier;
-                        }
-                    }
-
-                    $cIdentifier = $identifier;
-                    if (!is_null($mIdentifier)) {
-                        $cIdentifier = $mIdentifier;
-                    } else {
-                        $identifier ++;
-                    }
-
-                    $iCard->setIdentifier($cIdentifier);
-                    foreach ($mCards as $mCard) {
-                        $mCard->setIdentifier($cIdentifier);
-                    }
-
-                    unset($leftCards[$i]);
+            $keys = array();
+            foreach($cards as $key => $jCard)
+            {
+                $lev = $this->compare($iCard, $jCard);
+                if($lev != -1 && $lev <= 1) {
+                    $keys[] = $key;
                 }
             }
+
+            if(count($keys) > 0) {
+                $iCard->setIdentifier($id);
+                foreach($keys as $key) {
+                    $cards[$key]->setIdentifier($id);
+                    unset($cards[$key]);
+                    $progressBar->advance();
+                }
+                $id ++;
+            }
+
+            $iCard = array_shift($cards);
+            $progressBar->advance();
         }
 
         $this->em->flush();
