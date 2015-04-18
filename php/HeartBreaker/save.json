@@ -1875,6 +1875,16 @@
 			"source": "hearthstonedecks",
 			"isGolden": false,
 			"quantity": 2
+		},{
+			"slug": "gardien-cobalt",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 1
+		},{
+			"slug": "bling-o-tron-3000",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 1
 		}
 	]
 }
