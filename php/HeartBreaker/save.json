@@ -1049,7 +1049,7 @@
 			"slug": "forban-de-la-voile-sanglante",
 			"source": "hearthstonedecks",
 			"isGolden": false,
-			"quantity": 1
+			"quantity": 2
 		},{
 			"slug": "fossoyeur",
 			"source": "hearthstonedecks",
@@ -1504,7 +1504,7 @@
 			"slug": "nain-sombrefer",
 			"source": "hearthstonedecks",
 			"isGolden": false,
-			"quantity": 1
+			"quantity": 2
 		},{
 			"slug": "ogre-magi",
 			"source": "hearthstonedecks",
@@ -1824,7 +1824,7 @@
 			"slug": "frappe-heroique",
 			"source": "hearthstonedecks",
 			"isGolden": true,
-			"quantity": 2
+			"quantity": 1
 		},{
 			"slug": "boxeur-de-lombre",
 			"source": "hearthstonedecks",
@@ -1882,6 +1882,16 @@
 			"quantity": 1
 		},{
 			"slug": "bling-o-tron-3000",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 1
+		},{
+			"slug": "puissance-du-fauve",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 1
+		},{
+			"slug": "acolyte-de-la-souffrance",
 			"source": "hearthstonedecks",
 			"isGolden": false,
 			"quantity": 1
