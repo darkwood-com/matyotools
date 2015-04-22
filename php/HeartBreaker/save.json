@@ -159,7 +159,7 @@
 			"slug": "appel-du-familier",
 			"source": "hearthstonedecks",
 			"isGolden": false,
-			"quantity": 1
+			"quantity": 2
 		},{
 			"slug": "fusee-eclairante",
 			"source": "hearthstonedecks",
@@ -1892,6 +1892,16 @@
 			"quantity": 1
 		},{
 			"slug": "acolyte-de-la-souffrance",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 1
+		},{
+			"slug": "charge",
+			"source": "hearthstonedecks",
+			"isGolden": true,
+			"quantity": 1
+		},{
+			"slug": "mecano-amplificateur",
 			"source": "hearthstonedecks",
 			"isGolden": false,
 			"quantity": 1
