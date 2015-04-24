@@ -1824,7 +1824,7 @@
 			"slug": "frappe-heroique",
 			"source": "hearthstonedecks",
 			"isGolden": true,
-			"quantity": 1
+			"quantity": 2
 		},{
 			"slug": "boxeur-de-lombre",
 			"source": "hearthstonedecks",
@@ -1905,6 +1905,41 @@
 			"source": "hearthstonedecks",
 			"isGolden": false,
 			"quantity": 1
+		},{
+			"slug": "revanche",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 2
+		},{
+			"slug": "attise-flammes",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 2
+		},{
+			"slug": "dragon-affame",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 2
+		},{
+			"slug": "destructeur-garde-du-feu",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 2
+		},{
+			"slug": "chromaggus",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 1
+		},{
+			"slug": "courroux-demoniaque",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 2
+		},{
+			"slug": "furtif-sombrefer",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 2
 		}
 	]
 }
