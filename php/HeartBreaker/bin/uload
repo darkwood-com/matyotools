@@ -1,0 +1,2 @@
+#!/bin/sh
+vagrant ssh -c "/var/www/app/console users:load"
