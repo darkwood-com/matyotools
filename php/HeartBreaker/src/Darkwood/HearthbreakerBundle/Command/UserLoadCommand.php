@@ -43,8 +43,10 @@ class UserLoadCommand extends ContainerAwareCommand
                     $userCard->setUser($user);
                     $userCard->setCard($card['card']);
                     $userCard->setIsGolden($card['isGolden']);
-                    $userCard->setQuantity($card['quantity']);
+                }
 
+                if($userCard->getQuantity() !== $card['quantity']) {
+                    $userCard->setQuantity($card['quantity']);
                     $container->get('hb.usercard')->save($userCard);
                 }
             }
