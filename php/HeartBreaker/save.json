@@ -1940,6 +1940,21 @@
 			"source": "hearthstonedecks",
 			"isGolden": false,
 			"quantity": 2
+		},{
+			"slug": "diable-de-poussiere",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 1
+		},{
+			"slug": "accro-au-mana",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 1
+		},{
+			"slug": "nervi-de-la-kapitalrisk",
+			"source": "hearthstonedecks",
+			"isGolden": false,
+			"quantity": 1
 		}
 	]
 }
