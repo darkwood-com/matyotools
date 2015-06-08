@@ -287,6 +287,7 @@ xdebug:
         xdebug.remote_enable: '1'
         xdebug.remote_handler: dbgp
         xdebug.remote_port: '9000'
+        xdebug.remote_host: 192.168.56.1
 blackfire:
     install: '0'
     settings:

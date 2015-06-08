@@ -53,8 +53,8 @@ Server ready (Wheezy box provisioned with LNPP : Linux, Nginx, Percona and PHP u
 Put in /etc/hosts :
 
 ```
-44.44.44.44 phpinfo.matyotools.dev
-44.44.44.44 phpmyadmin.matyotools.dev
-44.44.44.44 searchreplace.matyotools.dev
-44.44.44.44 harvest.matyotools.dev
+192.168.56.101 phpinfo.matyotools.dev
+192.168.56.101 phpmyadmin.matyotools.dev
+192.168.56.101 searchreplace.matyotools.dev
+192.168.56.101 harvest.matyotools.dev
 ```

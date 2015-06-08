@@ -8,7 +8,10 @@ puphpet/files/dot/ssh/id_rsa
 puphpet/files/dot/ssh/id_rsa.pem
 puphpet/files/dot/ssh/id_rsa.ppk
 puphpet/files/dot/ssh/id_rsa.pub
-puphpet/puppet/modules
+puphpet/files/dot/ssh/root_id_rsa
+puphpet/files/dot/ssh/root_id_rsa.pem
+puphpet/files/dot/ssh/root_id_rsa.ppk
+puphpet/files/dot/ssh/root_id_rsa.pub
 
 # PhpStorm
 .idea
