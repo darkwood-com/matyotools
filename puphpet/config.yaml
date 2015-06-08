@@ -1,40 +1,60 @@
----
-vagrantfile-local:
+vagrantfile:
+    target: local
     vm:
-        box: puphpet/debian75-x64
-        box_url: puphpet/debian75-x64
-        hostname: matyotools
+        box: puphpet/ubuntu1404-x64
+        box_url: puphpet/ubuntu1404-x64
+        hostname: local.puphpet
         memory: '512'
+        cpus: '1'
         chosen_provider: virtualbox
         network:
-            private_network: 44.44.44.44
+            private_network: 192.168.56.101
             forwarded_port:
-                Yre9t5EQRDv1:
-                    host: '8080'
-                    guest: '80'
+                vflnp_lyf9kh030sav:
+                    host: '8274'
+                    guest: '22'
+        post_up_message: ''
         provider:
             virtualbox:
                 modifyvm:
                     natdnshostresolver1: on
-                setextradata:
-                    VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root: 1
+                showgui: '0'
             vmware:
                 numvcpus: 1
+            parallels:
+                cpus: 1
         provision:
             puppet:
                 manifests_path: puphpet/puppet
-                manifest_file: manifest.pp
+                manifest_file: site.pp
                 module_path: puphpet/puppet/modules
                 options:
                     - '--verbose'
                     - '--hiera_config /vagrant/puphpet/puppet/hiera.yaml'
                     - '--parser future'
         synced_folder:
-            u7VmZt7A26ue:
+            vflsf_f33rb6s2khmo:
                 source: ./
                 target: /var/www
-                nfs: 'true'
-        usable_port_range: 2200..2250
+                sync_type: nfs
+                smb:
+                    smb_host: ''
+                    smb_username: ''
+                    smb_password: ''
+                rsync:
+                    args:
+                        - '--verbose'
+                        - '--archive'
+                        - '-z'
+                    exclude:
+                        - .vagrant/
+                        - .git/
+                    auto: 'true'
+                owner: www-data
+                group: www-data
+        usable_port_range:
+            start: 10200
+            stop: 10500
     ssh:
         host: null
         port: null
@@ -48,89 +68,29 @@ vagrantfile-local:
     vagrant:
         host: detect
 server:
+    install: '1'
     packages:
         - lftp
         - phpmyadmin
-    dot_files:
-        -
-            bash_aliases: null
-    _prevent_empty: ''
-mailcatcher:
-    install: 0
-    settings:
-        smtp_ip: 0.0.0.0
-        smtp_port: 1025
-        http_ip: 0.0.0.0
-        http_port: '1080'
-        mailcatcher_path: /usr/local/bin
-        log_path: /var/log/mailcatcher/mailcatcher.log
-apache:
+users_groups:
     install: '1'
-    settings:
-        user: www-data
-        group: www-data
-        default_vhost: false
-        manage_user: false
-        manage_group: false
-        sendfile: 0
-    modules:
-        - php
-        - rewrite
-    vhosts:
-        host01:
-            servername: phpinfo.matyotools.dev
-            docroot: /var/www/php/Info
-            port: '80'
-            override:
-                - All
-            custom_fragment: ''
-            ssl_cert: ''
-            ssl_key: ''
-            ssl_chain: ''
-            ssl_certs_dir: ''
-        host02:
-            servername: phpmyadmin.matyotools.dev
-            docroot: /usr/share/phpmyadmin
-            port: '80'
-            override:
-                - All
-            custom_fragment: ''
-            ssl_cert: ''
-            ssl_key: ''
-            ssl_chain: ''
-            ssl_certs_dir: ''
-        host03:
-            servername: searchreplace.matyotools.dev
-            docroot: /var/www/php/SearchReplace
-            port: '80'
-            override:
-                - All
-            options:
-                - Indexes
-                - FollowSymLinks
-                - MultiViews
-            custom_fragment: ''
-            ssl_cert: ''
-            ssl_key: ''
-            ssl_chain: ''
-            ssl_certs_dir: ''
-        host04:
-            servername: harvest.matyotools.dev
-            docroot: /var/www/php/Harvest/web
-            port: '80'
-            override:
-                - All
-            custom_fragment: ''
-            ssl_cert: ''
-            ssl_key: ''
-            ssl_chain: ''
-            ssl_certs_dir: ''
-    mod_pagespeed: 0
-    mod_spdy: 0
+    groups: {  }
+    users: {  }
+firewall:
+    install: '1'
+    rules: {  }
+cron:
+    install: '1'
+    jobs: {  }
 nginx:
-    install: 0
+    install: '0'
+    settings:
+        default_vhost: 1
+        proxy_buffer_size: 128k
+        proxy_buffers: '4 256k'
+    upstreams: {  }
     vhosts:
-        8a46vlKN7W1Y:
+        nxv_fnchsxr10v88:
             server_name: awesome.dev
             server_aliases:
                 - www.awesome.dev
@@ -140,14 +100,155 @@ nginx:
                 - index.html
                 - index.htm
                 - index.php
-            envvars:
-                - 'APP_ENV dev'
+            client_max_body_size: 1m
+            ssl: '0'
             ssl_cert: ''
             ssl_key: ''
+            ssl_port: ''
+            ssl_protocols: ''
+            ssl_ciphers: ''
+    proxies: {  }
+apache:
+    install: '1'
+    settings:
+        user: www-data
+        group: www-data
+        default_vhost: true
+        manage_user: false
+        manage_group: false
+        sendfile: 0
+    modules:
+        - proxy_fcgi
+        - rewrite
+    vhosts:
+        av_rphvvsprkk6u:
+            servername: phpinfo.matyotools.dev
+            docroot: /var/www/php/Info
+            port: '80'
+            custom_fragment: ''
+            ssl: '0'
+            ssl_cert: ''
+            ssl_key: ''
+            ssl_chain: ''
+            ssl_certs_dir: ''
+            ssl_protocol: ''
+            ssl_cipher: ''
+            directories:
+                avd_797me96n0ceb:
+                    path: /var/www
+                    options:
+                        - Indexes
+                        - FollowSymlinks
+                        - MultiViews
+                    allow_override:
+                        - All
+                    require:
+                        - 'all granted'
+                    custom_fragment: ''
+                    files_match:
+                        avdfm_eo7uynkdhj6h:
+                            path: \.php$
+                            sethandler: 'proxy:fcgi://127.0.0.1:9000'
+                            custom_fragment: ''
+                            provider: filesmatch
+                    provider: directory
+        av_hb2t6qzt0oy9:
+            servername: phpmyadmin.matyotools.dev
+            docroot: /usr/share/phpmyadmin
+            port: '80'
+            custom_fragment: ''
+            ssl: '0'
+            ssl_cert: ''
+            ssl_key: ''
+            ssl_chain: ''
+            ssl_certs_dir: ''
+            ssl_protocol: ''
+            ssl_cipher: ''
+            directories:
+                avd_797me96n0ceb:
+                    path: /var/www
+                    options:
+                        - Indexes
+                        - FollowSymlinks
+                        - MultiViews
+                    allow_override:
+                        - All
+                    require:
+                        - 'all granted'
+                    custom_fragment: ''
+                    files_match:
+                        avdfm_eo7uynkdhj6h:
+                            path: \.php$
+                            sethandler: 'proxy:fcgi://127.0.0.1:9000'
+                            custom_fragment: ''
+                            provider: filesmatch
+                    provider: directory
+        av_oasnb1qb42oa:
+            servername: searchreplace.matyotools.dev
+            docroot: /var/www/php/SearchReplace
+            port: '80'
+            custom_fragment: ''
+            ssl: '0'
+            ssl_cert: ''
+            ssl_key: ''
+            ssl_chain: ''
+            ssl_certs_dir: ''
+            ssl_protocol: ''
+            ssl_cipher: ''
+            directories:
+                avd_797me96n0ceb:
+                    path: /var/www
+                    options:
+                        - Indexes
+                        - FollowSymlinks
+                        - MultiViews
+                    allow_override:
+                        - All
+                    require:
+                        - 'all granted'
+                    custom_fragment: ''
+                    files_match:
+                        avdfm_eo7uynkdhj6h:
+                            path: \.php$
+                            sethandler: 'proxy:fcgi://127.0.0.1:9000'
+                            custom_fragment: ''
+                            provider: filesmatch
+                    provider: directory
+        av_6hr2x9r88xst:
+            servername: harvest.matyotools.dev
+            docroot: /var/www/php/Harvest/web
+            port: '80'
+            custom_fragment: ''
+            ssl: '0'
+            ssl_cert: ''
+            ssl_key: ''
+            ssl_chain: ''
+            ssl_certs_dir: ''
+            ssl_protocol: ''
+            ssl_cipher: ''
+            directories:
+                avd_797me96n0ceb:
+                    path: /var/www
+                    options:
+                        - Indexes
+                        - FollowSymlinks
+                        - MultiViews
+                    allow_override:
+                        - All
+                    require:
+                        - 'all granted'
+                    custom_fragment: ''
+                    files_match:
+                        avdfm_eo7uynkdhj6h:
+                            path: \.php$
+                            sethandler: 'proxy:fcgi://127.0.0.1:9000'
+                            custom_fragment: ''
+                            provider: filesmatch
+                    provider: directory
 php:
     install: '1'
-    version: '55'
-    composer: '1'
+    settings:
+        version: '56'
     modules:
         php:
             - cli
@@ -155,6 +256,7 @@ php:
             - gd
             - intl
             - mcrypt
+            - xsl
         pear: {  }
         pecl:
             - pecl_http
@@ -162,7 +264,20 @@ php:
         display_errors: On
         error_reporting: '-1'
         session.save_path: /var/lib/php/session
-    timezone: Europe/Paris
+        memory_limit: '-1'
+        date.timezone: Europe/Paris
+    fpm_ini:
+        error_log: /var/log/php-fpm.log
+    fpm_pools:
+        phpfp_ldf9his9cyaq:
+            ini:
+                prefix: www
+                listen: '127.0.0.1:9000'
+                security.limit_extensions: .php
+                user: www-user
+                group: www-data
+    composer: '1'
+    composer_home: ''
 xdebug:
     install: '1'
     settings:
@@ -172,44 +287,101 @@ xdebug:
         xdebug.remote_enable: '1'
         xdebug.remote_handler: dbgp
         xdebug.remote_port: '9000'
-drush:
-    install: 0
+blackfire:
+    install: '0'
     settings:
-        drush.tag_branch: 6.x
+        server_id: ''
+        server_token: ''
+        agent:
+            http_proxy: ''
+            https_proxy: ''
+            log_file: stderr
+            log_level: '1'
+        php:
+            agent_timeout: '0.25'
+            log_file: ''
+            log_level: '1'
+xhprof:
+    install: '0'
+wpcli:
+    install: '0'
+    version: v0.19.0
+drush:
+    install: '0'
+    version: ''
+ruby:
+    install: '1'
+    versions: {  }
+python:
+    install: '1'
+    packages: {  }
+    versions: {  }
+nodejs:
+    install: '0'
+    npm_packages: {  }
+hhvm:
+    install: '0'
+    nightly: 0
+    composer: '1'
+    composer_home: ''
+    settings: {  }
+    server_ini:
+        hhvm.server.host: 127.0.0.1
+        hhvm.server.port: '9000'
+        hhvm.log.use_log_file: '1'
+        hhvm.log.file: /var/log/hhvm/error.log
+    php_ini:
+        display_errors: On
+        error_reporting: '-1'
+        date.timezone: UTC
 mysql:
     install: '1'
-    root_password: root
-    phpmyadmin: 0
-    adminer: 0
-    databases: {  }
-postgresql:
-    install: 0
     settings:
-        root_password: '123'
-        user_group: postgres
-        encoding: UTF8
-        version: '9.3'
-    databases: {  }
+        version: '5.6'
+        root_password: 'root'
+        override_options: {  }
     adminer: 0
-mariadb:
-    install: 0
-    root_password: '123'
-    phpmyadmin: 0
-    adminer: 0
+    users: {  }
     databases: {  }
-    version: '10.0'
+    grants: {  }
+postgresql:
+    install: '0'
+    settings:
+        global:
+            encoding: UTF8
+            version: '9.3'
+        server:
+            postgres_password: ''
+    databases: {  }
+    users: {  }
+    grants: {  }
+    adminer: 0
 mongodb:
-    install: 0
+    install: '0'
     settings:
         auth: 1
+        bind_ip: 127.0.0.1
         port: '27017'
     databases: {  }
 redis:
-    install: 0
+    install: '0'
     settings:
         conf_port: '6379'
+sqlite:
+    install: '0'
+    adminer: 0
+    databases: {  }
+mailcatcher:
+    install: '0'
+    settings:
+        smtp_ip: 0.0.0.0
+        smtp_port: 1025
+        http_ip: 0.0.0.0
+        http_port: '1080'
+        mailcatcher_path: /usr/local/rvm/wrappers/default
+        from_email_method: inline
 beanstalkd:
-    install: 0
+    install: '0'
     settings:
         listenaddress: 0.0.0.0
         listenport: '13000'
@@ -219,9 +391,21 @@ beanstalkd:
         binlogfsync: null
         binlogsize: '10485760'
     beanstalk_console: 0
-    binlogdir: /var/lib/beanstalkd/binlog
 rabbitmq:
-    install: 0
+    install: '0'
     settings:
         port: '5672'
+    users: {  }
+    vhosts: {  }
+    plugins: {  }
+elastic_search:
+    install: '0'
+    settings:
+        version: 1.4.1
+        java_install: true
+solr:
+    install: '0'
+    settings:
+        version: 4.10.2
+        port: '8984'
 

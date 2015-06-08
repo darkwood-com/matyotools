@@ -2,6 +2,7 @@
 
 namespace Matyotools\DominoBundle\Services;
 
+use Goutte\Client;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Message\Response as GuzzleResponse;
@@ -9,7 +10,6 @@ use GuzzleHttp\Stream\Stream;
 use GuzzleHttp\Subscriber\History;
 use GuzzleHttp\Subscriber\Mock;
 use GuzzleHttp\Post\PostFile;
-
 
 class DominoService
 {
@@ -19,7 +19,7 @@ class DominoService
 	protected $history;
 
 	/**
-	 * @var GuzzleClient
+	 * @var Client
 	 */
 	protected $client;
 
@@ -35,16 +35,22 @@ class DominoService
 
     public function __construct($user, $password)
     {
+        $this->user = $user;
+        $this->password = $password;
+
 		$this->history = new History();
 
-		$this->client = new GuzzleClient();
-		$this->client->getEmitter()->attach($this->history);
+		$guzzle = new GuzzleClient();
+        $guzzle->getEmitter()->attach($this->history);
+
+        $this->client = new Client();
+        $this->client->setClient($guzzle);
     }
 
 	public function login()
 	{
 		$loginUrl = 'https://dominoweb.domino-info.fr:7001/cgiphl/pw_login.pgm';
-		$this->client->post($loginUrl, array(
+		$crawler = $this->client->request('POST', $loginUrl, array(
 			'body' => array(
 				'function' => 1,
 				'name1' => $this->user,
