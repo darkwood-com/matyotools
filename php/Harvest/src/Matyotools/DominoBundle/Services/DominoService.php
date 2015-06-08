@@ -19,6 +19,11 @@ class DominoService
 	protected $history;
 
 	/**
+	 * @var GuzzleClient
+	 */
+	protected $client;
+
+	/**
 	 * @var string
 	 */
 	protected $user;
@@ -32,12 +37,20 @@ class DominoService
     {
 		$this->history = new History();
 
-		$guzzle = new GuzzleClient(array('redirect.disable' => true, 'base_url' => ''));
-		$guzzle->getEmitter()->attach($this->history);
+		$this->client = new GuzzleClient();
+		$this->client->getEmitter()->attach($this->history);
     }
 
 	public function login()
 	{
-		echo 'coucou';
+		$loginUrl = 'https://dominoweb.domino-info.fr:7001/cgiphl/pw_login.pgm';
+		$this->client->post($loginUrl, array(
+			'body' => array(
+				'function' => 1,
+				'name1' => $this->user,
+				'name2' => $this->password,
+				'apkode' => '',
+			)
+		));
 	}
 }
