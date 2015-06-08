@@ -18,6 +18,9 @@ parameters:
     harvest_password: 'password'
     harvest_account: 'account'
 
+    domino_user: 'user'
+    domino_password: 'password'
+
     #truncate params
     harvest_truncate_max:  7.50
     harvest_truncate_rand: 0.50

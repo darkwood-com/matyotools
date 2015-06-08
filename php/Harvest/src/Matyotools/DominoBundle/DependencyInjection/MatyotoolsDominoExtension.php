@@ -2,10 +2,11 @@
 
 namespace Matyotools\DominoBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\Loader;
 
 /**
  * This is the class that loads and manages your bundle configuration
@@ -14,15 +15,39 @@ use Symfony\Component\DependencyInjection\Loader;
  */
 class MatyotoolsDominoExtension extends Extension
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function load(array $configs, ContainerBuilder $container)
-    {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+	protected $resources = array(
+		'domino' => 'domino.xml',
+	);
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function load(array $configs, ContainerBuilder $container)
+	{
+		$processor = new Processor();
+		$configuration = new Configuration();
+		$config = $processor->processConfiguration($configuration, $configs);
+
+		$this->loadDefaults($container);
+
+		if (isset($config['alias'])) {
+			$container->setAlias($config['alias'], 'matyotools_domino');
+		}
+
+		foreach (array('user', 'password') as $attribute) {
+			if (isset($config[$attribute])) {
+				$container->setParameter('matyotools_domino.'.$attribute, $config[$attribute]);
+				$container->setParameter('matyotools_domino_reports.'.$attribute, $config[$attribute]);
+			}
+		}
+	}
+
+	protected function loadDefaults($container)
+	{
+		$loader = new XmlFileLoader($container, new FileLocator(array(__DIR__.'/../Resources/config', __DIR__.'/Resources/config')));
+
+		foreach ($this->resources as $resource) {
+			$loader->load($resource);
+		}
+	}
 }
