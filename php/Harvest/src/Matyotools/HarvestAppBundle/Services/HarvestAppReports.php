@@ -5,16 +5,16 @@ namespace Matyotools\HarvestAppBundle\Services;
 use \Harvest\HarvestReports;
 
 /**
- * Very simple proxy class to HarvestAPI functionality
+ * Very simple proxy class to HarvestApi functionality
  */
 class HarvestAppReports
 {
     private $reports;
 
     /**
-     * @param HarvestReports $reports HarvestAPI API client instance
+     * @param HarvestReports $reports HarvestApi API client instance
      */
-    public function __construct(HarvestReports $reports, $user, $password, $account, $ssl, $mode)
+    public function __construct(HarvestReports $reports, $user, $password, $account, $mode)
     {
         $this->reports = $reports;
 
@@ -22,7 +22,6 @@ class HarvestAppReports
         $this->reports->setUser($user);
         $this->reports->setPassword($password);
         $this->reports->setAccount($account);
-        $this->reports->setSSL($ssl);
         $this->reports->setRetryMode($mode);
     }
 

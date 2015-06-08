@@ -34,7 +34,7 @@ class MatyotoolsHarvestAppExtension extends Extension
             $container->setAlias($config['alias'], 'matyotools_harvest_app');
         }
 
-        foreach (array('user', 'password', 'account', 'ssl', 'mode') as $attribute) {
+        foreach (array('user', 'password', 'account', 'mode') as $attribute) {
             if (isset($config[$attribute])) {
                 $container->setParameter('matyotools_harvest_app.'.$attribute, $config[$attribute]);
                 $container->setParameter('matyotools_harvest_app_reports.'.$attribute, $config[$attribute]);

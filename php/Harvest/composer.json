@@ -19,7 +19,8 @@
         "sensio/framework-extra-bundle": "~3.0",
         "sensio/generator-bundle": "~2.3",
         "incenteev/composer-parameter-handler": "~2.0",
-        "gridonic/hapi": "dev-master"
+        "gridonic/hapi": "dev-master",
+	  	"fabpot/goutte": "~2.0"
     },
     "scripts": {
         "post-install-cmd": [

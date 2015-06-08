@@ -18,6 +18,7 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Matyotools\TimesheetBundle\MatyotoolsTimesheetBundle(),
             new Matyotools\HarvestAppBundle\MatyotoolsHarvestAppBundle(),
+            new Matyotools\DominoBundle\MatyotoolsDominoBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

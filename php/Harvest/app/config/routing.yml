@@ -1,3 +1,7 @@
+matyotools_domino:
+    resource: "@MatyotoolsDominoBundle/Resources/config/routing.yml"
+    prefix:   /
+
 MatyotoolsTimesheetBundle:
     resource: "@MatyotoolsTimesheetBundle/Resources/config/routing.yml"
     prefix:   /

@@ -2,19 +2,19 @@
 
 namespace Matyotools\HarvestAppBundle\Services;
 
-use \Harvest\HarvestAPI;
+use \Harvest\HarvestApi;
 
 /**
- * Very simple proxy class to HarvestAPI functionality
+ * Very simple proxy class to HarvestApi functionality
  */
 class HarvestApp
 {
     private $harvest;
 
     /**
-     * @param HarvestAPI $harvest HarvestAPI API client instance
+     * @param HarvestApi $harvest HarvestApi API client instance
      */
-    public function __construct(HarvestAPI $harvest, $user, $password, $account, $ssl, $mode)
+    public function __construct(HarvestApi $harvest, $user, $password, $account, $mode)
     {
         $this->harvest = $harvest;
 
@@ -22,14 +22,13 @@ class HarvestApp
         $this->harvest->setUser($user);
         $this->harvest->setPassword($password);
         $this->harvest->setAccount($account);
-        $this->harvest->setSSL($ssl);
         $this->harvest->setRetryMode($mode);
     }
 
     /**
      * Get oAuth client
      *
-     * @return HarvestAPI
+     * @return HarvestApi
      */
     public function getApi()
     {

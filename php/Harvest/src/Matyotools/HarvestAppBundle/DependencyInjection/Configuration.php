@@ -25,7 +25,6 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('user')->isRequired()->cannotBeEmpty()->end()
             ->scalarNode('password')->isRequired()->cannotBeEmpty()->end()
             ->scalarNode('account')->isRequired()->cannotBeEmpty()->end()
-            ->scalarNode('ssl')->defaultValue(true)->end()
             ->scalarNode('mode')->defaultValue('FAIL')->end()
             ->scalarNode('alias')->defaultNull()->end()
             ->end()

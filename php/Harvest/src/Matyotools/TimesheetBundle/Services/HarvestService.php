@@ -7,32 +7,30 @@ use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use \Matyotools\HarvestAppBundle\Services\HarvestApp;
-use \Harvest\HarvestAPI;
+use \Harvest\HarvestApi;
 use \Harvest\Model\DayEntry;
 use \Harvest\Model\DailyActivity;
 
 class HarvestService
 {
     /**
-     * @var HarvestAPI
+     * @var HarvestApi
      */
     protected $api;
 
     protected $user;
     protected $password;
     protected $account;
-    protected $ssl;
     protected $mode;
     protected $truncateMax;
     protected $truncateRand;
 
-    public function __construct(HarvestApp $api, $user, $password, $account, $ssl, $mode, $truncateMax, $truncateRand)
+    public function __construct(HarvestApp $api, $user, $password, $account, $mode, $truncateMax, $truncateRand)
     {
         $this->api = $api->getApi();
         $this->user = $user;
         $this->password = $password;
         $this->account = $account;
-        $this->ssl = $ssl;
         $this->mode = $mode;
         $this->truncateMax = $truncateMax;
         $this->truncateRand = $truncateRand;
@@ -171,9 +169,6 @@ class HarvestService
     public function getUrl($url)
     {
         $http = "http://";
-        if ($this->ssl) {
-            $http = "https://";
-        }
 
         return $http . $this->account . ".harvestapp.com/" . $url;
     }
