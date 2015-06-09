@@ -101,7 +101,13 @@ class DominoService
         $body = (string) $response->getBody();
 
 		$crawler = $this->createCrawler($response);
-		$form = $crawler->filter('form')->text();
+		$datas = $form = $crawler->filter('form input')->each(function($node) use (&$datas) {
+			/** @var $node Crawler */
+			$toto = $node->text();
+			$datas[$node->attr('name')] = $node->attr('value');
+		});
+
+		return $datas;
     }
 
     public function fill()
