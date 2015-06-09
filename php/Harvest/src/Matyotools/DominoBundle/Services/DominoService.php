@@ -5,11 +5,13 @@ namespace Matyotools\DominoBundle\Services;
 use Goutte\Client;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Message\Response as GuzzleResponse;
+use GuzzleHttp\Message\Response;
 use GuzzleHttp\Stream\Stream;
 use GuzzleHttp\Subscriber\History;
 use GuzzleHttp\Subscriber\Mock;
 use GuzzleHttp\Post\PostFile;
+use Symfony\Component\DomCrawler\Crawler;
+use GuzzleHttp\Message\ResponseInterface;
 
 class DominoService
 {
@@ -52,6 +54,18 @@ class DominoService
         //$this->client->setClient($guzzle);
     }
 
+	/**
+	 * @param Response $response
+	 * @return Crawler
+	 */
+	private function createCrawler($response)
+	{
+		$crawler = new Crawler();
+		$crawler->addContent($response->getBody(), $response->getHeader('Content-Type'));
+
+		return $crawler;
+	}
+
 	public function login()
 	{
 		$url = 'https://dominoweb.domino-info.fr:7001/cgiphl/pw_login.pgm';
@@ -85,6 +99,9 @@ class DominoService
         ));
         $response = $this->client->get($url);
         $body = (string) $response->getBody();
+
+		$crawler = $this->createCrawler($response);
+		$form = $crawler->filter('form')->text();
     }
 
     public function fill()

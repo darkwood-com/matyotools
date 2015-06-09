@@ -24,7 +24,7 @@ class DominoCommand extends ContainerAwareCommand
 		/** @var \Matyotools\DominoBundle\Services\DominoService $domino */
 		$domino = $container->get('domino');
 		$domino->login();
-        //$domino->timesheet();
-        $domino->fill();
+        $domino->timesheet();
+        //$domino->fill();
 	}
 }
