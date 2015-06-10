@@ -56,6 +56,8 @@ class DominoService
             "Accept" => "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
             "Accept-Encoding" => "gzip, deflate",
             "Accept-Language" => "fr-FR,fr;q=0.8,en-US;q=0.6,en;q=0.4,tr;q=0.2",
+			"Cache-Control" => "no-cache",
+			"Connection" => "keep-alive",
             "User-Agent" => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 Safari/537.36",
             "Host" => "dominoweb.domino-info.fr:7001",
             "Origin" => "https://dominoweb.domino-info.fr:7001",
@@ -237,7 +239,7 @@ class DominoService
         $response = $this->client->post($url, array(
             'headers' => array_merge($this->headers, array(
                 'Content-Type' => 'application/x-www-form-urlencoded',
-                'Cookie' => $this->pw_id.'=',
+                'Cookie' => $this->pw_id.'=; PW_LOGINJ=MKH_MLEDR',
                 'Content-Length' => strlen($data),
                 'Referer' => $d['url'],
             )),
