@@ -40,6 +40,7 @@ php/Harvest/app/cache/*
 php/Harvest/app/logs/*
 php/Harvest/build/
 php/Harvest/vendor/
+php/Harvest/domino/reports
 
 # Hipchat
 php/Hipchat/web/bundles/

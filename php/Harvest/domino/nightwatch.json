@@ -32,6 +32,10 @@
 		"browserName": "firefox",
 		"javascriptEnabled": true,
 		"acceptSslCerts": true
+	  },
+	  "globals": {
+		"user": "${ENV_USER}",
+		"password": "${ENV_PASSWORD}"
 	  }
 	},
 

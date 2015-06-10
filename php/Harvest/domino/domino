@@ -1,0 +1,5 @@
+#!/bin/sh
+
+#ENV_USER=user ENV_PASSWORD=password
+
+../node_modules/.bin/nightwatch --test tests/run.js
