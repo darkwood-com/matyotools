@@ -16,6 +16,9 @@ puphpet/files/dot/ssh/root_id_rsa.pub
 # PhpStorm
 .idea
 
+# Node
+node_modules
+
 # Matyotools
 node/MatyoTools/node_modules
 
