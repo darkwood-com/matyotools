@@ -10,6 +10,7 @@ use GuzzleHttp\Stream\Stream;
 use GuzzleHttp\Subscriber\History;
 use GuzzleHttp\Subscriber\Mock;
 use GuzzleHttp\Post\PostFile;
+use Matyotools\TimesheetBundle\Services\HarvestService;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\DomCrawler\Crawler;
 use GuzzleHttp\Message\ResponseInterface;
@@ -28,14 +29,26 @@ class DominoDriveService
 	 */
 	protected $password;
 
+	/**
+	 * @var HarvestService
+	 */
+	protected $harvestService;
+
+	/**
+	 * @var array
+	 */
 	private $daysInWeek;
 
+	/**
+	 * @var string
+	 */
 	private $genDir;
 
-    public function __construct($user, $password)
+    public function __construct($user, $password, $harvestService)
     {
         $this->user = $user;
         $this->password = $password;
+		$this->harvestService = $harvestService;
 
 		$this->daysInWeek = ['monday' => 1, 'tuesday' => 2, 'wednesday' => 3, 'thursday' => 4, 'friday' => 5, 'saturday' => 6, 'sunday' => 7];
 		$this->genDir = __DIR__ . '/../../../../domino/tests';
@@ -67,29 +80,54 @@ class DominoDriveService
 	{
 		$week = $this->getWeek(new \DateTime());
 
-		return array(array(
-			'project' => 'toto',
-			'monday' => 'toto',
-			'tuesday' => 'toto',
-			'wednesday' => 'toto',
-			'thursday' => 'toto',
-			'friday' => 'toto',
-			'saturday' => 'toto',
-			'sunday' => 'toto',
-		));
+		$range = $this->harvestService->getRangeDays($week['monday'], $week['sunday']);
+
+		$data = array();
+		foreach($range as $entry) {
+			if(!isset($data[$entry->get('project-id')][$entry->get('spent-at')])) {
+				$data[$entry->get('project-id')][$entry->get('spent-at')] = 0;
+			}
+			$data[$entry->get('project-id')][$entry->get('spent-at')] += floatval($entry->get('hours'));
+		}
+
+		$rows = array();
+		foreach($data as $projectId => $times) {
+			$row = array(
+				'project' => $projectId,
+				'monday' => 0,
+				'tuesday' => 0,
+				'wednesday' => 0,
+				'thursday' => 0,
+				'friday' => 0,
+				'saturday' => 0,
+				'sunday' => 0,
+			);
+
+			foreach($week as $day => $date) {
+				/** @var \DateTime $date */
+				$date = $date->format('Y-m-d');
+				if(isset($times[$date])) {
+					$row[$day] = $times[$date];
+				}
+			}
+
+			$rows[] = $row;
+		}
+
+		return $rows;
 	}
 
 	public function generate($timesheet)
 	{
-		$finder = new Finder();
+		/*$finder = new Finder();
 		$finder->in($this->genDir)->name('*.gen.js');
 		foreach($finder as $file) {
 			$dateString = substr($file->getFilename(), 0, 10);
 			$date = \DateTime::createFromFormat('Y-m-d', $dateString);
-		}
+		}*/
 
-		$date = new \DateTime();
-		$genFile = $this->genDir . '/' . $date->format('Y-m-d') . '.gen.js';
+		$week = $this->getWeek(new \DateTime());
+		$genFile = $this->genDir . '/' . $week['monday']->format('Y-m-d') . '.gen.js';
 
 		$script = <<<SCRIPT
 module.exports = {

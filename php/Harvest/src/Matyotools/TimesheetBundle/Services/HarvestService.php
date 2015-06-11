@@ -51,19 +51,32 @@ class HarvestService
         return null;
     }
 
+	/**
+	 * @param \DateTime $from
+	 * @param \DateTime $to
+	 * @return DayEntry[]
+	 * @throws \Harvest\Exception\HarvestException
+	 */
+	public function getRangeDays($from, $to)
+	{
+		$user_id = $this->getMyUserId();
+
+
+		$range = new Range($from->format( "Ymd" ), $to->format( "Ymd" ));
+		$entries = $this->api->getUserEntries($user_id, $range);
+
+		return $entries->isSuccess() ? $entries->get('data') : array();
+	}
+
     /**
      * @return DayEntry[]
      */
     public function getDays()
     {
-        $user_id = $this->getMyUserId();
+		$to = new \DateTime();
+		$from = new \DateTime("-60 day"); //since 60 days
 
-        $to = new \DateTime();
-        $from = new \DateTime("-60 day"); //since 60 days
-        $range = new Range($from->format( "Ymd" ), $to->format( "Ymd" ));
-        $entries = $this->api->getUserEntries($user_id, $range);
-
-        return $entries->isSuccess() ? $entries->get('data') : array();
+        return $this->getRangeDays($from, $to);
     }
 
     /**
