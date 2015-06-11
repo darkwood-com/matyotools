@@ -21,9 +21,33 @@ class DominoCommand extends ContainerAwareCommand
 	{
 		$container = $this->getContainer();
 
-		/** @var \Matyotools\DominoBundle\Services\DominoService $domino */
-		$domino = $container->get('domino');
-		$domino->login();
-        $domino->fill();
+		/** @var \Matyotools\DominoBundle\Services\DominoWebService $dominoWeb */
+		/*$dominoWeb = $container->get('domino_web');
+		$dominoWeb->login();
+        $dominoWeb->fill();*/
+
+		/** @var \Matyotools\DominoBundle\Services\DominoDriveService $dominoDrive */
+		$dominoDrive = $container->get('domino_drive');
+		$timesheet = $dominoDrive->drive();
+
+		$rows = array_map(function($line) {
+			return array(
+				$line['project'],
+				$line['monday'],
+				$line['tuesday'],
+				$line['wednesday'],
+				$line['thursday'],
+				$line['friday'],
+				$line['saturday'],
+				$line['sunday'],
+			);
+		}, $timesheet);
+
+		$table = $this->getHelperSet()->get('table');
+		$table
+			->setHeaders(array('', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'))
+			->setRows($rows)
+		;
+		$table->render($output);
 	}
 }

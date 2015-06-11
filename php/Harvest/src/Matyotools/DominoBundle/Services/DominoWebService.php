@@ -14,7 +14,7 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\DomCrawler\Crawler;
 use GuzzleHttp\Message\ResponseInterface;
 
-class DominoService
+class DominoWebService
 {
 	/**
 	 * @var History

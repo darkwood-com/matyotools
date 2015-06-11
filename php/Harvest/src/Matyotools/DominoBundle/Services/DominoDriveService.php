@@ -1,0 +1,143 @@
+<?php
+
+namespace Matyotools\DominoBundle\Services;
+
+use Goutte\Client;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Message\Response;
+use GuzzleHttp\Stream\Stream;
+use GuzzleHttp\Subscriber\History;
+use GuzzleHttp\Subscriber\Mock;
+use GuzzleHttp\Post\PostFile;
+use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\DomCrawler\Crawler;
+use GuzzleHttp\Message\ResponseInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+
+class DominoDriveService
+{
+	/**
+	 * @var string
+	 */
+	protected $user;
+
+	/**
+	 * @var string
+	 */
+	protected $password;
+
+	private $daysInWeek;
+
+	private $genDir;
+
+    public function __construct($user, $password)
+    {
+        $this->user = $user;
+        $this->password = $password;
+
+		$this->daysInWeek = ['monday' => 1, 'tuesday' => 2, 'wednesday' => 3, 'thursday' => 4, 'friday' => 5, 'saturday' => 6, 'sunday' => 7];
+		$this->genDir = __DIR__ . '/../../../../domino/tests';
+    }
+
+	/**
+	 * @param \DateTime $date
+	 * @return array
+	 */
+	public function getWeek($date = null)
+	{
+		$week = $this->daysInWeek;
+
+		$date = clone $date;
+		foreach($week as $key => $day)
+		{
+			if(is_null($date)) {
+				$dayDate = clone $date;
+			} else {
+				$dayDate = new \DateTime();
+			}
+			$week[$key] = $dayDate->setISODate($dayDate->format('o'), $dayDate->format('W'), $day);
+		}
+
+		return $week;
+	}
+
+	public function getTimesheet()
+	{
+		$week = $this->getWeek(new \DateTime());
+
+		return array(array(
+			'project' => 'toto',
+			'monday' => 'toto',
+			'tuesday' => 'toto',
+			'wednesday' => 'toto',
+			'thursday' => 'toto',
+			'friday' => 'toto',
+			'saturday' => 'toto',
+			'sunday' => 'toto',
+		));
+	}
+
+	public function generate($timesheet)
+	{
+		$finder = new Finder();
+		$finder->in($this->genDir)->name('*.gen.js');
+		foreach($finder as $file) {
+			$dateString = substr($file->getFilename(), 0, 10);
+			$date = \DateTime::createFromFormat('Y-m-d', $dateString);
+		}
+
+		$date = new \DateTime();
+		$genFile = $this->genDir . '/' . $date->format('Y-m-d') . '.gen.js';
+
+		$script = <<<SCRIPT
+module.exports = {
+	'Test domino' : function (browser) {
+		var params = browser.globals.test_settings.globals;
+
+        var wait = 5000,
+			saisieDesTempsPath = '#menu_3',
+			frameSaisieDesTempsPath = "#href_1",
+			clientPath = "#f1_28_sel",
+			dossierPath = "#f1_30_phl",
+			buttonAddPath = "#f1_pw_btndyn_201";
+
+		browser
+			.url('https://dominoweb.domino-info.fr:7001/cgiphl/pw_main.pgm')
+			.waitForElementVisible('body', wait)
+			.setValue('input[name="name1"]', params.user)
+			.setValue('input[name="name2"]', params.password)
+			.waitForElementVisible('input[type="button"][value="OK"]', wait)
+			.click('input[type="button"][value="OK"]')
+            .waitForElementVisible(saisieDesTempsPath, wait)
+			.click(saisieDesTempsPath)
+			.waitForElementPresent(frameSaisieDesTempsPath, wait)
+			.getAttribute(frameSaisieDesTempsPath, "src", function(data) {
+				console.log(data.value);
+				this.url(data.value);
+				/*this.waitForElementPresent(clientPath, wait)
+					.waitForElementPresent(dossierPath, wait)
+					.setValue(clientPath, "AEGE GROUPE/Plan de Communication/Sté 07")
+					.setValue(dossierPath, "78282")
+					.click(buttonAddPath);*/
+			})
+			.pause(wait)
+			.end();
+	}
+};
+SCRIPT;
+
+		$filesystem = new Filesystem();
+		$filesystem->dumpFile($genFile, $script);
+
+	}
+
+	public function drive()
+	{
+		$timesheet = $this->getTimesheet();
+		$this->generate($timesheet);
+
+		return $timesheet;
+	}
+}
