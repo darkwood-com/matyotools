@@ -125,6 +125,26 @@ class DominoDriveService
 		return $rows;
 	}
 
+    public function normalizeTimesheet($timesheet)
+    {
+        $rows = array();
+
+        foreach($timesheet as $row) {
+            $sum = 0;
+            foreach($this->daysInWeek as $day => $value) {
+                $row[$day] = round($row[$day] * 4) / 4;
+
+                $sum += $row[$day];
+            }
+
+            if($sum > 0) {
+                $rows[] = $row;
+            }
+        }
+
+        return $rows;
+    }
+
 	public function bindHarvestToDomino()
 	{
 		return array(
@@ -136,7 +156,7 @@ class DominoDriveService
 
 	public function generate()
 	{
-		$timesheet = $this->getTimesheet();
+		$timesheet = $this->normalizeTimesheet($this->getTimesheet());
 
 		/*$finder = new Finder();
 		$finder->in($this->genDir)->name('*.gen.js');
