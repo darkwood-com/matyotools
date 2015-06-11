@@ -32,7 +32,7 @@ class DominoCommand extends ContainerAwareCommand
 
 		$rows = array_map(function($line) {
 			return array(
-				$line['project'],
+				$line['project']['name'],
 				$line['monday'],
 				$line['tuesday'],
 				$line['wednesday'],

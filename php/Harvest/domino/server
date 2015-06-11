@@ -1,3 +1,4 @@
 #!/bin/sh
 
-java -jar lib/selenium-server-standalone-2.46.0.jar
+java -jar lib/selenium-server-standalone-2.46.0.jar -Dwebdriver.chrome.driver=lib/chromedriver-2.16-mac32
+#java -jar lib/selenium-server-standalone-2.46.0.jar

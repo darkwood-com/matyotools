@@ -84,6 +84,7 @@ class DominoDriveService
 		$week = $this->getWeek($date);
 
 		$range = $this->harvestService->getRangeDays($week['monday'], $week['sunday']);
+		$projects = $this->bindHarvestToDomino();
 
 		$data = array();
 		foreach($range as $entry) {
@@ -95,8 +96,12 @@ class DominoDriveService
 
 		$rows = array();
 		foreach($data as $projectId => $times) {
+			if(!isset($projects[$projectId])) {
+				throw new Exception(sprintf('Project id %s not found !', $projectId));
+			}
+
 			$row = array(
-				'project' => $projectId,
+				'project' => $projects[$projectId],
 				'monday' => 0,
 				'tuesday' => 0,
 				'wednesday' => 0,
@@ -123,7 +128,9 @@ class DominoDriveService
 	public function bindHarvestToDomino()
 	{
 		return array(
-			'6938786' => array('client' => '', 'dossier' => '')
+			'6938786' => array('name' => 'PRIMONIAL - Partenaires',	    'client' => '', 'dossier' => ''),
+			'7376843' => array('name' => 'AO NRJ GAMES',                'client' => '', 'dossier' => ''),
+			'6445332' => array('name' => 'KRONENBOURG - Tourtel Twist', 'client' => '', 'dossier' => ''),
 		);
 	}
 

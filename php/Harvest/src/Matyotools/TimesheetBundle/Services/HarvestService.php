@@ -2,7 +2,9 @@
 
 namespace Matyotools\TimesheetBundle\Services;
 
+use Harvest\Model\Project;
 use Harvest\Model\Range;
+use Harvest\Model\Result;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -50,6 +52,23 @@ class HarvestService
 
         return null;
     }
+
+	/**
+	 * @return Project[]
+	 */
+	public function getProjects()
+	{
+		/** @var Result $data */
+		$data = $this->api->getProjects();
+
+		$projects = array();
+
+		foreach($data->get('data') as $project) {
+			$projects[$project->get('id')] = $project;
+		}
+
+		return $projects;
+	}
 
 	/**
 	 * @param \DateTime $from
