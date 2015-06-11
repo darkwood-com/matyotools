@@ -66,9 +66,9 @@ class DominoDriveService
 		foreach($week as $key => $day)
 		{
 			if(is_null($date)) {
-				$dayDate = clone $date;
-			} else {
 				$dayDate = new \DateTime();
+			} else {
+				$dayDate = clone $date;
 			}
 			$week[$key] = $dayDate->setISODate($dayDate->format('o'), $dayDate->format('W'), $day);
 		}
@@ -76,9 +76,12 @@ class DominoDriveService
 		return $week;
 	}
 
-	public function getTimesheet()
+	public function getTimesheet($date = null)
 	{
-		$week = $this->getWeek(new \DateTime());
+		if(is_null($date)) {
+			$date = new \DateTime();
+		}
+		$week = $this->getWeek($date);
 
 		$range = $this->harvestService->getRangeDays($week['monday'], $week['sunday']);
 
@@ -117,8 +120,17 @@ class DominoDriveService
 		return $rows;
 	}
 
-	public function generate($timesheet)
+	public function bindHarvestToDomino()
 	{
+		return array(
+			'6938786' => array('client' => '', 'dossier' => '')
+		);
+	}
+
+	public function generate()
+	{
+		$timesheet = $this->getTimesheet();
+
 		/*$finder = new Finder();
 		$finder->in($this->genDir)->name('*.gen.js');
 		foreach($finder as $file) {
@@ -169,12 +181,12 @@ SCRIPT;
 		$filesystem = new Filesystem();
 		$filesystem->dumpFile($genFile, $script);
 
+		return $timesheet;
 	}
 
 	public function drive()
 	{
-		$timesheet = $this->getTimesheet();
-		$this->generate($timesheet);
+		$timesheet = $this->generate();
 
 		return $timesheet;
 	}

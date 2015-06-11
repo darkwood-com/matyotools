@@ -2,9 +2,10 @@ module.exports = {
 	'Test domino' : function (browser) {
 		var params = browser.globals.test_settings.globals;
 
-        var wait = 5000,
+        var wait = 10000,
 			saisieDesTempsPath = '#menu_3',
 			frameSaisieDesTempsPath = "#href_1",
+			saisieDesTempsUrl = null,
 			clientPath = "#f1_28_sel",
 			dossierPath = "#f1_30_phl",
 			buttonAddPath = "#f1_pw_btndyn_201";
@@ -20,13 +21,16 @@ module.exports = {
 			.click(saisieDesTempsPath)
 			.waitForElementPresent(frameSaisieDesTempsPath, wait)
 			.getAttribute(frameSaisieDesTempsPath, "src", function(data) {
-				console.log(data.value);
-				this.url(data.value);
-				/*this.waitForElementPresent(clientPath, wait)
+				saisieDesTempsUrl = data.value;
+
+				console.log('Url: ' + saisieDesTempsUrl);
+
+				this.url(data.value)
+					.waitForElementPresent(clientPath, wait)
 					.waitForElementPresent(dossierPath, wait)
 					.setValue(clientPath, "AEGE GROUPE/Plan de Communication/Sté 07")
 					.setValue(dossierPath, "78282")
-					.click(buttonAddPath);*/
+					.click(buttonAddPath);
 			})
 			.pause(wait)
 			.end();
