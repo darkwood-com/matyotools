@@ -19,9 +19,9 @@ module.exports = {
             .waitForElementVisible(saisieDesTempsPath, wait)
 			.click(saisieDesTempsPath)
 			.waitForElementPresent(frameSaisieDesTempsPath, wait)
-			.getAttribute(frameSaisieDesTempsPath, "src", function(src) {
-				console.log(src);
-				this.url(src);
+			.getAttribute(frameSaisieDesTempsPath, "src", function(data) {
+				console.log(data.value);
+				this.url(data.value);
 				/*this.waitForElementPresent(clientPath, wait)
 					.waitForElementPresent(dossierPath, wait)
 					.setValue(clientPath, "AEGE GROUPE/Plan de Communication/Sté 07")
