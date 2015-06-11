@@ -8,12 +8,12 @@
 
   "selenium" : {
 	"start_process" : false,
-	"server_path" : "./selenium-server-standalone-2.46.0.jar",
+	"server_path" : "./lib/selenium-server-standalone-2.46.0.jar",
 	"log_path" : "",
 	"host" : "127.0.0.1",
 	"port" : 4444,
 	"cli_args" : {
-	  "webdriver.chrome.driver" : "./chromedriver-2.16-mac32",
+	  "webdriver.chrome.driver" : "./lib/chromedriver-2.16-mac32",
 	  "webdriver.ie.driver" : ""
 	}
   },
