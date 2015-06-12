@@ -49,5 +49,7 @@ class DominoCommand extends ContainerAwareCommand
 			->setRows($rows)
 		;
 		$table->render($output);
+
+		$output->writeln('URL : https://dominoweb.domino-info.fr:7001/cgiphl/pw_main.pgm');
 	}
 }
