@@ -2,4 +2,4 @@
 
 # convert movies for iphone 4
 MOVIES=.
-find "$MOVIES" \( -name "*.avi" -o -name "*.mkv" -o -name "*.mp4" \) -exec sh -c 'ffmpeg -i "$0" -vcodec h264 -q:v 1 -s 640x480 -r 24 -b:v 500k -ar 44100 -ab 128k -ac 2 -c:s mov_text "iphone.${0%.*}.mp4"' {} \;
+find "$MOVIES" \( -name "*.avi" -o -name "*.mkv" -o -name "*.mp4" \) -exec sh -c 'ffmpeg -i "$0" -vcodec h264 -q:v 1 -s 640x480 -r 24 -b:v 500k -ar 44100 -ab 128k -ac 2 -c:s mov_text "${0%.*}.iphone.mp4"' {} \;
