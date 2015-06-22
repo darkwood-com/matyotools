@@ -154,9 +154,9 @@ class DominoDriveService
 		);
 	}
 
-	public function generate()
+	public function generate($date = null)
 	{
-		$timesheet = $this->normalizeTimesheet($this->getTimesheet());
+		$timesheet = $this->normalizeTimesheet($this->getTimesheet($date));
 
 		/*$finder = new Finder();
 		$finder->in($this->genDir)->name('*.gen.js');
@@ -211,9 +211,13 @@ SCRIPT;
 		return $timesheet;
 	}
 
-	public function drive()
+	/**
+	 * @param |DateTime|null $date
+	 * @return array
+	 */
+	public function drive($date = null)
 	{
-		$timesheet = $this->generate();
+		$timesheet = $this->generate($date);
 
 		return $timesheet;
 	}

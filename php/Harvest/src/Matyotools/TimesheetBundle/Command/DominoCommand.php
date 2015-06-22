@@ -4,6 +4,7 @@ namespace Matyotools\TimesheetBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -14,6 +15,7 @@ class DominoCommand extends ContainerAwareCommand
 		$this
 			->setName('harvest:domino')
 			->setDescription('Domino timesheet')
+			->addOption('week', null, InputArgument::OPTIONAL, 'Semaine relative')
 		;
 	}
 
@@ -26,9 +28,15 @@ class DominoCommand extends ContainerAwareCommand
 		$dominoWeb->login();
         $dominoWeb->fill();*/
 
+		$date = null;
+		$week = $input->getOption('week');
+		if($week) {
+			$date = new \DateTime($week.' weeks ago');
+		}
+
 		/** @var \Matyotools\DominoBundle\Services\DominoDriveService $dominoDrive */
 		$dominoDrive = $container->get('domino_drive');
-		$timesheet = $dominoDrive->drive();
+		$timesheet = $dominoDrive->drive($date);
 
 		$rows = array_map(function($line) {
 			return array(
