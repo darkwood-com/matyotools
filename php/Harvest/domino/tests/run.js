@@ -35,10 +35,8 @@ module.exports = {
 					.click('#sflw2 span:contains("140265")')
 
 					// add row
+					.injectScript('pw_fnkey(\'10\',0,0,0);')
 
-
-
-					//.injectScript('affcombodyn(document.getElementById('f1_28_select')')
 					/*.waitForElementPresent(clientPath, wait)
 					.waitForElementPresent(dossierPath, wait)
 					.setValue(clientPath, 'AEGE GROUPE/Plan de Communication/Sté 07')

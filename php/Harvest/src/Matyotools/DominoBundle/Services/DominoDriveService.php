@@ -151,6 +151,7 @@ class DominoDriveService
 			'6938786' => array('name' => 'PRIMONIAL - Partenaires',	    'client' => '', 'dossier' => ''),
 			'7376843' => array('name' => 'AO NRJ GAMES',                'client' => '', 'dossier' => ''),
 			'6445332' => array('name' => 'KRONENBOURG - Tourtel Twist', 'client' => '', 'dossier' => ''),
+			'6579884' => array('name' => 'GRATTA E VINCI - Lottomatica', 'client' => '', 'dossier' => ''),
 		);
 	}
 
