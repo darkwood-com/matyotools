@@ -26,12 +26,12 @@ module.exports = {
 
 					// client
 					.click('#f1_28_btn')
-					.waitForElementVisible('#f1_28_select', wait)
+					.waitForElementPresent('#f1_28_select', wait)
 					.click('#f1_28_select option[value="24003603"]')
 
 					// dossier
 					.click('#f1_30_btn')
-					.waitForElementVisible('#sflw2', wait)
+					.waitForElementPresent('#sflw2', wait)
 					.click('#sflw2 span:contains("140265")')
 
 					// add row
