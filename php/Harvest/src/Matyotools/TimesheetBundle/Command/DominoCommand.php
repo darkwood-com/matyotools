@@ -51,9 +51,13 @@ class DominoCommand extends ContainerAwareCommand
 			);
 		}, $timesheet);
 
+		$week = $dominoDrive->getWeek($date);
+
 		$table = $this->getHelperSet()->get('table');
 		$table
-			->setHeaders(array('', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'))
+			->setHeaders(array(
+				'Semaine du ' . $week['monday']->format('d-m-Y') . ' au ' . $week['saturday']->format('d-m-Y'),
+				'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'))
 			->setRows($rows)
 		;
 		$table->render($output);

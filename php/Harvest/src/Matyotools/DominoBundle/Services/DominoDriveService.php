@@ -60,6 +60,10 @@ class DominoDriveService
 	 */
 	public function getWeek($date = null)
 	{
+		if(is_null($date)) {
+			$date = new \DateTime();
+		}
+
 		$week = $this->daysInWeek;
 
 		$date = clone $date;
@@ -148,10 +152,11 @@ class DominoDriveService
 	public function bindHarvestToDomino()
 	{
 		return array(
-			'6938786' => array('name' => 'PRIMONIAL - Partenaires',	    'client' => '', 'dossier' => ''),
-			'7376843' => array('name' => 'AO NRJ GAMES',                'client' => '', 'dossier' => ''),
-			'6445332' => array('name' => 'KRONENBOURG - Tourtel Twist', 'client' => '', 'dossier' => ''),
+			'6938786' => array('name' => 'PRIMONIAL - Partenaires',	     'client' => '', 'dossier' => ''),
+			'7376843' => array('name' => 'AO NRJ GAMES',                 'client' => '', 'dossier' => ''),
+			'6445332' => array('name' => 'KRONENBOURG - Tourtel Twist',  'client' => '', 'dossier' => ''),
 			'6579884' => array('name' => 'GRATTA E VINCI - Lottomatica', 'client' => '', 'dossier' => ''),
+			'6664888' => array('name' => 'EVOLUPHARM',                   'client' => '', 'dossier' => ''),
 		);
 	}
 
