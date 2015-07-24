@@ -159,6 +159,8 @@ class DominoDriveService
 			'6664888' => array('name' => 'EVOLUPHARM',                   	      'client' => '', 'dossier' => ''),
 			'8347267' => array('name' => 'Sweet Kiss in NY (Lolita Lempicka)',    'client' => '', 'dossier' => ''),
 			'7557808' => array('name' => 'Salomon - Service plateform (Salomon)', 'client' => '', 'dossier' => ''),
+			'2325033' => array('name' => 'SoMusic (Universal)', 'client' => '', 'dossier' => ''),
+			'7881273' => array('name' => 'Site expérience déco (ACOVA)', 'client' => '', 'dossier' => ''),
 		);
 	}
 
