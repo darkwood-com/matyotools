@@ -38,3 +38,16 @@ into /Volumes/iMac/Users/math/Library/LaunchAgents/fr.darkwood.harvest.plist
     	<false/>
     </dict>
     </plist>
+
+into /usr/local/bin/harvest_coffee
+
+	#!/bin/bash
+	/Users/math/Sites/darkwood/matyotools/php/Harvest/app/console harvest:coffee
+	
+Install harvest:domino
+----------------------
+
+into /usr/local/bin/harvest_domino
+
+	#!/bin/bash
+	/Users/math/Sites/darkwood/matyotools/php/Harvest/app/console harvest:domino
