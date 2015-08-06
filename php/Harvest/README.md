@@ -11,7 +11,7 @@ $ app/console harvest:truncate  => Truncate harvest timesheet
 Install harvest:coffee
 ----------------------
 
-into /Volumes/iMac/Users/math/Library/LaunchAgents/fr.darkwood.harvest.plist
+into ~/Library/LaunchAgents/fr.darkwood.harvest.plist
 
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -38,6 +38,11 @@ into /Volumes/iMac/Users/math/Library/LaunchAgents/fr.darkwood.harvest.plist
     	<false/>
     </dict>
     </plist>
+
+launchctl usage
+
+	launchctl list | grep darkwood
+	launchctl load ~/Library/LaunchAgents/fr.darkwood.harvest.plist
 
 into /usr/local/bin/harvest_coffee
 
