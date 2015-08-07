@@ -19,6 +19,7 @@
 		<service id="domino_drive" class="%matyotools_domino.service_drive.class%">
 			<argument key="user">%matyotools_domino.user%</argument>
 			<argument key="password">%matyotools_domino.password%</argument>
+            <argument key="projects">%matyotools_domino_app.projects%</argument>
 			<argument type="service" id="matyotools_timesheet.harvest" />
 		</service>
     </services>

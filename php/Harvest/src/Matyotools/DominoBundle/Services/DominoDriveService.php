@@ -30,6 +30,11 @@ class DominoDriveService
 	protected $password;
 
 	/**
+	 * @var array
+	 */
+	protected $projects;
+
+	/**
 	 * @var HarvestService
 	 */
 	protected $harvestService;
@@ -44,10 +49,11 @@ class DominoDriveService
 	 */
 	private $genDir;
 
-    public function __construct($user, $password, $harvestService)
+    public function __construct($user, $password, $projects, $harvestService)
     {
         $this->user = $user;
         $this->password = $password;
+		$this->projects = $projects;
 		$this->harvestService = $harvestService;
 
 		$this->daysInWeek = ['monday' => 1, 'tuesday' => 2, 'wednesday' => 3, 'thursday' => 4, 'friday' => 5, 'saturday' => 6, 'sunday' => 7];
@@ -151,19 +157,7 @@ class DominoDriveService
 
 	public function bindHarvestToDomino()
 	{
-		return array(
-			'6938786' => array('name' => 'PRIMONIAL - Partenaires',	     	      	  'client' => '', 'dossier' => ''),
-			'7376843' => array('name' => 'AO NRJ GAMES',                 	      	  'client' => '', 'dossier' => ''),
-			'6445332' => array('name' => 'KRONENBOURG - Tourtel Twist',  	      	  'client' => '', 'dossier' => ''),
-			'6579884' => array('name' => 'GRATTA E VINCI - Lottomatica', 	      	  'client' => '', 'dossier' => ''),
-			'6664888' => array('name' => 'EVOLUPHARM',                   	      	  'client' => '', 'dossier' => ''),
-			'8347267' => array('name' => 'Sweet Kiss in NY (Lolita Lempicka)',    	  'client' => '', 'dossier' => ''),
-			'7557808' => array('name' => 'Salomon - Service plateform (Salomon)', 	  'client' => '', 'dossier' => ''),
-			'2325033' => array('name' => 'SoMusic (Universal)', 				  	  'client' => '', 'dossier' => ''),
-			'7881273' => array('name' => 'Site expérience déco (ACOVA)', 		      'client' => '', 'dossier' => '140517'),
-			'7557823' => array('name' => 'Heineken - Beertender (heineken)', 		  'client' => '', 'dossier' => '140618'),
-			'7074717' => array('name' => 'PRIMONIAL - Vie Courante 2015 (Primonial)', 'client' => '', 'dossier' => '140583'),
-		);
+		return $this->projects;
 	}
 
 	public function generate($date = null)

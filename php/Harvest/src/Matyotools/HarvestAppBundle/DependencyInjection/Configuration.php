@@ -27,6 +27,11 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('account')->isRequired()->cannotBeEmpty()->end()
             ->scalarNode('mode')->defaultValue('FAIL')->end()
             ->scalarNode('alias')->defaultNull()->end()
+            ->arrayNode('domino_projects')
+                ->prototype('array')
+                    ->prototype('scalar')->end()
+                ->end()
+            ->end()
             ->end()
         ;
 
