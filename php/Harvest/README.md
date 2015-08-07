@@ -44,6 +44,8 @@ launchctl usage
 	launchctl list | grep darkwood
 	launchctl load ~/Library/LaunchAgents/fr.darkwood.harvest.plist
 
+do not forget to check your php.ini (date.timezone = "Europe/Paris" and http://symfony.com/fr/doc/current/reference/requirements.html)
+
 into /usr/local/bin/harvest_coffee
 
 	#!/bin/bash
