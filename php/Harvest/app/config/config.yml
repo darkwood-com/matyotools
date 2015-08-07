@@ -80,7 +80,7 @@ matyotools_harvest_app:
     6579884: { name: GRATTA E VINCI - Lottomatica              , client: '', dossier: '' }
     6938786: { name: PRIMONIAL - Partenaires                   , client: '', dossier: 140607 }
     7074717: { name: PRIMONIAL - Vie Courante 2015 (Primonial) , client: '', dossier: 140583 }
-    4802473: { name: Refonte Site Master Decléor (Decléor)     , client: '', dossier: '' }
+    4802473: { name: Refonte Site Master Decléor (Decléor)     , client: '', dossier: 140592 }
     7557808: { name: Salomon - Service plateform (Salomon)     , client: '', dossier: '' }
     7881273: { name: Site expérience déco (ACOVA)              , client: '', dossier: 140517 }
     2325033: { name: SoMusic (Universal)                       , client: '', dossier: '' }
