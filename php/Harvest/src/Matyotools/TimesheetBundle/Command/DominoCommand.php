@@ -79,5 +79,6 @@ class DominoCommand extends ContainerAwareCommand
 		$table->render($output);
 
 		$output->writeln('URL : https://dominoweb.domino-info.fr:7001/cgiphl/pw_main.pgm');
+		$output->writeln('dossier RTT : 140338');
 	}
 }
