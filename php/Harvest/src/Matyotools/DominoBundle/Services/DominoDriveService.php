@@ -98,12 +98,13 @@ class DominoDriveService
 
 		$data = array();
 		foreach($range as $entry) {
-			$dayEntry = $this->harvestService->getEntry($entry->get('id'));
+			//$dayEntry = $this->harvestService->getEntry($entry->get('id'));
 
 			if(!isset($data[$entry->get('project-id')][$entry->get('spent-at')])) {
 				$data[$entry->get('project-id')][$entry->get('spent-at')] = 0;
 			}
 			$data[$entry->get('project-id')][$entry->get('spent-at')] += floatval($entry->get('hours'));
+
 			//$projects[$entry->get('project-id')]['apiName'] = $dayEntry->get('project');
 		}
 
