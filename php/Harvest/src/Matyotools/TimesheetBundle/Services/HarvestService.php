@@ -70,6 +70,16 @@ class HarvestService
 		return $projects;
 	}
 
+    public function getProject($id)
+    {
+        return $this->api->getProject($id);
+    }
+
+    public function getEntry($id)
+    {
+        return $this->api->getEntry($id);
+    }
+
 	/**
 	 * @param \DateTime $from
 	 * @param \DateTime $to
