@@ -20,30 +20,31 @@ module.exports = {
 			.getAttribute('#href_1', 'src', function(data) {
 				console.log('Url: ' + data.value);
 
+				//close tab
+				this.click('#tabdesk td[class="tdesk_close"]')
+					.waitForElementNotPresent('#tabdesk td[class="tdesk_close"]', wait)
+
 				// timesheet iframe
 				this.init(data.value)
 					.waitForElementVisible('body', wait)
 
 					// client
 					.click('#f1_28_btn')
-					.waitForElementVisible('#f1_28_select', wait)
+					.waitForElementPresent('#f1_28_select', wait)
 					.click('#f1_28_select option[value="24003603"]')
 
 					// dossier
 					.click('#f1_30_btn')
-					.waitForElementVisible('#sflw2', wait)
-					.click('#sflw2 span:contains("140265")')
+					.waitForElementPresent('#sfl2_4', wait)
+					.click('#sfl2_4')
+					.pause('1000')
+
+					.doubleClick('#sfl2_4')
+
+					.pause('5000')
 
 					// add row
-
-
-
-					//.injectScript('affcombodyn(document.getElementById('f1_28_select')')
-					/*.waitForElementPresent(clientPath, wait)
-					.waitForElementPresent(dossierPath, wait)
-					.setValue(clientPath, 'AEGE GROUPE/Plan de Communication/Sté 07')
-					.setValue(dossierPath, '78282')
-					.click(buttonAddPath)*/;
+					.injectScript('pw_fnkey(\'10\',0,0,0);')
 			})
 			.pause(wait)
 			.end();

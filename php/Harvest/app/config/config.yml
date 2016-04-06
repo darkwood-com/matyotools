@@ -72,6 +72,7 @@ matyotools_harvest_app:
   user: %harvest_user%
   password: %harvest_password%
   account: %harvest_account%
+  domino_projects: %harvest_domino_projects%
 
 matyotools_domino:
   user: %domino_user%

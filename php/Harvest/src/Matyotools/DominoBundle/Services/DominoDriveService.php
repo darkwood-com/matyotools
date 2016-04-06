@@ -30,6 +30,11 @@ class DominoDriveService
 	protected $password;
 
 	/**
+	 * @var array
+	 */
+	protected $projects;
+
+	/**
 	 * @var HarvestService
 	 */
 	protected $harvestService;
@@ -44,10 +49,11 @@ class DominoDriveService
 	 */
 	private $genDir;
 
-    public function __construct($user, $password, $harvestService)
+    public function __construct($user, $password, $projects, $harvestService)
     {
         $this->user = $user;
         $this->password = $password;
+		$this->projects = $projects;
 		$this->harvestService = $harvestService;
 
 		$this->daysInWeek = ['monday' => 1, 'tuesday' => 2, 'wednesday' => 3, 'thursday' => 4, 'friday' => 5, 'saturday' => 6, 'sunday' => 7];
@@ -60,6 +66,10 @@ class DominoDriveService
 	 */
 	public function getWeek($date = null)
 	{
+		if(is_null($date)) {
+			$date = new \DateTime();
+		}
+
 		$week = $this->daysInWeek;
 
 		$date = clone $date;
@@ -88,10 +98,14 @@ class DominoDriveService
 
 		$data = array();
 		foreach($range as $entry) {
+			//$dayEntry = $this->harvestService->getEntry($entry->get('id'));
+
 			if(!isset($data[$entry->get('project-id')][$entry->get('spent-at')])) {
 				$data[$entry->get('project-id')][$entry->get('spent-at')] = 0;
 			}
 			$data[$entry->get('project-id')][$entry->get('spent-at')] += floatval($entry->get('hours'));
+
+			//$projects[$entry->get('project-id')]['apiName'] = $dayEntry->get('project');
 		}
 
 		$rows = array();
@@ -147,16 +161,12 @@ class DominoDriveService
 
 	public function bindHarvestToDomino()
 	{
-		return array(
-			'6938786' => array('name' => 'PRIMONIAL - Partenaires',	    'client' => '', 'dossier' => ''),
-			'7376843' => array('name' => 'AO NRJ GAMES',                'client' => '', 'dossier' => ''),
-			'6445332' => array('name' => 'KRONENBOURG - Tourtel Twist', 'client' => '', 'dossier' => ''),
-		);
+		return $this->projects;
 	}
 
-	public function generate()
+	public function generate($date = null)
 	{
-		$timesheet = $this->normalizeTimesheet($this->getTimesheet());
+		$timesheet = $this->normalizeTimesheet($this->getTimesheet($date));
 
 		/*$finder = new Finder();
 		$finder->in($this->genDir)->name('*.gen.js');
@@ -211,9 +221,13 @@ SCRIPT;
 		return $timesheet;
 	}
 
-	public function drive()
+	/**
+	 * @param |DateTime|null $date
+	 * @return array
+	 */
+	public function drive($date = null)
 	{
-		$timesheet = $this->generate();
+		$timesheet = $this->generate($date);
 
 		return $timesheet;
 	}
