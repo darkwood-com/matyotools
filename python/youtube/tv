@@ -32,7 +32,7 @@ _dir = os.path.dirname(os.path.abspath(__file__))
 youtubeDL = _dir + '/youtube-dl'
 folder = _dir + '/dl'
 
-#clean dl folder : delete older videos for space
+# clean dl folder : delete older videos for space
 for file in os.listdir(folder):
     path = os.path.join(folder, file)
     try:
