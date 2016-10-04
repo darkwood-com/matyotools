@@ -46,6 +46,8 @@ launchctl usage
 
 do not forget to check your php.ini (date.timezone = "Europe/Paris" and http://symfony.com/fr/doc/current/reference/requirements.html)
 
+sudo apachectl restart
+
 into /usr/local/bin/harvest_coffee
 
 	#!/bin/bash

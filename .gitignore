@@ -65,6 +65,17 @@ php/HeartBreaker/web/bundles/
 php/HeartBreaker/web/media/
 php/HeartBreaker/phpMemcachedAdmin
 
+# Harvest
+php/SocialNetwork/web/bundles/
+php/SocialNetwork/app/bootstrap.php.cache
+php/SocialNetwork/app/config/parameters.yml
+php/SocialNetwork/var/cache/*
+php/SocialNetwork/var/logs/*
+php/SocialNetwork/build/
+php/SocialNetwork/vendor/
+php/SocialNetwork/domino/reports
+php/SocialNetwork/domino/tests/*.gen.js
+
 
 # SearchReplace
 php/SearchReplace/tests
