@@ -17,7 +17,7 @@ parameters:
     harvest_user: 'user'
     harvest_password: 'password'
     harvest_account: 'account'
-    harvest_truncate_max:  7.0
+    harvest_truncate_max:  7.25
     harvest_truncate_rand: 0.50
     harvest_domino_projects:
         123456789: { name: My Project, client: '', dossier: '' }
