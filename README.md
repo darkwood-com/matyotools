@@ -17,6 +17,7 @@ Tools for programming
   - **applescript** : Applescript commands
   - **ffmpeg** : Scripts that use https://www.ffmpeg.org/ for batch video conversion
   - **git-sftp** : Allows to push or pull git repository to a remote git directory stored on sftp server
+  - **bash-profile** : My custom bash profile
   - **vagrant** : Scripts for [vagrant](http://www.vagrantup.com/) development usage
 
 * Javascript
