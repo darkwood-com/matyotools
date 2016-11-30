@@ -14,11 +14,11 @@ complete -o default -o nospace -W "$(/usr/bin/env ruby -ne 'puts $_.split(/[,\s]
 # git
 GIT_AUTHOR_NAME="Mathieu Ledru"
 GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
-git config --global user.name "$GIT_AUTHOR_NAME"
 GIT_AUTHOR_EMAIL="matyo91@gmail.com"
 GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
-git config --global user.email "$GIT_AUTHOR_EMAIL"
 GIT_MERGE_AUTOEDIT=no
+# git config --global user.name "$GIT_AUTHOR_NAME"
+# git config --global user.email "$GIT_AUTHOR_EMAIL"
 
 alias gs='git status'
 alias gd='git diff'
@@ -78,6 +78,3 @@ alias get='gitCommitEmotion ticket'
 # vagrant
 alias vu='vagrant up'
 alias vs='vagrant ssh'
-
-# domino
-alias harvest_domino='/Users/math/Sites/darkwood/matyotools/php/Harvest/app/console harvest:domino'
