@@ -50,16 +50,15 @@ function gitCommitEmotion() {
             done
             return 0
             ;;
-        bug)    emoji=":bug:" ;;
-        ticket) emoji=":zap:" ;;
-        *)
-            message=$1
-            emojis=( smile simple_smile smirk blush wink sunglasses )
-            emojisLength=${#emojis[*]}
-            emoji=":${emojis[$((RANDOM%emojisLength))]}:"
-            ;;
+        bug)    emojis=( bug ) ;;
+        ticket) emojis=( zap ) ;;
+        *)      emojis=( smile simple_smile smirk blush wink sunglasses )
+                message=$1
+                ;;
     esac
 
+    emojisLength=${#emojis[*]}
+    emoji=":${emojis[$((RANDOM%emojisLength))]}:"
     message="$message $emoji"
     for item in "${emojisList[@]}"
     do
