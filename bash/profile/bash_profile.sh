@@ -43,6 +43,13 @@ function gitCommitEmotion() {
     message=$2
 
     case "$1" in
+        list)
+            for item in "${emojisList[@]}"
+            do
+                echo ":${item%%:*}: ${item#*:}"
+            done
+            return 0
+            ;;
         bug)    emoji=":bug:" ;;
         ticket) emoji=":zap:" ;;
         *)
@@ -53,7 +60,7 @@ function gitCommitEmotion() {
             ;;
     esac
 
-    message="$emoji $message"
+    message="$message $emoji"
     for item in "${emojisList[@]}"
     do
         key=${item%%:*}
@@ -64,6 +71,7 @@ function gitCommitEmotion() {
     git commit -a -m "$message"
 }
 alias ge='gitCommitEmotion'
+alias gel='gitCommitEmotion list'
 alias geb='gitCommitEmotion bug'
 alias get='gitCommitEmotion ticket'
 
