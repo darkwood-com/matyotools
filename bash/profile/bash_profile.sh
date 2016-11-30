@@ -1,8 +1,6 @@
 # bash color
 parse_git_branch() {
-
     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
-
 }
 
 export PS1="[\t]\[\e[0;33m\][\[\e[0;36m\]\u@\h \[\e[0;32m\]\w\[\e[0;33m\]]\[\e[0;31m\]\$(parse_git_branch)\[\e[0m\]\$ "
@@ -28,6 +26,46 @@ alias gc='git commit -a -m'
 alias gpull='git pull'
 alias gpush='git push'
 alias gup='git up'
+
+# git emoji
+function gitCommitEmotion() {
+    # http://emoji-cheat-sheet.com/
+    emojisList=(
+        "smile:"$'\xF0\x9F\x98\x80'
+        "simple_smile:"$'\xF0\x9F\x99\x82'
+        "smirk:"$'\xF0\x9F\x98\x8F'
+        "blush:"$'\xF0\x9F\x98\x8A'
+        "wink:"$'\xF0\x9F\x98\x89'
+        "sunglasses:"$'\xF0\x9F\x98\x8E'
+        "bug:"$'\xF0\x9F\x90\x9B'
+        "zap:"$'\xE2\x9A\xA1\xEF\xB8\x8F'
+    )
+    message=$2
+
+    case "$1" in
+        bug)    emoji=":bug:" ;;
+        ticket) emoji=":zap:" ;;
+        *)
+            message=$1
+            emojis=( smile simple_smile smirk blush wink sunglasses )
+            emojisLength=${#emojis[*]}
+            emoji=":${emojis[$((RANDOM%emojisLength))]}:"
+            ;;
+    esac
+
+    message="$emoji $message"
+    for item in "${emojisList[@]}"
+    do
+        key=${item%%:*}
+        value=${item#*:}
+        message=$(echo $message | sed -e "s/:$key:/$value/g")
+    done
+
+    git commit -a -m "$message"
+}
+alias ge='gitCommitEmotion'
+alias geb='gitCommitEmotion bug'
+alias get='gitCommitEmotion ticket'
 
 # vagrant
 alias vu='vagrant up'
