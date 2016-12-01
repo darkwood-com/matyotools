@@ -39,6 +39,7 @@ function gitCommitEmotion() {
         "sunglasses:"$'\xF0\x9F\x98\x8E'
         "bug:"$'\xF0\x9F\x90\x9B'
         "zap:"$'\xE2\x9A\xA1\xEF\xB8\x8F'
+        "pencil:"$'\xF0\x9F\x93\x9D'
     )
     message=$2
 
@@ -51,7 +52,7 @@ function gitCommitEmotion() {
             return 0
             ;;
         bug)    emojis=( bug ) ;;
-        ticket) emojis=( zap ) ;;
+        ticket) emojis=( pencil ) ;;
         *)      emojis=( smile simple_smile smirk blush wink sunglasses )
                 message=$1
                 ;;
