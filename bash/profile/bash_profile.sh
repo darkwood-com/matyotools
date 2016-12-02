@@ -40,6 +40,7 @@ function gitCommitEmotion() {
         "bug:"$'\xF0\x9F\x90\x9B'
         "zap:"$'\xE2\x9A\xA1\xEF\xB8\x8F'
         "pencil:"$'\xF0\x9F\x93\x9D'
+        "book:"$'\xF0\x9F\x93\x96'
     )
     message=$2
 
@@ -53,6 +54,7 @@ function gitCommitEmotion() {
             ;;
         bug)    emojis=( bug ) ;;
         ticket) emojis=( pencil ) ;;
+        merge)  emojis=( book ) ;;
         *)      emojis=( smile simple_smile smirk blush wink sunglasses )
                 message=$1
                 ;;
@@ -74,6 +76,7 @@ alias ge='gitCommitEmotion'
 alias gel='gitCommitEmotion list'
 alias geb='gitCommitEmotion bug'
 alias get='gitCommitEmotion ticket'
+alias get='gitCommitEmotion merge'
 
 # vagrant
 alias vu='vagrant up'
