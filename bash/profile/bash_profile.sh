@@ -59,7 +59,7 @@ function gitCommitEmotion() {
 
     emojisLength=${#emojis[*]}
     emoji=":${emojis[$((RANDOM%emojisLength))]}:"
-    message="$message $emoji"
+    message="$emoji $message"
     for item in "${emojisList[@]}"
     do
         key=${item%%:*}
