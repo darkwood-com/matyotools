@@ -7,5 +7,5 @@ DOCS
 ----
 
 Emoji development
-https://github.com/carloscuesta/gitmoji
-https://github.com/dannyfritz/commit-message-emoji
+- https://github.com/carloscuesta/gitmoji
+- https://github.com/dannyfritz/commit-message-emoji
