@@ -76,7 +76,7 @@ alias ge='gitCommitEmotion'
 alias gel='gitCommitEmotion list'
 alias geb='gitCommitEmotion bug'
 alias get='gitCommitEmotion ticket'
-alias get='gitCommitEmotion merge'
+alias gem='gitCommitEmotion merge'
 
 # vagrant
 alias vu='vagrant up'
