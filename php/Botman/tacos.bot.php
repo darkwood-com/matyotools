@@ -25,7 +25,7 @@ $client->getChannelByName('ricard_inte')->then(function($channel) use ($client) 
         $members = array_slice($members, 0, 5);
         foreach ($members as $member)
         {
-            $client->send("@{$member->getUsername()} :taco:", $channel);
+            $client->send("<@{$member->getId()}|{$member->getUsername()}> :taco:", $channel);
         }
     });
 });
