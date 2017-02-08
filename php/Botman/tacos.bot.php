@@ -15,7 +15,7 @@ $loop = Factory::create();
 
 $client = new ApiClient($loop);
 $client->setToken($config['slack_token']);
-$client->getChannelByName('general')->then(function($channel) use ($client) {
+$client->getChannelByName('ricard_inte')->then(function($channel) use ($client) {
     /** @var Channel $channel */
     $channel->getMembers()->then(function($members) use ($client, $channel) {
         /** @var User[] $members */
