@@ -34,6 +34,8 @@ Tools for programming
 
   - **Beautifier** : Extends [PHP_Beautifier](http://pear.php.net/package/PHP_Beautifier/) to format and beautify code.
 
+  - **Botman** : Bot chat scripting.
+  
   - **CS-Fixer** : Extends [PHP-CS-Fixer](http://cs.sensiolabs.org/) to format and beautify code.
 
   - **Harvest** : This allow use  [harverst api](http://www.getharvest.com/api) to fill and send approval of weeks, rather than spending time to record daily tasks.
@@ -43,6 +45,8 @@ Tools for programming
   - **Hipchat** : This allow send [hipchat](https://www.hipchat.com) messages from command line.
 
   - **SearchReplace** : This tool allows search and replace from input to output (file or stream). You can override the classes to customise your replacement rules.
+
+  - **SocialNetwork** : Try to grab social feed (Facebook, Twitter, Intagram, ...) and make it into a dashboard (friends activity, interests, feed push).
 
 * Python
   - **Youtube-dl** : Script for downloading videos from the internet to the disk

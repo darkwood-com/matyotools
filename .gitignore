@@ -65,7 +65,7 @@ php/HeartBreaker/web/bundles/
 php/HeartBreaker/web/media/
 php/HeartBreaker/phpMemcachedAdmin
 
-# Harvest
+# SocialNetwork
 php/SocialNetwork/web/bundles/
 php/SocialNetwork/app/bootstrap.php.cache
 php/SocialNetwork/app/config/parameters.yml
@@ -76,6 +76,8 @@ php/SocialNetwork/vendor/
 php/SocialNetwork/domino/reports
 php/SocialNetwork/domino/tests/*.gen.js
 
+# Botman
+php/Botman/vendor/
 
 # SearchReplace
 php/SearchReplace/tests
