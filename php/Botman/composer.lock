@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "9136204041d83e38ea4c810f50b0ecc1",
+    "content-hash": "510e38575583ad1cf481af457920357d",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -954,17 +954,80 @@
             "time": "2016-11-14T01:06:16+00:00"
         },
         {
-            "name": "tightenco/collect",
-            "version": "v5.4.0",
+            "name": "symfony/var-dumper",
+            "version": "v3.2.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/tightenco/collect.git",
-                "reference": "705a25fbbfee688353351f0bc13f34d61f9f668a"
+                "url": "https://github.com/symfony/var-dumper.git",
+                "reference": "5bb4435a03a4f05c211f4a9a8ee2756965924511"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tightenco/collect/zipball/705a25fbbfee688353351f0bc13f34d61f9f668a",
-                "reference": "705a25fbbfee688353351f0bc13f34d61f9f668a",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/5bb4435a03a4f05c211f4a9a8ee2756965924511",
+                "reference": "5bb4435a03a4f05c211f4a9a8ee2756965924511",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9",
+                "symfony/polyfill-mbstring": "~1.0"
+            },
+            "require-dev": {
+                "twig/twig": "~1.20|~2.0"
+            },
+            "suggest": {
+                "ext-symfony_debug": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.2-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "Resources/functions/dump.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Component\\VarDumper\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony mechanism for exploring and dumping PHP variables",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "debug",
+                "dump"
+            ],
+            "time": "2017-01-24T12:58:58+00:00"
+        },
+        {
+            "name": "tightenco/collect",
+            "version": "v5.4.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tightenco/collect.git",
+                "reference": "de4d58f9273a203fabf879004cad303ba76fd8f9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tightenco/collect/zipball/de4d58f9273a203fabf879004cad303ba76fd8f9",
+                "reference": "de4d58f9273a203fabf879004cad303ba76fd8f9",
                 "shasum": ""
             },
             "require": {
@@ -998,7 +1061,7 @@
                 "collection",
                 "laravel"
             ],
-            "time": "2017-01-24T16:58:09+00:00"
+            "time": "2017-02-08T16:28:48+00:00"
         },
         {
             "name": "zendframework/zend-escaper",
