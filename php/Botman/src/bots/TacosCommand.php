@@ -55,10 +55,17 @@ class TacosCommand extends Command
                 ->then(function ($members) use($authedUser) {
                     /** @var User[] $members */
 
-                    //shuffle members without me
+                    //shuffle members
                     shuffle($members);
+
+                    //without me
                     $members = array_filter($members, function (User $user) use($authedUser) {
                         return $user->getId() != $authedUser->getId();
+                    });
+
+                    //without heytaco bot
+                    $members = array_filter($members, function (User $user) {
+                        return $user->getUsername() !== 'heytaco' ;
                     });
 
                     return $members;
