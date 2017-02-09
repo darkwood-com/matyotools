@@ -24,6 +24,7 @@ foreach ($configs as $config)
         /** @var Channel[] $channels */
         $channels = array_merge($data[0], $data[1]);
 
+        // do no join mpim channels
         $channels = array_filter($channels, function($channel) {
             /** @var Channel $channel */
             return strpos($channel->getName(), 'mpdm-') === false;
