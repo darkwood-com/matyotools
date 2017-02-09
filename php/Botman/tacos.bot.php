@@ -12,10 +12,10 @@ use Slack\Channel;
 use Slack\User;
 
 $loop = Factory::create();
-//$botman = BotManFactory::createForRTM($config, $loop);
+//$botman = BotManFactory::createForRTM($config['bigyouth'], $loop);
 
 $client = new ApiClient($loop);
-$client->setToken($config['slack_token']);
+$client->setToken($config['bigyouth']['slack_token']);
 
 Promise\all([
     $client->getAuthedUser(),

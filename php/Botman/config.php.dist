@@ -1,5 +1,13 @@
 <?php
 
 $config = [
-    'slack_token' => 'YOUR-SLACK-BOT-TOKEN'
+    'bigyouth' => [
+         'slack_token' => 'YOUR-SLACK-BOT-TOKEN'
+    ],
+    'makheia' => [
+         'slack_token' => 'YOUR-SLACK-BOT-TOKEN'
+    ],
+    'symfony-devs' => [
+         'slack_token' => 'YOUR-SLACK-BOT-TOKEN'
+    ],
 ];
