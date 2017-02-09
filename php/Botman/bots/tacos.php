@@ -1,7 +1,6 @@
 <?php
-include '../config.php';
-
-require '../vendor/autoload.php';
+include dirname(__FILE__) . '/../config.php';
+require dirname(__FILE__) . '/../vendor/autoload.php';
 
 use Mpociot\BotMan\BotManFactory;
 use Mpociot\BotMan\BotMan;

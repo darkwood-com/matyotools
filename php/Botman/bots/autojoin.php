@@ -1,7 +1,6 @@
 <?php
-include '../config.php';
-
-require '../vendor/autoload.php';
+include dirname(__FILE__) . '/../config.php';
+require dirname(__FILE__) . '/../vendor/autoload.php';
 
 use Mpociot\BotMan\BotManFactory;
 use Mpociot\BotMan\BotMan;
@@ -24,6 +23,11 @@ foreach ($configs as $config)
     ])->then(function ($data) use ($client) {
         /** @var Channel[] $channels */
         $channels = array_merge($data[0], $data[1]);
+
+        $channels = array_filter($channels, function($channel) {
+            /** @var Channel $channel */
+            return strpos($channel->getName(), 'mpdm-') === false;
+        });
 
         foreach ($channels as $channel)
         {
