@@ -1,7 +1,7 @@
 <?php
-include 'config.php';
+include '../config.php';
 
-require 'vendor/autoload.php';
+require '../vendor/autoload.php';
 
 use Mpociot\BotMan\BotManFactory;
 use Mpociot\BotMan\BotMan;
@@ -12,10 +12,9 @@ use Slack\Channel;
 use Slack\User;
 
 $loop = Factory::create();
-//$botman = BotManFactory::createForRTM($config['bigyouth'], $loop);
 
 $client = new ApiClient($loop);
-$client->setToken($config['bigyouth']['slack_token']);
+$client->setToken($configs['bigyouth']['slack_token']);
 
 Promise\all([
     $client->getAuthedUser(),
