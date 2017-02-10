@@ -24,18 +24,18 @@ class HarvestService
     protected $password;
     protected $account;
     protected $mode;
-    protected $truncateMax;
+    protected $truncate;
     protected $truncateRand;
 
-    public function __construct(HarvestApp $api, $user, $password, $account, $mode, $truncateMax, $truncateRand)
+    public function __construct(HarvestApp $api, $user, $password, $account, $mode, $truncate, $truncateRand)
     {
         $this->api = $api->getApi();
         $this->user = $user;
         $this->password = $password;
         $this->account = $account;
         $this->mode = $mode;
-        $this->truncateMax = $truncateMax;
-        $this->truncateRand = $truncateRand;
+        $this->truncate = floatval($truncate);
+        $this->truncateRand = floatval($truncateRand);
     }
 
     public function getMyUserId()
@@ -94,7 +94,20 @@ class HarvestService
 		$range = new Range($from->format( "Ymd" ), $to->format( "Ymd" ));
 		$entries = $this->api->getUserEntries($user_id, $range);
 
-		return $entries->isSuccess() ? $entries->get('data') : array();
+		/** @var DayEntry[] $days */
+		$days = array();
+		if($entries->isSuccess()) {
+            $days = $entries->get('data');
+        }
+
+        $days = array_map(function($day) {
+            /** @var DayEntry $day */
+            $day->set('hours', floatval($day->get('hours')));
+
+            return $day;
+        }, $days);
+
+		return $days;
 	}
 
     /**
@@ -125,28 +138,47 @@ class HarvestService
     {
         $truncated = array();
 
-        $days = $this->getDays();
-        $group = $this->groupByDays($days);
+        $group = $this->groupByDays($this->getDays());
 
         foreach ($group as $days) {
-            $totalHours = 0;
-            foreach ($days as $day) {
+            /** @var DayEntry[] $days */
+
+            // sort by time
+            usort($days, function($dayA, $dayB) {
+                /** @var DayEntry $dayA */
+                /** @var DayEntry $dayB */
+                return $dayA->get('hours') < $dayB->get('hours');
+            });
+
+            // calculate total time
+            $totalHours = array_reduce($days, function($carry, $day) {
                 /** @var DayEntry $day */
-                $hours = floatval($day->get('hours'));
-                $totalHours += $hours;
+                return $carry + $day->get('hours');
+            }, 0);
 
-                if (!is_null($totalHours) && $totalHours > $this->truncateMax) {
-                    //truncate this entry
-                    $hours = $hours - ($totalHours - $this->truncateMax);
-                    $rand = mt_rand(max(0, ($hours - $this->truncateRand) * 100), $hours * 100) / 100;
-                    $day->set('hours', $rand);
-                    $this->api->updateEntry($day);
-                    $truncated[] = $day;
+            $min = $this->truncate - $this->truncateRand;
+            $max = $this->truncate + $this->truncateRand;
 
-                    $totalHours = null;
-                } elseif (is_null($totalHours)) {
-                    //delete tracking when more hour than truncateMax
-                    $this->api->deleteEntry($day->get('id'));
+            // truncate
+            if($totalHours > $max) {
+                $realHours = $min + ($max - $min) * lcg_value();
+                $totalHoursDiff = $totalHours - $realHours;
+
+                foreach ($days as $day) {
+                    $hours = $day->get('hours');
+                    $hoursDiff = $hours - $totalHoursDiff;
+
+                    if($hoursDiff <= 0) {
+                        $day->set('hours', 0);
+                        $this->api->deleteEntry($day->get('id'));
+                        $totalHoursDiff -= $hours;
+                    } else {
+                        $day->set('hours', $hoursDiff);
+                        $this->api->updateEntry($day);
+                        $truncated[] = $day;
+
+                        break;
+                    }
                 }
             }
         }
@@ -175,11 +207,9 @@ class HarvestService
                 /** @var DayEntry $carry */
                 /** @var DayEntry $item */
                 if (is_null($carry)) {
-                    return $item;
-                } elseif (!is_null($item)) {
+                    $carry = clone $item;
+                } else {
                     $carry->set('hours', $carry->get('hours') + $item->get('hours'));
-
-                    return $carry;
                 }
 
                 return $carry;
@@ -227,11 +257,15 @@ class HarvestService
             $day = new \DateTime($data->get('created-at'));
 
             $hours = $data->get('hours');
-            if($hours < $this->truncateMax - $this->truncateRand) $hours = '<less>'.$hours.'H</less>';
-            elseif($hours <= $this->truncateMax) $hours = '<ok>'.$hours.'H</ok>';
+
+            $min = $this->truncate - $this->truncateRand;
+            $max = $this->truncate + $this->truncateRand;
+
+            if($hours < $min) $hours = '<less>'.$hours.'H</less>';
+            elseif($hours <= $max) $hours = '<ok>'.$hours.'H</ok>';
             else $hours = '<more>'.$hours.'H</more>';
 
-            $lines[] = implode("\t\t", array(
+            $lines[] = implode("\t", array(
                 $this->getUrl('time/day/'.$day->format('Y').'/'.$day->format('m').'/'.$day->format('d').'/'.$data->get('user-id')),
                 $hours,
             ));
