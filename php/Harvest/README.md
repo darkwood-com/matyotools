@@ -8,6 +8,12 @@ $ app/console harvest:stop      => Stop harvest timesheet
 $ app/console harvest:truncate  => Truncate harvest timesheet
 ```
 
+BUG FIX
+-------
+
+    when installed at : php/Harvest/src/Matyotools/TimesheetBundle/Services/HarvestService.php
+    edit line 2575 : if ($multi == "id" && isset($this->_headers["Location"]))
+
 Install harvest:coffee
 ----------------------
 
