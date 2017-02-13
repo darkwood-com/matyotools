@@ -38,7 +38,7 @@ class SlackService
      */
     public function getHistories($loop)
     {
-        $clients = array_map(function($config) use ($loop) {
+        $clients = array_map(function ($config) use ($loop) {
             $client = new ApiClient($loop);
             $client->setToken($this->configs[$config]['slack_token']);
 
@@ -53,16 +53,15 @@ class SlackService
                     /** @var Channel[] $channels */
                     $histories = [];
 
-                    foreach($channels as $channel)
-                    {
+                    foreach ($channels as $channel) {
                         $histories[] = Promise\resolve($channel)
-                            ->then(function($channel) {
-                                /** @var Channel $channel  */
+                            ->then(function ($channel) {
+                                /** @var Channel $channel */
                                 $client = $channel->getClient();
 
                                 return $client->apiCall('channels.history', [
                                     'channel' => $channel->getId(),
-                                ])->then(function($history) use ($channel) {
+                                ])->then(function ($history) use ($channel) {
                                     return [
                                         'channel' => $channel,
                                         'history' => $history,
@@ -72,8 +71,7 @@ class SlackService
                     }
 
                     return Promise\all($histories);
-                })
-            ;
+                });
 
             return $carry;
         }, []);
@@ -86,16 +84,15 @@ class SlackService
                     /** @var Group[] $groups */
                     $histories = [];
 
-                    foreach($groups as $group)
-                    {
+                    foreach ($groups as $group) {
                         $histories[] = Promise\resolve($group)
-                            ->then(function($group) {
-                                /** @var Group $group  */
+                            ->then(function ($group) {
+                                /** @var Group $group */
                                 $client = $group->getClient();
 
                                 return $client->apiCall('groups.history', [
                                     'channel' => $group->getId(),
-                                ])->then(function($history) use ($group) {
+                                ])->then(function ($history) use ($group) {
                                     return [
                                         'channel' => $group,
                                         'history' => $history,
@@ -105,8 +102,7 @@ class SlackService
                     }
 
                     return Promise\all($histories);
-                })
-            ;
+                });
 
             return $carry;
         }, []);
@@ -119,16 +115,15 @@ class SlackService
                     /** @var DirectMessageChannel[] $dms */
                     $histories = [];
 
-                    foreach($dms as $dm)
-                    {
+                    foreach ($dms as $dm) {
                         $histories[] = Promise\resolve($dm)
-                            ->then(function($dm) {
-                                /** @var DirectMessageChannel $dm  */
+                            ->then(function ($dm) {
+                                /** @var DirectMessageChannel $dm */
                                 $client = $dm->getClient();
 
                                 return $client->apiCall('im.history', [
                                     'channel' => $dm->getId(),
-                                ])->then(function($history) use ($dm) {
+                                ])->then(function ($history) use ($dm) {
                                     return [
                                         'channel' => $dm,
                                         'history' => $history,
@@ -138,19 +133,56 @@ class SlackService
                     }
 
                     return Promise\all($histories);
-                })
-            ;
+                });
 
             return $carry;
         }, []);
 
         return Promise\reduce(array_merge(
             $channelHistories,
-            $groupHistories
-            //$dmHistories
-        ), function($carry, $histories) {
+            $groupHistories,
+            $dmHistories
+        ), function ($carry, $histories) {
             $carry = array_merge($carry, $histories);
             return $carry;
         }, []);
+    }
+
+    /**
+     * @param $loop
+     * @return Promise\Promise
+     */
+    public function getLastMessages($loop)
+    {
+        return $this->getHistories($loop)
+            ->then(function ($histories) {
+                $messages = [];
+                foreach ($histories as $kHistory => $history) {
+                    foreach ($history['history']['messages'] as $kMessage => $message) {
+                        if ($message['type'] == 'message') {
+                            $messages[] = [
+                                'kHistory' => $kHistory,
+                                'kMessage' => $kMessage,
+                                'ts' => $message['ts'],
+                            ];
+                        }
+                    }
+                }
+
+                usort($messages, function ($messageA, $messageB) {
+                    return $messageA['ts'] < $messageB['ts'];
+                });
+
+                $messages = array_reverse(array_slice($messages, 0, 20));
+
+                $messages = array_map(function ($message) use ($histories) {
+                    $newMessage = $histories[$message['kHistory']]['history']['messages'][$message['kMessage']];
+                    $newMessage['channel'] = $histories[$message['kHistory']]['channel'];
+
+                    return $newMessage;
+                }, $messages);
+
+                return $messages;
+            });
     }
 }

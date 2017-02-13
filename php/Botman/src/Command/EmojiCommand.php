@@ -43,37 +43,8 @@ class EmojiCommand extends Command
     {
         $loop = Factory::create();
 
-        $this->slackService
-            ->getHistories($loop)
-            ->then(function ($histories) {
-                $messages = [];
-                foreach ($histories as $kHistory => $history) {
-                    foreach ($history['history']['messages'] as $kMessage => $message) {
-                        if($message['type'] == 'message') {
-                            $messages[] = [
-                                'kHistory' => $kHistory,
-                                'kMessage' => $kMessage,
-                                'ts' => $message['ts'],
-                            ];
-                        }
-                    }
-                }
-
-                usort($messages, function ($messageA, $messageB) {
-                    return $messageA['ts'] < $messageB['ts'];
-                });
-
-                $messages = array_reverse(array_slice($messages, 0, 20));
-
-                $messages = array_map(function($message) use ($histories) {
-                    $newMessage = $histories[$message['kHistory']]['history']['messages'][$message['kMessage']];
-                    $newMessage['channel'] = $histories[$message['kHistory']]['channel'];
-
-                    return $newMessage;
-                }, $messages);
-
-                return $messages;
-            })->then(function ($messages) use ($output) {
+        $this->slackService->getLastMessages($loop)
+            ->then(function ($messages) use ($output) {
                 foreach ($messages as $message) {
                     $output->writeln($message['ts'] . ' - ' . $message['text']);
                 }
