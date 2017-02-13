@@ -4,6 +4,9 @@ namespace Command;
 
 use Services\SlackService;
 use Slack\Group;
+use Slack\Message\Message;
+use Slack\Message\MessageBuilder;
+use Slack\Payload;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -41,30 +44,41 @@ class EmojiCommand extends Command
         $loop = Factory::create();
 
         $this->slackService
-            ->getChannels($loop)
-            ->then(function ($channels) {
-                $messagesPromise = array_map(function ($channel) {
-                    /** @var Channel|Group $channel */
-                    $client = $channel->getClient();
-
-                    $method = 'channels.history';
-                    if($channel instanceof Group) {
-                        $method = 'groups.history';
+            ->getHistories($loop)
+            ->then(function ($histories) {
+                $messages = [];
+                foreach ($histories as $kHistory => $history) {
+                    foreach ($history['history']['messages'] as $kMessage => $message) {
+                        if($message['type'] == 'message') {
+                            $messages[] = [
+                                'kHistory' => $kHistory,
+                                'kMessage' => $kMessage,
+                                'ts' => $message['ts'],
+                            ];
+                        }
                     }
+                }
 
-                    return $client->apiCall($method, [
-                        'channel' => $channel->getName(),
-                    ]);
-                }, $channels);
+                usort($messages, function ($messageA, $messageB) {
+                    return $messageA['ts'] < $messageB['ts'];
+                });
 
-                return Promise\all($messagesPromise);
-            })->then(function ($messages) {
-                /** @var Channel[] $channels */
+                $messages = array_reverse(array_slice($messages, 0, 20));
 
-                dump($messages);
-            }, function ($a) {
-                dump($a);
-            });
+                $messages = array_map(function($message) use ($histories) {
+                    $newMessage = $histories[$message['kHistory']]['history']['messages'][$message['kMessage']];
+                    $newMessage['channel'] = $histories[$message['kHistory']]['channel'];
+
+                    return $newMessage;
+                }, $messages);
+
+                return $messages;
+            })->then(function ($messages) use ($output) {
+                foreach ($messages as $message) {
+                    $output->writeln($message['ts'] . ' - ' . $message['text']);
+                }
+            })
+        ;
 
         $loop->run();
     }
