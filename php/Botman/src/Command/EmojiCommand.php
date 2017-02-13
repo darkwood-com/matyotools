@@ -46,7 +46,9 @@ class EmojiCommand extends Command
         $this->slackService->getLastMessages($loop)
             ->then(function ($messages) use ($output) {
                 foreach ($messages as $message) {
-                    $output->writeln($message['ts'] . ' - ' . $message['text']);
+                    $time = new \DateTime($message['ts']);
+
+                    $output->writeln($time->format('JJ/MM/YYYY') . ' - ' . $message['text']);
                 }
             })
         ;
