@@ -39,8 +39,7 @@ class TacosCommand extends Command
     {
         $loop = Factory::create();
 
-        $client = new ApiClient($loop);
-        $client->setToken($this->configs['bigyouth']['slack_token']);
+        $clients = $this->slackService->getClients($loop, 'bigyouth');
 
         Promise\all([
             $client->getAuthedUser(),

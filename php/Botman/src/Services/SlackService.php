@@ -2,6 +2,7 @@
 
 namespace Services;
 
+use Model\ApiClients;
 use Mpociot\BotMan\BotManFactory;
 use Mpociot\BotMan\BotMan;
 use React\EventLoop\Factory;
@@ -30,6 +31,24 @@ class SlackService
     public function getConfigs()
     {
         return $this->configs;
+    }
+
+    public function getClients($loop, $configs = array())
+    {
+        $clients = new ApiClients();
+
+        if (!is_array($configs)) {
+            $configs = array($configs);
+        }
+
+        foreach ($configs as $config) {
+            $client = new ApiClient($loop);
+            $client->setToken($this->configs[$config]['slack_token']);
+
+            $clients->addClient($client);
+        }
+
+        return $clients;
     }
 
     /**
