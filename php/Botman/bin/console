@@ -5,15 +5,13 @@ require __DIR__.'/../config.php';
 require __DIR__.'/../vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
-use Command\AutoJoinCommand;
-use Command\TacosCommand;
-use Command\EmojiCommand;
 use Services\SlackService;
 
 $slackService = new SlackService($configs);
 
 $application = new Application();
-$application->add(new AutoJoinCommand($configs));
-$application->add(new TacosCommand($configs));
-$application->add(new EmojiCommand($slackService));
+$application->add(new Command\AutoJoinCommand($configs));
+$application->add(new Command\TacosCommand($configs));
+$application->add(new Command\EmojiCommand($slackService));
+$application->add(new Command\ReactCommand($slackService));
 $application->run();

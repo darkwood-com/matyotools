@@ -30,7 +30,7 @@ class AutoJoinCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('bot:auto-join')
+            ->setName('auto-join')
         ;
     }
 
