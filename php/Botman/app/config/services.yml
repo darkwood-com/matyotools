@@ -34,4 +34,3 @@ services:
             - [add, ['@command.emoji']]
             - [add, ['@command.react']]
             - [add, ['@command.tacos']]
-

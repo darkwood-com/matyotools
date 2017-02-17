@@ -36,7 +36,7 @@ class ReactCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('react');
+            ->setName('bot:react');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

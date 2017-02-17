@@ -32,7 +32,7 @@ class TacosCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('tacos');
+            ->setName('bot:tacos');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

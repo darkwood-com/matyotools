@@ -36,7 +36,7 @@ class EmojiCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('emoji');
+            ->setName('bot:emoji');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
