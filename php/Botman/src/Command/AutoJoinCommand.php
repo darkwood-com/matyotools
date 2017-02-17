@@ -2,6 +2,7 @@
 
 namespace Command;
 
+use Services\SlackService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,15 +17,15 @@ use Slack\User;
 class AutoJoinCommand extends Command
 {
     /**
-     * @var array
+     * @var SlackService
      */
-    protected $configs;
+    protected $slackService;
 
-    public function __construct($configs)
+    public function __construct(SlackService $slackService)
     {
         parent::__construct();
 
-        $this->configs = $configs;
+        $this->slackService = $slackService;
     }
 
     protected function configure()

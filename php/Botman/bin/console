@@ -1,17 +1,14 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__.'/../config.php';
 require __DIR__.'/../vendor/autoload.php';
 
-use Symfony\Component\Console\Application;
-use Services\SlackService;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-$slackService = new SlackService($configs);
+$container = new ContainerBuilder();
+$loader = new YamlFileLoader($container, new FileLocator(__DIR__));
+$loader->load(__DIR__.'/../app/config/config.yml');
 
-$application = new Application();
-$application->add(new Command\AutoJoinCommand($configs));
-$application->add(new Command\TacosCommand($configs));
-$application->add(new Command\EmojiCommand($slackService));
-$application->add(new Command\ReactCommand($slackService));
-$application->run();
+$container->get('application')->run();

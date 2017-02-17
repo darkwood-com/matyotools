@@ -1,0 +1,9 @@
+# This file is auto-generated during the composer install
+parameters:
+    configs:
+        bigyouth:
+            slack_token: YOUR-SLACK-BOT-TOKEN
+        makheia:
+            slack_token: YOUR-SLACK-BOT-TOKEN
+        symfony-devs:
+            slack_token: YOUR-SLACK-BOT-TOKEN

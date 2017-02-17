@@ -26,7 +26,7 @@ class EmojiCommand extends Command
      */
     protected $slackService;
 
-    public function __construct($slackService)
+    public function __construct(SlackService $slackService)
     {
         parent::__construct();
 

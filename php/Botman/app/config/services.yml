@@ -1,0 +1,37 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/service_container.html
+parameters:
+#    parameter_name: value
+
+services:
+    service.slack:
+        class: Services\SlackService
+        arguments: ['%configs%']
+
+    service.cache:
+        class:
+    
+    command.autojoin:
+        class: Command\AutoJoinCommand
+        arguments: ['@service.slack']
+
+    command.emoji:
+        class: Command\EmojiCommand
+        arguments: ['@service.slack']
+
+    command.react:
+        class: Command\ReactCommand
+        arguments: ['@service.slack']
+
+    command.tacos:
+        class: Command\TacosCommand
+        arguments: ['@service.slack']
+
+    application:
+        class: Symfony\Component\Console\Application
+        calls:
+            - [add, ['@command.autojoin']]
+            - [add, ['@command.emoji']]
+            - [add, ['@command.react']]
+            - [add, ['@command.tacos']]
+
