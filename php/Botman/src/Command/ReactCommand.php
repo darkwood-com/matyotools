@@ -3,6 +3,7 @@
 namespace Command;
 
 use Services\SlackService;
+use Slack\ChannelInterface;
 use Slack\Group;
 use Slack\Message\Message;
 use Slack\Message\MessageBuilder;
@@ -43,7 +44,13 @@ class ReactCommand extends Command
     {
         $loop = Factory::create();
 
-
+        $clients = $this->slackService->getClients($loop, ['makheia', 'symfony-devs']);
+        $clients->getChannels()->then(function ($channels) use ($output) {
+            /** @var ChannelInterface[] $channels */
+            foreach ($channels as $channel) {
+                $output->writeln($channel->getId());
+            }
+        });
 
         $loop->run();
     }

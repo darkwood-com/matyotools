@@ -2,11 +2,11 @@
 
 namespace Services;
 
-use Model\ApiClients;
 use Mpociot\BotMan\BotManFactory;
 use Mpociot\BotMan\BotMan;
 use React\EventLoop\Factory;
 use React\Promise;
+use Slack\ApiClients;
 use Slack\ApiClient;
 use Slack\Channel;
 use Slack\DirectMessageChannel;
@@ -39,6 +39,8 @@ class SlackService
 
         if (!is_array($configs)) {
             $configs = array($configs);
+        } elseif (count($configs) == 0) {
+            $configs = array_keys($this->configs);
         }
 
         foreach ($configs as $config) {
