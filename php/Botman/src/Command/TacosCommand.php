@@ -41,6 +41,13 @@ class TacosCommand extends Command
 
         $clients = $this->slackService->getClients($loop, 'bigyouth');
 
+        $clients
+            ->getChannels('big-youth')
+            ->then(function ($channels) {
+
+            })
+        ;
+
         Promise\all([
             $client->getAuthedUser(),
             $client->getGroupByName('big-youth'),
@@ -91,7 +98,7 @@ class TacosCommand extends Command
                     //get 5 members
                     $members = array_slice($members, 0, 5);
                     foreach ($members as $member) {
-                        $client->send("<@{$member->getId()}|{$member->getUsername()}> :taco:", $channel);
+                        //$client->send("<@{$member->getId()}|{$member->getUsername()}> :taco:", $channel);
                     }
 
                     return $members;
