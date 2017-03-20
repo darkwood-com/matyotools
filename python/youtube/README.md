@@ -46,3 +46,10 @@ Linux [Contab](http://fr.wikipedia.org/wiki/Crontab)
 
     $ crontab -e
     19 30 * * * /usr/local/bin/tv
+
+COMMANDS
+--------
+
+Extract youtube audio playlist
+
+    $ youtube-dl --extract-audio -o "%(upload_date)s.%(title)s.%(ext)s" --audio-format mp3 <youtube playlist url>

@@ -30,33 +30,14 @@ class ApiClients
      */
     public function getChannels($expr = null)
     {
-        $channelPromises = array_reduce($this->clients, function ($carry, $client) {
+        $promises = array_reduce($this->clients, function ($carry, $client) {
             /** @var ApiClient $client */
             $carry[] = $client->getChannels();
-
-            return $carry;
-        }, []);
-
-        $groupPromises = array_reduce($this->clients, function ($carry, $client) {
-            /** @var ApiClient $client */
             $carry[] = $client->getGroups();
-
-            return $carry;
-        }, []);
-
-        $dmPromises = array_reduce($this->clients, function ($carry, $client) {
-            /** @var ApiClient $client */
             $carry[] = $client->getDMs();
-
-            return $carry;
-        }, []);
-
-        $mdmPromises = array_reduce($this->clients, function ($carry, $client) {
-            /** @var ApiClient $client */
             $carry[] = $client->apiCall('mpim.list')->then(function ($response) use ($client) {
                 $mdms = [];
                 foreach ($response['groups'] as $group) {
-                    dump($group);
                     $mdms[] = new MultiDirectMessageChannel($client, $group);
                 }
                 return $mdms;
@@ -65,8 +46,20 @@ class ApiClients
             return $carry;
         }, []);
 
-        return Promise\reduce(array_merge($channelPromises, $groupPromises, $dmPromises, $mdmPromises), function ($carry, $channels) {
+        return Promise\reduce($promises, function ($carry, $channels) {
             return array_merge($carry, $channels);
         }, []);
+    }
+
+    public function getHistories($expr = null)
+    {
+        /*return $this->getChannels($expr)
+            ->then(function ($channels) {
+
+            });
+        $promises = array_reduce($this->getChannels($expr), function ($carry, $);
+        return Promise\reduce($promises, function ($carry, $messages) {
+            return array_merge($carry, $messages);
+        }, []);*/
     }
 }
