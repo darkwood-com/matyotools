@@ -39,6 +39,7 @@ class ApiClients
                 $mdms = [];
                 foreach ($response['groups'] as $group) {
                     $mdms[] = new MultiDirectMessageChannel($client, $group);
+
                 }
                 return $mdms;
             });
@@ -46,9 +47,25 @@ class ApiClients
             return $carry;
         }, []);
 
-        return Promise\reduce($promises, function ($carry, $channels) {
+        return Promise\reduce($promises, function ($carry, $channels) use ($expr) {
+            $channels = array_map(function ($channel) {
+                return new AutoChannel($channel);
+            }, $channels);
+
             return array_merge($carry, $channels);
-        }, []);
+        }, [])->then(function ($channels) use ($expr) {
+            return Promise\reduce($channels, function () use ($expr) {
+//                if ($expr) {
+//                    $channels = array_filter($channels, function ($channel) use ($expr) {
+//                        /** @var AutoChannel $channel */
+//                        $name = $channel->getName();
+//
+//                        return preg_match($expr, $name);
+//                    });
+//                }
+
+            }, array());
+        });
     }
 
     public function getHistories($expr = null)
