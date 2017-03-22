@@ -2,6 +2,7 @@
 
 namespace Services;
 
+use Doctrine\Common\Cache\Cache;
 use Mpociot\BotMan\BotManFactory;
 use Mpociot\BotMan\BotMan;
 use React\EventLoop\Factory;
@@ -20,9 +21,15 @@ class SlackService
      */
     protected $configs;
 
-    public function __construct($configs)
+    /**
+     * @var Cache
+     */
+    protected $cache;
+
+    public function __construct($configs, $cache)
     {
         $this->configs = $configs;
+        $this->cache = $cache;
     }
 
     /**

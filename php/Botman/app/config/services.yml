@@ -6,10 +6,15 @@ parameters:
 services:
     service.slack:
         class: Services\SlackService
-        arguments: ['%configs%']
+        arguments: ['%configs%', '@service.cache']
+
+    service.cache_adapter:
+        class: Symfony\Component\Cache\Adapter\FilesystemAdapter
+        arguments: ['', 0, '../../var/cache/cache']
 
     service.cache:
-        class:
+        class: Symfony\Component\Cache\DoctrineProvider
+        arguments: ['@service.cache_adapter']
     
     command.autojoin:
         class: Command\AutoJoinCommand

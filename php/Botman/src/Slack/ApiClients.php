@@ -39,7 +39,6 @@ class ApiClients
                 $mdms = [];
                 foreach ($response['groups'] as $group) {
                     $mdms[] = new MultiDirectMessageChannel($client, $group);
-
                 }
                 return $mdms;
             });

@@ -10,6 +10,7 @@
         "symfony/dependency-injection": "^3.2",
         "symfony/cache": "^3.2",
         "symfony/config": "^3.2",
-        "symfony/yaml": "^3.2"
+        "symfony/yaml": "^3.2",
+        "doctrine/cache": "^1.6"
     }
 }
