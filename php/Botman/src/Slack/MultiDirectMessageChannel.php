@@ -28,6 +28,10 @@ class MultiDirectMessageChannel extends ClientObject implements ChannelInterface
 
     public function close()
     {
-        // TODO: Implement close() method.
+        return $this->client->apiCall('mpim.close', [
+            'channel' => $this->getId(),
+        ])->then(function ($response) {
+            return !isset($response['no_op']);
+        });
     }
 }
