@@ -54,17 +54,20 @@ class ApiClients
 
             return array_merge($carry, $channels);
         }, [])->then(function ($channels) use ($expr) {
-            return Promise\reduce($channels, function () use ($expr) {
-//                if ($expr) {
-//                    $channels = array_filter($channels, function ($channel) use ($expr) {
-//                        /** @var AutoChannel $channel */
-//                        $name = $channel->getName();
-//
-//                        return preg_match($expr, $name);
-//                    });
-//                }
+            if ($expr) {
+                return Promise\reduce($channels, function ($carry, AutoChannel $channel) use ($expr) {
+                    return $channel->getName()
+                        ->then(function ($name) use ($carry, $channel, $expr) {
+                            if (preg_match($expr, $name)) {
+                                $carry[] = $channel;
+                            }
 
-            }, array());
+                            return $carry;
+                        });
+                }, array());
+            }
+
+            return $channels;
         });
     }
 

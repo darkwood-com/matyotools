@@ -35,22 +35,28 @@ class AutoChannel extends ClientObject implements ChannelInterface
         return $this->instance->close();
     }
 
+    /**
+     * @return Promise\Promise
+     */
     public function getName()
     {
         if ($this->instance instanceof Channel || $this->instance instanceof Group) {
-            return $this->instance->getName();
+            return Promise\resolve($this->instance->getName());
         } elseif ($this->instance instanceof DirectMessageChannel) {
             return $this->instance->getUser()->then(function ($user) {
                 /** @var User $user */
                 return $user->getUsername();
             });
         } elseif ($this->instance instanceof MultiDirectMessageChannel) {
-            return $this->data['name'];
+            return  Promise\resolve($this->data['name']);
         }
 
-        return '';
+        return  Promise\resolve(null);
     }
 
+    /**
+     * @return Promise\Promise
+     */
     public function getMembers()
     {
         if ($this->instance instanceof Channel || $this->instance instanceof Group) {
@@ -64,6 +70,6 @@ class AutoChannel extends ClientObject implements ChannelInterface
             return Promise\all($memberPromises);
         }
 
-        return array();
+        return Promise\resolve(array());
     }
 }
