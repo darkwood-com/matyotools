@@ -26,7 +26,8 @@ class ApiClients
     /**
      * Gets all channels in the team.
      *
-     * @return \React\Promise\PromiseInterface
+     * @param null $expr
+     * @return Promise\PromiseInterface
      */
     public function getChannels($expr = null)
     {

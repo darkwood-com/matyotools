@@ -1,7 +1,7 @@
 # Learn more about services, parameters and containers at
 # http://symfony.com/doc/current/service_container.html
 parameters:
-#    parameter_name: value
+    root_dir: '../..'
 
 services:
     service.slack:
@@ -10,7 +10,7 @@ services:
 
     service.cache_adapter:
         class: Symfony\Component\Cache\Adapter\FilesystemAdapter
-        arguments: ['', 0, '../../var/cache/cache']
+        arguments: ['', 0, '%root_dir%/var/cache/cache']
 
     service.cache:
         class: Symfony\Component\Cache\DoctrineProvider
