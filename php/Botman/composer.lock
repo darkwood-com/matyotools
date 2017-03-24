@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "8c63699d8460ca803f9206ef25e5c5ba",
+    "content-hash": "9f6a0f5a5733475f69003b208c895aad",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -1643,6 +1643,43 @@
             "time": "2017-02-15T16:24:05+00:00"
         },
         {
+            "name": "verbalexpressions/php-verbal-expressions",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/VerbalExpressions/PHPVerbalExpressions.git",
+                "reference": "d1d4d9699a61da805e7df8736fab789480e0bf0c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/VerbalExpressions/PHPVerbalExpressions/zipball/d1d4d9699a61da805e7df8736fab789480e0bf0c",
+                "reference": "d1d4d9699a61da805e7df8736fab789480e0bf0c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "fabpot/php-cs-fixer": "^1.11",
+                "phpunit/phpunit": "* >=4"
+            },
+            "suggest": {
+                "fabpot/php-cs-fixer": "PHP CS Fixer (testing for PSR-2 compliance)"
+            },
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "VerbalExpressions\\PHPVerbalExpressions\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHP Regular expressions made easy",
+            "time": "2017-01-18 20:21:03"
+        },
+        {
             "name": "zendframework/zend-escaper",
             "version": "2.5.2",
             "source": {
@@ -2079,7 +2116,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "verbalexpressions/php-verbal-expressions": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

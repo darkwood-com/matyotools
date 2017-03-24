@@ -43,7 +43,7 @@ class TacosCommand extends Command
         $clients = $this->slackService->getClients($loop, 'bigyouth');
 
         $clients
-            ->getChannels('/big-youth/')
+            ->getChannels('big-youth')
             ->then(function ($channels) {
                 foreach ($channels as $channel) {
                     dump($channel->data);

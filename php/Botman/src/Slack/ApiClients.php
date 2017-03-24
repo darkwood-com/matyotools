@@ -58,7 +58,8 @@ class ApiClients
                 return Promise\reduce($channels, function ($carry, AutoChannel $channel) use ($expr) {
                     return $channel->getName()
                         ->then(function ($name) use ($carry, $channel, $expr) {
-                            if (preg_match($expr, $name)) {
+
+                            if (strpos($expr, $name) !== false) {
                                 $carry[] = $channel;
                             }
 

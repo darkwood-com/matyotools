@@ -11,6 +11,7 @@
         "symfony/cache": "^3.2",
         "symfony/config": "^3.2",
         "symfony/yaml": "^3.2",
-        "doctrine/cache": "^1.6"
+        "doctrine/cache": "^1.6",
+        "verbalexpressions/php-verbal-expressions": "dev-master"
     }
 }
