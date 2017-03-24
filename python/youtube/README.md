@@ -52,4 +52,4 @@ COMMANDS
 
 Extract youtube audio playlist
 
-    $ youtube-dl --extract-audio -o "%(upload_date)s.%(title)s.%(ext)s" --audio-format mp3 <youtube playlist url>
+    $ youtube-dl --download-archive downloaded.txt --extract-audio -o "%(upload_date)s.%(title)s.%(ext)s" --audio-format mp3 <youtube playlist url>

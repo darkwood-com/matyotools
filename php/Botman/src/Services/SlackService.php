@@ -66,10 +66,11 @@ class SlackService
      * Gets all channels in the team.
      *
      * @param ApiClients $apiClient
-     * @param null $expr
+     * @param null $inExpr
+     * @param null $notInExpr
      * @return Promise\PromiseInterface
      */
-    public function getChannels(ApiClients $apiClient, $expr = null)
+    public function getChannels(ApiClients $apiClient, $inExpr = null, $notInExpr = null)
     {
         $promises = array_reduce($apiClient->getClients(), function ($carry, $client) {
             /** @var ApiClient $client */
@@ -87,19 +88,19 @@ class SlackService
             return $carry;
         }, []);
 
-        return Promise\reduce($promises, function ($carry, $channels) use ($expr) {
+        return Promise\reduce($promises, function ($carry, $channels) {
             $channels = array_map(function ($channel) {
                 return new AutoChannel($channel);
             }, $channels);
 
             return array_merge($carry, $channels);
-        }, [])->then(function ($channels) use ($expr) {
-            if ($expr) {
-                return Promise\reduce($channels, function ($carry, AutoChannel $channel) use ($expr) {
+        }, [])->then(function ($channels) use ($inExpr, $notInExpr) {
+            if ($inExpr || $notInExpr) {
+                return Promise\reduce($channels, function ($carry, AutoChannel $channel) use ($inExpr, $notInExpr) {
                     return $this->getChannelName($channel)
-                        ->then(function ($name) use ($carry, $channel, $expr) {
+                        ->then(function ($name) use ($carry, $channel, $inExpr, $notInExpr) {
 
-                            if (strpos($expr, $name) !== false) {
+                            if (strpos($inExpr, $name) !== false) {
                                 $carry[] = $channel;
                             }
 

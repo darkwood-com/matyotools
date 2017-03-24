@@ -52,12 +52,23 @@ function gitCommitEmotion() {
             done
             return 0
             ;;
-        bug)    emojis=( bug ) ;;
-        ticket) emojis=( pencil ) ;;
-        merge)  emojis=( book ) ;;
-        *)      emojis=( smile simple_smile smirk blush wink sunglasses )
-                message=$1
-                ;;
+        comments)      emojis=( books ) ;;
+        done)          emojis=( beers confetti_ball crown tada ) ;;
+        build)         emojis=( package ) ;;
+        deprecated)    emojis=( poop ) ;;
+        fix)           emojis=( bug zap ambulance ) ;;
+        localisation)  emojis=( globe_with_meridians ) ;;
+        new)           emojis=( sparkles ) ;;
+        merge)         emojis=( book ) ;;
+        optimisation)  emojis=( racehorse ) ;;
+        refactor)      emojis=( lipstick ) ;;
+        tag)           emojis=( bookmark ) ;;
+        testing)       emojis=( rotating_light ) ;;
+        ticket)        emojis=( pencil ) ;;
+        work)          emojis=( construction ) ;;
+        *)             emojis=( smile simple_smile smirk blush wink sunglasses )
+            message=$1
+            ;;
     esac
 
     emojisLength=${#emojis[*]}
@@ -74,9 +85,20 @@ function gitCommitEmotion() {
 }
 alias ge='gitCommitEmotion'
 alias gel='gitCommitEmotion list'
-alias geb='gitCommitEmotion bug'
-alias get='gitCommitEmotion ticket'
+alias gec='gitCommitEmotion comments'
+alias ged='gitCommitEmotion done'
+alias geb='gitCommitEmotion build'
+alias ged='gitCommitEmotion deprecated'
+alias gef='gitCommitEmotion fix'
+alias gelo='gitCommitEmotion localisation'
+alias gen='gitCommitEmotion new'
 alias gem='gitCommitEmotion merge'
+alias geo='gitCommitEmotion optimisation'
+alias ger='gitCommitEmotion refactor'
+alias getag='gitCommitEmotion tag'
+alias gett='gitCommitEmotion testing'
+alias get='gitCommitEmotion ticket'
+alias gew='gitCommitEmotion work'
 
 # vagrant
 alias vu='vagrant up'

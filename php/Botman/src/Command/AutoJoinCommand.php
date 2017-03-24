@@ -3,6 +3,7 @@
 namespace Command;
 
 use Services\SlackService;
+use Slack\AutoChannel;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -39,43 +40,28 @@ class AutoJoinCommand extends Command
     {
         $loop = Factory::create();
 
-        $promises = [];
-        foreach ($this->configs as $config)
-        {
-            $client = new ApiClient($loop);
-            $client->setToken($config['slack_token']);
-
-            $promises[] = Promise\all([
-                $client->getChannels(),
-                $client->getGroups(),
-            ])->then(function ($data) use ($client) {
-                /** @var Channel[] $channels */
-                $channels = array_merge($data[0], $data[1]);
-
-                // do no join mpim channels
-                $channels = array_filter($channels, function($channel) {
-                    /** @var Channel $channel */
-                    return strpos($channel->getName(), 'mpdm-') === false;
-                });
-
+        $clients = $this->slackService->getClients($loop);
+        $this->slackService
+            ->getChannels($clients, null, '/^mpdm-/')
+            ->then(function ($channels) {
+                /** @var AutoChannel[] $channels */
                 foreach ($channels as $channel)
                 {
-                    $client->apiCall('channels.join', ['name' => $channel->getName()]);
+                    $name = $this->slackService->getChannelName($channel);
+                    dump($name);
+
+                    $client = $channel->getClient();
+                    //$client->apiCall('channels.join', ['name' => $channel->getName()]);
                 }
 
                 return $channels;
+            })
+            ->then(function ($channels) use ($output) {
+                /** @var AutoChannel[] $channels */
+
+                $output->writeln("joined " . count($channels) . " channels");
             });
-        }
-        Promise\reduce($promises, function ($carry, $channels) {
-            /** @var Channel[] $channels */
-            $carry = array_merge($carry, $channels);
-
-            return $carry;
-        }, [])->then(function ($channels) use ($output) {
-            /** @var Channel[] $channels */
-
-            $output->writeln("joined " . count($channels) . " channels");
-        });
+        ;
 
         $loop->run();
     }
