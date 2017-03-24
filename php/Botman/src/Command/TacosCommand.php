@@ -61,13 +61,13 @@ class TacosCommand extends Command
                 });
             })
             ->then(function ($datas) {
+                $channelUsers = array();
+
                 foreach ($datas as $data) {
                     /** @var User $authedUser */
                     /** @var Channel $channel */
                     /** @var User[] $members */
                     list($authedUser, $channel, $members) = $data;
-
-                    $client = $channel->getClient();
 
                     //shuffle members
                     shuffle($members);
@@ -95,17 +95,33 @@ class TacosCommand extends Command
 
                     //get 5 members
                     $members = array_slice($members, 0, 5);
-                    
-                    return array_map(function ($member) { return $member[0]; }, $members);
-                }
-            })->then(function ($users) use ($output) {
-                /** @var User[] $users */
-                foreach ($users as $user) {
-                    //$client->send("<@{$user->getId()}|{$user->getUsername()}> :taco:", $channel);
+
+                    $channelUsers[] = array(
+                        $channel,
+                        array_map(function ($member) { return $member[0]; }, $members)
+                    );
                 }
 
-                foreach ($users as $user) {
-                    $output->writeln('tacos sent to ' . $user->getUsername());
+                return $channelUsers;
+            })->then(function ($channelUsers) use ($output) {
+                foreach ($channelUsers as $channelUser) {
+                    /** @var AutoChannel $channel */
+                    /** @var User[] $users */
+                    list($channel, $users) = $channelUser;
+
+                    $message = array_map(function (User $user) {
+                        return "<@{$user->getId()}|{$user->getUsername()}>";
+                    }, $users);
+                    $message[] = ':taco:';
+                    $message = implode(" ", $message);
+                    dump($message);
+
+                    $client = $channel->getClient();
+                    //$client->send($message, $channel);
+
+                    foreach ($users as $user) {
+                        $output->writeln('tacos sent to ' . $user->getUsername());
+                    }
                 }
             });
 
