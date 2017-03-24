@@ -45,23 +45,27 @@ class TacosCommand extends Command
         $this->slackService
             ->getChannels($clients, 'big-youth')
             ->then(function ($channels) {
-                return Promise\map($channels, function($channel) {
+                return Promise\map($channels, function ($channel) {
                     /** @var AutoChannel $channel */
                     return Promise\all(array(
                         $channel,
                         $channel->getClient()->getAuthedUser(),
-                        $channel->getMembers(),
+                        Promise\map($channel->getMembers(), function ($member) {
+                            /** @var User $member */
+                            return Promise\all(array(
+                                $member,
+                                $member->getPresence(),
+                            ));
+                        }),
                     ));
                 });
             })
             ->then(function ($datas) {
                 foreach ($datas as $data) {
                     /** @var User $authedUser */
-                    $authedUser = $data[0];
                     /** @var Channel $channel */
-                    $channel = $data[1];
                     /** @var User[] $members */
-                    $members = $data[2];
+                    list($authedUser, $channel, $members) = $data;
 
                     $client = $channel->getClient();
 
@@ -69,79 +73,41 @@ class TacosCommand extends Command
                     shuffle($members);
 
                     //without me
-                    $members = array_filter($members, function (User $user) use ($authedUser) {
+                    $members = array_filter($members, function ($member) use ($authedUser) {
+                        /** @var User $user */
+                        list($user, $presence) = $member;
                         return $user->getId() != $authedUser->getId();
                     });
 
                     //without heytaco bot
-                    $members = array_filter($members, function (User $user) {
+                    $members = array_filter($members, function ($member) {
+                        /** @var User $user */
+                        list($user, $presence) = $member;
                         return $user->getUsername() !== 'heytaco';
                     });
+
+                    //connected users
+                    $members = array_filter($members, function ($member) {
+                        /** @var User $user */
+                        list($user, $presence) = $member;
+                        return $presence == 'active';
+                    });
+
+                    //get 5 members
+                    $members = array_slice($members, 0, 5);
+                    
+                    return array_map(function ($member) { return $member[0]; }, $members);
+                }
+            })->then(function ($users) use ($output) {
+                /** @var User[] $users */
+                foreach ($users as $user) {
+                    //$client->send("<@{$user->getId()}|{$user->getUsername()}> :taco:", $channel);
+                }
+
+                foreach ($users as $user) {
+                    $output->writeln('tacos sent to ' . $user->getUsername());
                 }
             });
-
-//        Promise\all([
-//            $client->getAuthedUser(),
-//            $client->getGroupByName('big-youth'),
-//        ])->then(function ($data) use ($client) {
-//            /** @var User $authedUser */
-//            $authedUser = $data[0];
-//            /** @var Channel $channel */
-//            $channel = $data[1];
-//
-//            return $channel->getMembers()
-//                ->then(function ($members) use ($authedUser) {
-//                    /** @var User[] $members */
-//
-//                    //shuffle members
-//                    shuffle($members);
-//
-//                    //without me
-//                    $members = array_filter($members, function (User $user) use ($authedUser) {
-//                        return $user->getId() != $authedUser->getId();
-//                    });
-//
-//                    //without heytaco bot
-//                    $members = array_filter($members, function (User $user) {
-//                        return $user->getUsername() !== 'heytaco';
-//                    });
-//
-//                    return $members;
-//                })->then(function ($members) {
-//                    /** @var User[] $members */
-//                    return Promise\map($members, function ($member) {
-//                        /** @var User $member */
-//                        return $member->getPresence()->then(function ($presence) use ($member) {
-//                            return [$member, $presence];
-//                        });
-//                    })->then(function ($members) {
-//                        $members = array_filter($members, function ($data) {
-//                            return $data[1] == 'active';
-//                        });
-//                        $members = array_map(function ($data) {
-//                            return $data[0];
-//                        }, $members);
-//
-//                        return $members;
-//                    });
-//                })->then(function ($members) use ($client, $channel) {
-//                    /** @var User[] $members */
-//
-//                    //get 5 members
-//                    $members = array_slice($members, 0, 5);
-//                    foreach ($members as $member) {
-//                        //$client->send("<@{$member->getId()}|{$member->getUsername()}> :taco:", $channel);
-//                    }
-//
-//                    return $members;
-//                });
-//        })->then(function ($members) use ($output) {
-//            /** @var User[] $members */
-//
-//            foreach ($members as $member) {
-//                $output->writeln('tacos sent to ' . $member->getUsername());
-//            }
-//        });
 
         $loop->run();
     }
