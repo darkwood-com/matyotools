@@ -114,10 +114,9 @@ class TacosCommand extends Command
                     }, $users);
                     $message[] = ':taco:';
                     $message = implode(" ", $message);
-                    dump($message);
 
                     $client = $channel->getClient();
-                    //$client->send($message, $channel);
+                    $client->send($message, $channel);
 
                     foreach ($users as $user) {
                         $output->writeln('tacos sent to ' . $user->getUsername());
