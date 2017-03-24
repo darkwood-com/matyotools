@@ -9,9 +9,11 @@ use React\EventLoop\Factory;
 use React\Promise;
 use Slack\ApiClients;
 use Slack\ApiClient;
+use Slack\AutoChannel;
 use Slack\Channel;
 use Slack\DirectMessageChannel;
 use Slack\Group;
+use Slack\MultiDirectMessageChannel;
 use Slack\User;
 
 class SlackService
@@ -58,6 +60,79 @@ class SlackService
         }
 
         return $clients;
+    }
+
+    /**
+     * Gets all channels in the team.
+     *
+     * @param ApiClients $apiClient
+     * @param null $expr
+     * @return Promise\PromiseInterface
+     */
+    public function getChannels(ApiClients $apiClient, $expr = null)
+    {
+        $promises = array_reduce($apiClient->getClients(), function ($carry, $client) {
+            /** @var ApiClient $client */
+            $carry[] = $client->getChannels();
+            $carry[] = $client->getGroups();
+            $carry[] = $client->getDMs();
+            $carry[] = $client->apiCall('mpim.list')->then(function ($response) use ($client) {
+                $mdms = [];
+                foreach ($response['groups'] as $group) {
+                    $mdms[] = new MultiDirectMessageChannel($client, $group);
+                }
+                return $mdms;
+            });
+
+            return $carry;
+        }, []);
+
+        return Promise\reduce($promises, function ($carry, $channels) use ($expr) {
+            $channels = array_map(function ($channel) {
+                return new AutoChannel($channel);
+            }, $channels);
+
+            return array_merge($carry, $channels);
+        }, [])->then(function ($channels) use ($expr) {
+            if ($expr) {
+                return Promise\reduce($channels, function ($carry, AutoChannel $channel) use ($expr) {
+                    return $this->getChannelName($channel)
+                        ->then(function ($name) use ($carry, $channel, $expr) {
+
+                            if (strpos($expr, $name) !== false) {
+                                $carry[] = $channel;
+                            }
+
+                            return $carry;
+                        });
+                }, array());
+            }
+
+            return $channels;
+        });
+    }
+
+    /**
+     * @param AutoChannel $channel
+     * @return Promise\Promise
+     */
+    public function getChannelName($channel)
+    {
+        $key = "slack.channel.{$channel->getId()}.name";
+        $deferred = new Promise\Deferred();
+
+        $name = $this->cache->fetch($key);
+        if ($name !== false) {
+            $deferred->resolve($name);
+        } else {
+            $channel->getName()
+                ->then(function ($name) use ($deferred, $key) {
+                    $this->cache->save($key, $name, 3600 * 24 * 7);
+                    $deferred->resolve($name);
+                });
+        }
+
+        return $deferred->promise();
     }
 
     /**

@@ -42,13 +42,9 @@ class TacosCommand extends Command
 
         $clients = $this->slackService->getClients($loop, 'bigyouth');
 
-        $clients
-            ->getChannels('big-youth')
+        $this->slackService
+            ->getChannels($clients, 'big-youth')
             ->then(function ($channels) {
-                foreach ($channels as $channel) {
-                    dump($channel->data);
-                }
-                die();
                 return Promise\map($channels, function($channel) {
                     /** @var AutoChannel $channel */
                     return Promise\all(array(

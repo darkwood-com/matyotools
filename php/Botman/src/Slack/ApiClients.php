@@ -24,52 +24,11 @@ class ApiClients
     }
 
     /**
-     * Gets all channels in the team.
-     *
-     * @param null $expr
-     * @return Promise\PromiseInterface
+     * @return ApiClient[]
      */
-    public function getChannels($expr = null)
+    public function getClients()
     {
-        $promises = array_reduce($this->clients, function ($carry, $client) {
-            /** @var ApiClient $client */
-            $carry[] = $client->getChannels();
-            $carry[] = $client->getGroups();
-            $carry[] = $client->getDMs();
-            $carry[] = $client->apiCall('mpim.list')->then(function ($response) use ($client) {
-                $mdms = [];
-                foreach ($response['groups'] as $group) {
-                    $mdms[] = new MultiDirectMessageChannel($client, $group);
-                }
-                return $mdms;
-            });
-
-            return $carry;
-        }, []);
-
-        return Promise\reduce($promises, function ($carry, $channels) use ($expr) {
-            $channels = array_map(function ($channel) {
-                return new AutoChannel($channel);
-            }, $channels);
-
-            return array_merge($carry, $channels);
-        }, [])->then(function ($channels) use ($expr) {
-            if ($expr) {
-                return Promise\reduce($channels, function ($carry, AutoChannel $channel) use ($expr) {
-                    return $channel->getName()
-                        ->then(function ($name) use ($carry, $channel, $expr) {
-
-                            if (strpos($expr, $name) !== false) {
-                                $carry[] = $channel;
-                            }
-
-                            return $carry;
-                        });
-                }, array());
-            }
-
-            return $channels;
-        });
+        return $this->clients;
     }
 
     public function getHistories($expr = null)

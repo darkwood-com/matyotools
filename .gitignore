@@ -78,6 +78,7 @@ php/SocialNetwork/domino/tests/*.gen.js
 
 # Botman
 php/Botman/app/config/parameters.yml
+php/Botman/var/
 php/Botman/vendor/
 
 # SearchReplace
