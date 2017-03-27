@@ -31,16 +31,32 @@ alias gup='git up'
 function gitCommitEmotion() {
     # http://emoji-cheat-sheet.com/
     emojisList=(
-        "smile:"$'\xF0\x9F\x98\x80'
-        "simple_smile:"$'\xF0\x9F\x99\x82'
-        "smirk:"$'\xF0\x9F\x98\x8F'
-        "blush:"$'\xF0\x9F\x98\x8A'
-        "wink:"$'\xF0\x9F\x98\x89'
-        "sunglasses:"$'\xF0\x9F\x98\x8E'
-        "bug:"$'\xF0\x9F\x90\x9B'
-        "zap:"$'\xE2\x9A\xA1\xEF\xB8\x8F'
-        "pencil:"$'\xF0\x9F\x93\x9D'
+        "ambulance:"$'\xF0\x9F\x9A\x91'
+        "beers:"$'\xF0\x9F\x8D\xBB'
         "book:"$'\xF0\x9F\x93\x96'
+        "bookmark:"$'\xF0\x9F\x94\x96'
+        "books:"$'\xF0\x9F\x93\x9A'
+        "bug:"$'\xF0\x9F\x90\x9B'
+        "confetti_ball:"$'\xF0\x9F\x8E\x8A'
+        "construction:"$'\xF0\x9F\x91\xB7'
+        "crown:"$'\xF0\x9F\x91\x91'
+        "blush:"$'\xF0\x9F\x98\x8A'
+        "globe_with_meridians:"$'\xF0\x9F\x8C\x90'
+        "hammer:"$'\xF0\x9F\x94\xA8'
+        "lipstick:"$'\xF0\x9F\x92\x84'
+        "package:"$'\xF0\x9F\x93\xA6'
+        "pencil:"$'\xF0\x9F\x93\x9D'
+        "poop:"$'\xF0\x9F\x92\xA9'
+        "racehorse:"$'\xF0\x9F\x8F\x87'
+        "rotating_light:"$'\xF0\x9F\x9A\xA8'
+        "simple_smile:"$'\xF0\x9F\x99\x82'
+        "smile:"$'\xF0\x9F\x98\x80'
+        "smirk:"$'\xF0\x9F\x98\x8F'
+        "sparkles:"$'\xE2\x9C\xA8'
+        "sunglasses:"$'\xF0\x9F\x98\x8E'
+        "tada:"$'\xF0\x9F\x8E\x89'
+        "wink:"$'\xF0\x9F\x98\x89'
+        "zap:"$'\xE2\x9A\xA1\xEF\xB8\x8F'
     )
     message=$2
 
@@ -54,13 +70,14 @@ function gitCommitEmotion() {
             ;;
         comments)      emojis=( books ) ;;
         done)          emojis=( beers confetti_ball crown tada ) ;;
-        build)         emojis=( package ) ;;
+        build)         emojis=( hammer ) ;;
         deprecated)    emojis=( poop ) ;;
         fix)           emojis=( bug zap ambulance ) ;;
         localisation)  emojis=( globe_with_meridians ) ;;
         new)           emojis=( sparkles ) ;;
         merge)         emojis=( book ) ;;
         optimisation)  emojis=( racehorse ) ;;
+        package)       emojis=( package ) ;;
         refactor)      emojis=( lipstick ) ;;
         tag)           emojis=( bookmark ) ;;
         testing)       emojis=( rotating_light ) ;;
@@ -94,6 +111,7 @@ alias gelo='gitCommitEmotion localisation'
 alias gen='gitCommitEmotion new'
 alias gem='gitCommitEmotion merge'
 alias geo='gitCommitEmotion optimisation'
+alias gep='gitCommitEmotion package'
 alias ger='gitCommitEmotion refactor'
 alias getag='gitCommitEmotion tag'
 alias gett='gitCommitEmotion testing'
