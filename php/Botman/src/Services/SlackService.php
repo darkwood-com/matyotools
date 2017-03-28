@@ -96,16 +96,17 @@ class SlackService
             return array_merge($carry, $channels);
         }, [])->then(function ($channels) use ($inExpr, $notInExpr) {
             $promise = Promise\resolve($channels);
-            
-            $match = function($expr, $value) {
-                if(!is_array($value)) {
+
+            $match = function ($expr, $value) {
+                if (!is_array($value)) {
                     $value = array($value);
                 }
 
                 foreach ($value as $v) {
                     $isRegex = preg_match("/^\/[\s\S]+\/$/", $expr);
-                    if(($isRegex && preg_match($expr, $v) === 1)
-                    || (!$isRegex && strpos($expr, $v) !== false)) {
+                    if (($isRegex && preg_match($expr, $v) === 1)
+                        || (!$isRegex && strpos($expr, $v) !== false)
+                    ) {
                         return true;
                     }
                 }
@@ -114,7 +115,7 @@ class SlackService
             };
 
             if ($inExpr) {
-                $promise = $promise->then(function($channels) use ($inExpr, $match) {
+                $promise = $promise->then(function ($channels) use ($inExpr, $match) {
                     return Promise\reduce($channels, function ($carry, AutoChannel $channel) use ($inExpr, $match) {
                         return $this->getChannelName($channel)
                             ->then(function ($name) use ($carry, $channel, $inExpr, $match) {
@@ -130,13 +131,13 @@ class SlackService
             }
 
             if ($notInExpr) {
-                $promise = $promise->then(function($channels) use ($notInExpr, $match) {
+                $promise = $promise->then(function ($channels) use ($notInExpr, $match) {
                     return Promise\reduce($channels, function ($carry, AutoChannel $channel) use ($notInExpr, $match) {
                         return $this->getChannelName($channel)
                             ->then(function ($name) use ($carry, $channel, $notInExpr, $match) {
 
                                 if ($match($notInExpr, $name)) {
-                                    $carry = array_filter($carry, function($item) use ($channel) {
+                                    $carry = array_filter($carry, function ($item) use ($channel) {
                                         return $item !== $channel;
                                     });
                                 }
@@ -176,118 +177,25 @@ class SlackService
 
     /**
      * @param ApiClients $apiClient
-     * @return Promise\Promise
+     * @return Promise\PromiseInterface
      */
     public function getHistories(ApiClients $apiClient)
     {
-        $clients = array_map(function ($config) use ($loop) {
-            $client = new ApiClient($loop);
-            $client->setToken($this->configs[$config]['slack_token']);
-
-            return $client;
-        }, ['bigyouth', 'makheia']);
-
-        $channelHistories = array_reduce($clients, function ($carry, $client) {
-            /** @var ApiClient $client */
-            $carry[] = $client
-                ->getChannels()
-                ->then(function ($channels) {
-                    /** @var Channel[] $channels */
-                    $histories = [];
-
-                    foreach ($channels as $channel) {
-                        $histories[] = Promise\resolve($channel)
-                            ->then(function ($channel) {
-                                /** @var Channel $channel */
-                                $client = $channel->getClient();
-
-                                return $client->apiCall('channels.history', [
-                                    'channel' => $channel->getId(),
-                                ])->then(function ($history) use ($channel) {
-                                    return [
-                                        'channel' => $channel,
-                                        'history' => $history,
-                                    ];
-                                });
-                            });
-                    }
-
-                    return Promise\all($histories);
-                });
-
-            return $carry;
-        }, []);
-
-        $groupHistories = array_reduce($clients, function ($carry, $client) {
-            /** @var ApiClient $client */
-            $carry[] = $client
-                ->getGroups()
-                ->then(function ($groups) {
-                    /** @var Group[] $groups */
-                    $histories = [];
-
-                    foreach ($groups as $group) {
-                        $histories[] = Promise\resolve($group)
-                            ->then(function ($group) {
-                                /** @var Group $group */
-                                $client = $group->getClient();
-
-                                return $client->apiCall('groups.history', [
-                                    'channel' => $group->getId(),
-                                ])->then(function ($history) use ($group) {
-                                    return [
-                                        'channel' => $group,
-                                        'history' => $history,
-                                    ];
-                                });
-                            });
-                    }
-
-                    return Promise\all($histories);
-                });
-
-            return $carry;
-        }, []);
-
-        $dmHistories = array_reduce($clients, function ($carry, $client) {
-            /** @var ApiClient $client */
-            $carry[] = $client
-                ->getDMs()
-                ->then(function ($dms) {
-                    /** @var DirectMessageChannel[] $dms */
-                    $histories = [];
-
-                    foreach ($dms as $dm) {
-                        $histories[] = Promise\resolve($dm)
-                            ->then(function ($dm) {
-                                /** @var DirectMessageChannel $dm */
-                                $client = $dm->getClient();
-
-                                return $client->apiCall('im.history', [
-                                    'channel' => $dm->getId(),
-                                ])->then(function ($history) use ($dm) {
-                                    return [
-                                        'channel' => $dm,
-                                        'history' => $history,
-                                    ];
-                                });
-                            });
-                    }
-
-                    return Promise\all($histories);
-                });
-
-            return $carry;
-        }, []);
-
-        return Promise\reduce(array_merge(
-            $channelHistories,
-            $groupHistories,
-            $dmHistories
-        ), function ($carry, $histories) {
-            $carry = array_merge($carry, $histories);
-            return $carry;
-        }, []);
+        return $this
+            ->getChannels($apiClient)
+            ->then(function ($channels) {
+                return Promise\all(Promise\reduce($channels, function ($carry, $channel) {
+                    /** @var AutoChannel $channel */
+                    $carry[] = $channel->getHistory()
+                        ->then(function ($history) use ($channel) {
+                            return [
+                                'channel' => $channel,
+                                'history' => $history,
+                            ];
+                        });
+                    return $carry;
+                }, array()));
+            });
     }
 
     /**

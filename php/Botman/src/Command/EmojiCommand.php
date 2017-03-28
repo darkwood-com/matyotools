@@ -43,7 +43,13 @@ class EmojiCommand extends Command
     {
         $loop = Factory::create();
 
-        $this->slackService->getLastMessages($loop)
+        $clients = $this->slackService->getClients($loop);
+        $this->slackService->getHistories($clients)
+            ->then(function ($histories) {
+                dump($histories);
+            })
+        ;
+        /*$this->slackService->getLastMessages($loop)
             ->then(function ($messages) use ($output) {
                 foreach ($messages as $message) {
                     $time = new \DateTime($message['ts']);
@@ -51,7 +57,7 @@ class EmojiCommand extends Command
                     $output->writeln($time->format('JJ/MM/YYYY') . ' - ' . $message['text']);
                 }
             })
-        ;
+        ;*/
 
         $loop->run();
     }

@@ -72,4 +72,27 @@ class AutoChannel extends ClientObject implements ChannelInterface
 
         return Promise\resolve(array());
     }
+
+    public function getHistory()
+    {
+        if ($this->instance instanceof Channel) {
+            return $this->client->apiCall('channels.history', [
+                'channel' => $this->getId(),
+            ]);
+        } elseif ($this->instance instanceof Group) {
+            return $this->client->apiCall('groups.history', [
+                'channel' => $this->getId(),
+            ]);
+        } elseif ($this->instance instanceof DirectMessageChannel) {
+            return $this->client->apiCall('im.history', [
+                'channel' => $this->getId(),
+            ]);
+        } elseif ($this->instance instanceof MultiDirectMessageChannel) {
+            return $this->client->apiCall('mpim.history', [
+                'channel' => $this->getId(),
+            ]);
+        }
+
+        return Promise\resolve(array());
+    }
 }
