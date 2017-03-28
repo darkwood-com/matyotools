@@ -95,21 +95,59 @@ class SlackService
 
             return array_merge($carry, $channels);
         }, [])->then(function ($channels) use ($inExpr, $notInExpr) {
-            if ($inExpr || $notInExpr) {
-                return Promise\reduce($channels, function ($carry, AutoChannel $channel) use ($inExpr, $notInExpr) {
-                    return $this->getChannelName($channel)
-                        ->then(function ($name) use ($carry, $channel, $inExpr, $notInExpr) {
+            $promise = Promise\resolve($channels);
+            
+            $match = function($expr, $value) {
+                if(!is_array($value)) {
+                    $value = array($value);
+                }
 
-                            if (strpos($inExpr, $name) !== false) {
-                                $carry[] = $channel;
-                            }
+                foreach ($value as $v) {
+                    $isRegex = preg_match("/^\/[\s\S]+\/$/", $expr);
+                    if(($isRegex && preg_match($expr, $v) === 1)
+                    || (!$isRegex && strpos($expr, $v) !== false)) {
+                        return true;
+                    }
+                }
 
-                            return $carry;
-                        });
-                }, array());
+                return false;
+            };
+
+            if ($inExpr) {
+                $promise = $promise->then(function($channels) use ($inExpr, $match) {
+                    return Promise\reduce($channels, function ($carry, AutoChannel $channel) use ($inExpr, $match) {
+                        return $this->getChannelName($channel)
+                            ->then(function ($name) use ($carry, $channel, $inExpr, $match) {
+
+                                if ($match($inExpr, $name)) {
+                                    $carry[] = $channel;
+                                }
+
+                                return $carry;
+                            });
+                    }, array());
+                });
             }
 
-            return $channels;
+            if ($notInExpr) {
+                $promise = $promise->then(function($channels) use ($notInExpr, $match) {
+                    return Promise\reduce($channels, function ($carry, AutoChannel $channel) use ($notInExpr, $match) {
+                        return $this->getChannelName($channel)
+                            ->then(function ($name) use ($carry, $channel, $notInExpr, $match) {
+
+                                if ($match($notInExpr, $name)) {
+                                    $carry = array_filter($carry, function($item) use ($channel) {
+                                        return $item !== $channel;
+                                    });
+                                }
+
+                                return $carry;
+                            });
+                    }, $channels);
+                });
+            }
+
+            return $promise;
         });
     }
 

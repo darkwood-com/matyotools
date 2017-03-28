@@ -20,8 +20,8 @@ services:
         class: Command\AutoJoinCommand
         arguments: ['@service.slack']
 
-    command.autoleave:
-        class: Command\AutoLeaveCommand
+    command.autoclose:
+        class: Command\AutoCloseCommand
         arguments: ['@service.slack']
 
     command.emoji:
@@ -40,7 +40,7 @@ services:
         class: Symfony\Component\Console\Application
         calls:
             - [add, ['@command.autojoin']]
-            - [add, ['@command.autoleave']]
+            - [add, ['@command.autoclose']]
             - [add, ['@command.emoji']]
             - [add, ['@command.react']]
             - [add, ['@command.tacos']]

@@ -15,7 +15,7 @@ use Slack\ApiClient;
 use Slack\Channel;
 use Slack\User;
 
-class AutoJoinCommand extends Command
+class AutoCloseCommand extends Command
 {
     /**
      * @var SlackService
@@ -32,7 +32,7 @@ class AutoJoinCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('bot:auto-join')
+            ->setName('bot:auto-close')
         ;
     }
 
@@ -42,13 +42,12 @@ class AutoJoinCommand extends Command
 
         $clients = $this->slackService->getClients($loop);
         $this->slackService
-            ->getChannels($clients, null, '/^mpdm-/')
+            ->getChannels($clients, '/^mpdm-/')
             ->then(function ($channels) {
                 /** @var AutoChannel[] $channels */
                 foreach ($channels as $channel)
                 {
-                    $client = $channel->getClient();
-                    //$client->apiCall('channels.join', ['name' => $channel->getName()]);
+                    //$channel->close();
                 }
 
                 return $channels;
@@ -66,7 +65,7 @@ class AutoJoinCommand extends Command
                     ;
                 }
 
-                $output->writeln("joined " . count($channels) . " channels");
+                $output->writeln("closed " . count($channels) . " channels");
             });
         ;
 
