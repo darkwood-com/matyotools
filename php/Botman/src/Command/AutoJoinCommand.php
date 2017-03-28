@@ -40,15 +40,15 @@ class AutoJoinCommand extends Command
     {
         $loop = Factory::create();
 
-        $clients = $this->slackService->getClients($loop);
+        $clients = $this->slackService->getClients($loop, array('bigyouth', 'makheia'));
         $this->slackService
-            ->getChannels($clients, null, '/^mpdm-/')
+            ->getHistories($clients)
             ->then(function ($channels) {
                 /** @var AutoChannel[] $channels */
                 foreach ($channels as $channel)
                 {
                     $client = $channel->getClient();
-                    //$client->apiCall('channels.join', ['name' => $channel->getName()]);
+                    $client->apiCall('channels.join', ['name' => $channel->getName()]);
                 }
 
                 return $channels;

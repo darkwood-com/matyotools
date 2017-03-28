@@ -47,7 +47,7 @@ class AutoCloseCommand extends Command
                 /** @var AutoChannel[] $channels */
                 foreach ($channels as $channel)
                 {
-                    //$channel->close();
+                    $channel->close();
                 }
 
                 return $channels;

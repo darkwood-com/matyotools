@@ -175,10 +175,10 @@ class SlackService
     }
 
     /**
-     * @param $loop
+     * @param ApiClients $apiClient
      * @return Promise\Promise
      */
-    public function getHistories($loop)
+    public function getHistories(ApiClients $apiClient)
     {
         $clients = array_map(function ($config) use ($loop) {
             $client = new ApiClient($loop);

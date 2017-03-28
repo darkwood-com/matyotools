@@ -10,6 +10,7 @@ use Slack\Channel;
 use Slack\ClientObject;
 use Slack\Message\Message;
 use Slack\Message\MessageBuilder;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class ApiClients
 {

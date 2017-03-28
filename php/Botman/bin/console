@@ -8,6 +8,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 $container = new ContainerBuilder();
+$container->getParameterBag()->set('root_dir', __DIR__ . '/..');
 $loader = new YamlFileLoader($container, new FileLocator(__DIR__));
 $loader->load(__DIR__.'/../app/config/config.yml');
 
