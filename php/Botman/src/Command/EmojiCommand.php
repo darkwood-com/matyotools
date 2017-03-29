@@ -44,9 +44,14 @@ class EmojiCommand extends Command
         $loop = Factory::create();
 
         $clients = $this->slackService->getClients($loop);
-        $this->slackService->getHistories($clients)
+        $this->slackService
+            ->getHistories($clients)
+            //->getChannels($clients)
             ->then(function ($histories) {
-                dump($histories);
+                die('coucou');
+            }, function($a) {
+                //dump($a);
+                die('coucou de');
             })
         ;
         /*$this->slackService->getLastMessages($loop)

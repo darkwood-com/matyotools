@@ -176,13 +176,38 @@ class SlackService
     }
 
     /**
+     * @param AutoChannel $channel
+     * @return Promise\Promise
+     */
+    public function getHistory($channel)
+    {
+        $key = "slack.channel.{$channel->getId()}.history";
+        $deferred = new Promise\Deferred();
+
+        $history = $this->cache->fetch($key);
+        if ($history !== false) {
+            $deferred->resolve($history);
+        } else {
+            $channel->getHistory()
+                ->then(function ($history) use ($deferred, $key) {
+                    $this->cache->save($key, $history, 3600);
+                    $deferred->resolve($history);
+                });
+        }
+
+        return $deferred->promise();
+    }
+
+    /**
      * @param ApiClients $apiClient
+     * @param null $inExpr
+     * @param null $notInExpr
      * @return Promise\PromiseInterface
      */
-    public function getHistories(ApiClients $apiClient)
+    public function getHistories(ApiClients $apiClient, $inExpr = null, $notInExpr = null)
     {
         return $this
-            ->getChannels($apiClient)
+            ->getChannels($apiClient, $inExpr, $notInExpr)
             ->then(function ($channels) {
                 return Promise\all(Promise\reduce($channels, function ($carry, $channel) {
                     /** @var AutoChannel $channel */
