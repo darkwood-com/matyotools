@@ -67,7 +67,7 @@ class TacosCommand extends Command
                     /** @var User $authedUser */
                     /** @var Channel $channel */
                     /** @var User[] $members */
-                    list($authedUser, $channel, $members) = $data;
+                    list($channel, $authedUser, $members) = $data;
 
                     //shuffle members
                     shuffle($members);
