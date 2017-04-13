@@ -87,10 +87,10 @@ class TacosCommand extends Command
                     });
 
                     //connected users
-                    $members = array_filter($members, function ($member) {
+                    usort($members, function ($member) {
                         /** @var User $user */
                         list($user, $presence) = $member;
-                        return $presence == 'active';
+                        return $presence == 'active' ? 0 : 1;
                     });
 
                     //get 5 members
