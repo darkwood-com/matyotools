@@ -76,11 +76,13 @@ class AutoChannel extends ClientObject implements ChannelInterface
     public function getHistory()
     {
         if ($this->instance instanceof Channel) {
+            if ($this->instance instanceof Group) {
+                return $this->client->apiCall('groups.history', [
+                    'channel' => $this->getId(),
+                ]);
+            }
+
             return $this->client->apiCall('channels.history', [
-                'channel' => $this->getId(),
-            ]);
-        } elseif ($this->instance instanceof Group) {
-            return $this->client->apiCall('groups.history', [
                 'channel' => $this->getId(),
             ]);
         } elseif ($this->instance instanceof DirectMessageChannel) {

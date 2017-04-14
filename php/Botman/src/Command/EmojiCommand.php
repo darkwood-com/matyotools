@@ -46,14 +46,9 @@ class EmojiCommand extends Command
         $clients = $this->slackService->getClients($loop);
         $this->slackService
             ->getHistories($clients)
-            //->getChannels($clients)
             ->then(function ($histories) {
-                die('coucou');
-            }, function($a) {
-                //dump($a);
-                die('coucou de');
-            })
-        ;
+                $a = 0;
+            });
         /*$this->slackService->getLastMessages($loop)
             ->then(function ($messages) use ($output) {
                 foreach ($messages as $message) {
