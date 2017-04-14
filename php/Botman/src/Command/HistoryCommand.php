@@ -3,6 +3,7 @@
 namespace Command;
 
 use Services\SlackService;
+use Slack\AutoChannel;
 use Slack\Group;
 use Slack\Message\Message;
 use Slack\Message\MessageBuilder;
@@ -19,7 +20,7 @@ use Slack\ApiClient;
 use Slack\Channel;
 use Slack\User;
 
-class EmojiCommand extends Command
+class HistoryCommand extends Command
 {
     /**
      * @var SlackService
@@ -36,28 +37,27 @@ class EmojiCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('bot:emoji');
+            ->setName('bot:history');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $loop = Factory::create();
 
-        $clients = $this->slackService->getClients($loop);
+        $clients = $this->slackService->getClients($loop, array('bigyouth', 'makheia'));
         $this->slackService
-            ->getHistories($clients)
-            ->then(function ($histories) {
-                $a = 0;
-            });
-        /*$this->slackService->getLastMessages($loop)
+            ->getLastMessages($clients)
             ->then(function ($messages) use ($output) {
-                foreach ($messages as $message) {
-                    $time = new \DateTime($message['ts']);
+                foreach ($messages as $data) {
+                    /** @var AutoChannel $channel */
+                    list($channel, $message) = $data;
 
-                    $output->writeln($time->format('JJ/MM/YYYY') . ' - ' . $message['text']);
+                    $time = new \DateTime();
+                    $time->setTimestamp($message['ts']);
+
+                    $output->writeln($time->format('Y-m-d H:i:s') . ' - ' . $message['text']);
                 }
-            })
-        ;*/
+            });
 
         $loop->run();
     }

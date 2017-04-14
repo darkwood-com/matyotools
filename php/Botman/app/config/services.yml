@@ -24,8 +24,8 @@ services:
         class: Command\AutoCloseCommand
         arguments: ['@service.slack']
 
-    command.emoji:
-        class: Command\EmojiCommand
+    command.history:
+        class: Command\HistoryCommand
         arguments: ['@service.slack']
 
     command.react:
@@ -41,6 +41,6 @@ services:
         calls:
             - [add, ['@command.autojoin']]
             - [add, ['@command.autoclose']]
-            - [add, ['@command.emoji']]
+            - [add, ['@command.history']]
             - [add, ['@command.react']]
             - [add, ['@command.tacos']]

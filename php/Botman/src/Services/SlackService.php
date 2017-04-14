@@ -14,6 +14,7 @@ use Slack\Channel;
 use Slack\DirectMessageChannel;
 use Slack\Group;
 use Slack\MultiDirectMessageChannel;
+use Slack\Payload;
 use Slack\User;
 
 class SlackService
@@ -153,6 +154,28 @@ class SlackService
     }
 
     /**
+     * @param ApiClients $apiClient
+     * @param null $inExpr
+     * @param null $notInExpr
+     * @return Promise\PromiseInterface
+     */
+    public function getHistories(ApiClients $apiClient, $inExpr = null, $notInExpr = null)
+    {
+        return $this
+            ->getChannels($apiClient, $inExpr, $notInExpr)
+            ->then(function ($channels) {
+                return Promise\all(Promise\reduce($channels, function ($carry, $channel) {
+                    /** @var AutoChannel $channel */
+                    $carry[] = $this->getHistory($channel)
+                        ->then(function ($history) use ($channel) {
+                            return [$channel, $history];
+                        });
+                    return $carry;
+                }, array()));
+            });
+    }
+
+    /**
      * @param AutoChannel $channel
      * @return Promise\Promise
      */
@@ -190,7 +213,7 @@ class SlackService
         } else {
             $channel->getHistory()
                 ->then(function ($history) use ($deferred, $key) {
-                    $this->cache->save($key, $history, 3600);
+                    $this->cache->save($key, $history, 500);
                     $deferred->resolve($history);
                 });
         }
@@ -204,58 +227,28 @@ class SlackService
      * @param null $notInExpr
      * @return Promise\PromiseInterface
      */
-    public function getHistories(ApiClients $apiClient, $inExpr = null, $notInExpr = null)
+    public function getLastMessages(ApiClients $apiClient, $inExpr = null, $notInExpr = null)
     {
-        return $this
-            ->getChannels($apiClient, $inExpr, $notInExpr)
-            ->then(function ($channels) {
-                return Promise\all(Promise\reduce($channels, function ($carry, $channel) {
-                    /** @var AutoChannel $channel */
-                    $carry[] = $channel->getHistory()
-                        ->then(function ($history) use ($channel) {
-                            return [
-                                'channel' => $channel,
-                                'history' => $history,
-                            ];
-                        });
-                    return $carry;
-                }, array()));
-            });
-    }
-
-    /**
-     * @param $loop
-     * @return Promise\Promise
-     */
-    public function getLastMessages($loop)
-    {
-        return $this->getHistories($loop)
+        return $this->getHistories($apiClient, $inExpr, $notInExpr)
             ->then(function ($histories) {
                 $messages = [];
-                foreach ($histories as $kHistory => $history) {
-                    foreach ($history['history']['messages'] as $kMessage => $message) {
-                        if ($message['type'] == 'message') {
-                            $messages[] = [
-                                'kHistory' => $kHistory,
-                                'kMessage' => $kMessage,
-                                'ts' => $message['ts'],
-                            ];
-                        }
+                foreach ($histories as $data) {
+                    /** @var Payload $history */
+                    /** @var AutoChannel $channel */
+                    list($channel, $history) = $data;
+                    foreach ($history->offsetGet('messages') as $message) {
+                            $messages[] = array($channel, $message);
                     }
                 }
 
                 usort($messages, function ($messageA, $messageB) {
-                    return $messageA['ts'] < $messageB['ts'];
+                    $timeA = new \DateTime();
+                    $timeA->setTimestamp($messageA[1]['ts']);
+                    $timeB = new \DateTime();
+                    $timeB->setTimestamp($messageB[1]['ts']);
+                    
+                    return $timeA > $timeB;
                 });
-
-                $messages = array_reverse(array_slice($messages, 0, 20));
-
-                $messages = array_map(function ($message) use ($histories) {
-                    $newMessage = $histories[$message['kHistory']]['history']['messages'][$message['kMessage']];
-                    $newMessage['channel'] = $histories[$message['kHistory']]['channel'];
-
-                    return $newMessage;
-                }, $messages);
 
                 return $messages;
             });
