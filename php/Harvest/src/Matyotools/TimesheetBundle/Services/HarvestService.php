@@ -26,8 +26,10 @@ class HarvestService
     protected $mode;
     protected $truncate;
     protected $truncateRand;
+    protected $freeTimeProjectId;
+    protected $freeTimeTaskId;
 
-    public function __construct(HarvestApp $api, $user, $password, $account, $mode, $truncate, $truncateRand)
+    public function __construct(HarvestApp $api, $user, $password, $account, $mode, $truncate, $truncateRand, $freeTimeProjectId, $freeTimeTaskId)
     {
         $this->api = $api->getApi();
         $this->user = $user;
@@ -36,6 +38,8 @@ class HarvestService
         $this->mode = $mode;
         $this->truncate = floatval($truncate);
         $this->truncateRand = floatval($truncateRand);
+        $this->freeTimeProjectId = $freeTimeProjectId;
+        $this->freeTimeTaskId = $freeTimeTaskId;
     }
 
     public function getMyUserId()
@@ -140,7 +144,7 @@ class HarvestService
 
         $group = $this->groupByDays($this->getDays());
 
-        foreach ($group as $days) {
+        foreach ($group as $spentAt => $days) {
             /** @var DayEntry[] $days */
 
             // sort by time
@@ -159,8 +163,8 @@ class HarvestService
             $min = $this->truncate - $this->truncateRand;
             $max = $this->truncate + $this->truncateRand;
 
-            // truncate
             if($totalHours > $max) {
+                // truncate
                 $realHours = $min + ($max - $min) * lcg_value();
                 $totalHoursDiff = $totalHours - $realHours;
 
@@ -180,6 +184,19 @@ class HarvestService
                         break;
                     }
                 }
+            } else if($totalHours < $min && $this->freeTimeProjectId && $this->freeTimeTaskId) {
+                //append free time
+                $realHours = $min + ($max - $min) * lcg_value();
+                $totalHoursDiff = $realHours - $totalHours;
+
+                $day = new DayEntry();
+                $day->set("hours", $totalHoursDiff);
+                $day->set("project_id", $this->freeTimeProjectId);
+                $day->set("task_id", $this->freeTimeTaskId);
+                $day->set("spent_at", $spentAt);
+                $this->api->createEntry($day);
+
+                $truncated[] = $day;
             }
         }
 
