@@ -3,6 +3,7 @@
 namespace Command;
 
 use Services\SlackService;
+use Slack\AutoChannel;
 use Slack\ChannelInterface;
 use Slack\Group;
 use Slack\Message\Message;
@@ -44,13 +45,49 @@ class ReactCommand extends Command
     {
         $loop = Factory::create();
 
-        $clients = $this->slackService->getClients($loop, ['makheia', 'symfony-devs']);
-        $clients->getChannels()->then(function ($channels) use ($output) {
-            /** @var ChannelInterface[] $channels */
-            foreach ($channels as $channel) {
-                $output->writeln($channel->getId());
-            }
-        });
+        $clients = $this->slackService->getClients($loop, 'bigyouth');
+
+        $this->slackService
+            ->getChannels($clients, 'big-youth')
+            ->then(function ($channels) {
+                return Promise\map($channels, function ($channel) {
+                    /** @var AutoChannel $channel */
+                    return Promise\all(array(
+                        $channel,
+                        $channel->getClient()->getAuthedUser(),
+                        Promise\map($channel->getMembers(), function ($member) {
+                            /** @var User $member */
+                            return Promise\all(array(
+                                $member,
+                                $member->getPresence(),
+                            ));
+                        }),
+                    ));
+                });
+            })
+            ->then(function ($datas) {
+                $channelUsers = array();
+
+                foreach ($datas as $data) {
+                    /** @var User $authedUser */
+                    /** @var Channel $channel */
+                    /** @var User[] $members */
+                    list($channel, $authedUser, $members) = $data;
+
+                    /*$message = array_map(function (User $user) {
+                        return "<@{$user->getId()}|{$user->getUsername()}>";
+                    }, $users);
+                    $message[] = ':taco:';
+                    $message = implode(" ", $message);
+
+                    $client = $channel->getClient();
+                    $client->send($message, $channel);
+
+                    foreach ($users as $user) {
+                        $output->writeln('tacos sent to ' . $user->getUsername());
+                    }*/
+                }
+            });
 
         $loop->run();
     }
