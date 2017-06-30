@@ -4,4 +4,4 @@ parameters:
 services:
     matyotools_timesheet.harvest:
         class: %matyotools_timesheet.harvest.class%
-        arguments: [@harvest_app,%matyotools_harvest_app.user%,%matyotools_harvest_app.password%,%matyotools_harvest_app.account%,%matyotools_harvest_app.mode%,%harvest_truncate%,%harvest_truncate_rand%,%harvest_free_time_project_id%,%harvest_free_time_task_id%]
+        arguments: [@harvest_app,%matyotools_harvest_app.user%,%matyotools_harvest_app.password%,%matyotools_harvest_app.account%,%matyotools_harvest_app.mode%,%harvest_truncate%,%harvest_truncate_rand%,%harvest_free_time_project_id%,%harvest_free_time_task_id%,%harvest_vacation_time_task_id%]

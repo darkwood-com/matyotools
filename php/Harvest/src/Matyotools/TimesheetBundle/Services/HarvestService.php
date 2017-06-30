@@ -28,8 +28,9 @@ class HarvestService
     protected $truncateRand;
     protected $freeTimeProjectId;
     protected $freeTimeTaskId;
+    protected $vacationTimeTaskId;
 
-    public function __construct(HarvestApp $api, $user, $password, $account, $mode, $truncate, $truncateRand, $freeTimeProjectId, $freeTimeTaskId)
+    public function __construct(HarvestApp $api, $user, $password, $account, $mode, $truncate, $truncateRand, $freeTimeProjectId, $freeTimeTaskId, $vacationTimeTaskId)
     {
         $this->api = $api->getApi();
         $this->user = $user;
@@ -40,6 +41,7 @@ class HarvestService
         $this->truncateRand = floatval($truncateRand);
         $this->freeTimeProjectId = $freeTimeProjectId;
         $this->freeTimeTaskId = $freeTimeTaskId;
+        $this->vacationTimeTaskId = $vacationTimeTaskId;
     }
 
     public function getMyUserId()
@@ -57,22 +59,22 @@ class HarvestService
         return null;
     }
 
-	/**
-	 * @return Project[]
-	 */
-	public function getProjects()
-	{
-		/** @var Result $data */
-		$data = $this->api->getProjects();
+    /**
+     * @return Project[]
+     */
+    public function getProjects()
+    {
+        /** @var Result $data */
+        $data = $this->api->getProjects();
 
-		$projects = array();
+        $projects = array();
 
-		foreach($data->get('data') as $project) {
-			$projects[$project->get('id')] = $project;
-		}
+        foreach ($data->get('data') as $project) {
+            $projects[$project->get('id')] = $project;
+        }
 
-		return $projects;
-	}
+        return $projects;
+    }
 
     public function getProject($id)
     {
@@ -84,43 +86,43 @@ class HarvestService
         return $this->api->getEntry($id);
     }
 
-	/**
-	 * @param \DateTime $from
-	 * @param \DateTime $to
-	 * @return DayEntry[]
-	 * @throws \Harvest\Exception\HarvestException
-	 */
-	public function getRangeDays($from, $to)
-	{
-		$user_id = $this->getMyUserId();
+    /**
+     * @param \DateTime $from
+     * @param \DateTime $to
+     * @return DayEntry[]
+     * @throws \Harvest\Exception\HarvestException
+     */
+    public function getRangeDays($from, $to)
+    {
+        $user_id = $this->getMyUserId();
 
 
-		$range = new Range($from->format( "Ymd" ), $to->format( "Ymd" ));
-		$entries = $this->api->getUserEntries($user_id, $range);
+        $range = new Range($from->format("Ymd"), $to->format("Ymd"));
+        $entries = $this->api->getUserEntries($user_id, $range);
 
-		/** @var DayEntry[] $days */
-		$days = array();
-		if($entries->isSuccess()) {
+        /** @var DayEntry[] $days */
+        $days = array();
+        if ($entries->isSuccess()) {
             $days = $entries->get('data');
         }
 
-        $days = array_map(function($day) {
+        $days = array_map(function ($day) {
             /** @var DayEntry $day */
             $day->set('hours', floatval($day->get('hours')));
 
             return $day;
         }, $days);
 
-		return $days;
-	}
+        return $days;
+    }
 
     /**
      * @return DayEntry[]
      */
     public function getDays()
     {
-		$to = new \DateTime();
-		$from = new \DateTime("-60 day"); //since 60 days
+        $to = new \DateTime();
+        $from = new \DateTime("-60 day"); //since 60 days
 
         return $this->getRangeDays($from, $to);
     }
@@ -148,22 +150,50 @@ class HarvestService
             /** @var DayEntry[] $days */
 
             // sort by time
-            usort($days, function($dayA, $dayB) {
+            usort($days, function ($dayA, $dayB) {
                 /** @var DayEntry $dayA */
                 /** @var DayEntry $dayB */
                 return $dayA->get('hours') < $dayB->get('hours');
             });
 
+            $min = $this->truncate - $this->truncateRand;
+            $max = $this->truncate + $this->truncateRand;
+
+            $taskIds = array();
+            foreach ($days as $day) {
+                if ($day->get('hours') > 0) {
+                    $taskIds[$day->get('task_id')] = $day;
+                }
+            }
+
+            //only one task in the day then truncate it at 70%
+            /** @var DayEntry[] $taskIds */
+            if (count($taskIds) == 1) {
+                $day = current($taskIds);
+                $day->set("hours", min($this->truncate * 0.7, $day->get('hours')));
+                $this->api->updateEntry($day);
+            }
+
+            //special case if we are in vacation : then make it the whole day
+            if (isset($taskIds[$this->vacationTimeTaskId])) {
+                foreach ($days as $day) {
+                    if($day->get('task_id') == $this->vacationTimeTaskId) {
+                        $day->set("hours", $this->truncate);
+                        $this->api->updateEntry($day);
+                    } else {
+                        $this->api->deleteEntry($day->get('id'));
+                    }
+                }
+            }
+
             // calculate total time
-            $totalHours = array_reduce($days, function($carry, $day) {
+            $totalHours = array_reduce($days, function ($carry, $day) {
                 /** @var DayEntry $day */
                 return $carry + $day->get('hours');
             }, 0);
 
-            $min = $this->truncate - $this->truncateRand;
-            $max = $this->truncate + $this->truncateRand;
-
-            if($totalHours > $max) {
+            //tuncate max or add freeTime if less than max
+            if ($totalHours > $max) {
                 // truncate
                 $realHours = $min + ($max - $min) * lcg_value();
                 $totalHoursDiff = $totalHours - $realHours;
@@ -172,7 +202,7 @@ class HarvestService
                     $hours = $day->get('hours');
                     $hoursDiff = $hours - $totalHoursDiff;
 
-                    if($hoursDiff <= 0) {
+                    if ($hoursDiff <= 0) {
                         $day->set('hours', 0);
                         $this->api->deleteEntry($day->get('id'));
                         $totalHoursDiff -= $hours;
@@ -184,7 +214,7 @@ class HarvestService
                         break;
                     }
                 }
-            } else if($totalHours < $min && $this->freeTimeProjectId && $this->freeTimeTaskId) {
+            } else if ($totalHours < $min && $this->freeTimeProjectId && $this->freeTimeTaskId) {
                 //append free time
                 $realHours = $min + ($max - $min) * lcg_value();
                 $totalHoursDiff = $realHours - $totalHours;
@@ -278,12 +308,12 @@ class HarvestService
             $min = $this->truncate - $this->truncateRand;
             $max = $this->truncate + $this->truncateRand;
 
-            if($hours < $min) $hours = '<less>'.$hours.'H</less>';
-            elseif($hours <= $max) $hours = '<ok>'.$hours.'H</ok>';
-            else $hours = '<more>'.$hours.'H</more>';
+            if ($hours < $min) $hours = '<less>' . $hours . 'H</less>';
+            elseif ($hours <= $max) $hours = '<ok>' . $hours . 'H</ok>';
+            else $hours = '<more>' . $hours . 'H</more>';
 
             $lines[] = implode("\t", array(
-                $this->getUrl('time/day/'.$day->format('Y').'/'.$day->format('m').'/'.$day->format('d').'/'.$data->get('user-id')),
+                $this->getUrl('time/day/' . $day->format('Y') . '/' . $day->format('m') . '/' . $day->format('d') . '/' . $data->get('user-id')),
                 $hours,
             ));
         } elseif (is_array($data)) {

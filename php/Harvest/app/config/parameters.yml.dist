@@ -21,6 +21,7 @@ parameters:
     harvest_truncate_rand: 0.17 #10 minutes
     harvest_free_time_project_id: 2324740 #Bigyouth Vie-Interne
     harvest_free_time_task_id: 6825875 #Development Back
+    harvest_vacation_time_task_id: 12785408 #Conges/RTT/Maladie BY
     harvest_domino_projects:
         123456789: { name: My Project, client: '', dossier: '' }
 
