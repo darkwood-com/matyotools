@@ -28,9 +28,9 @@ class HarvestService
     protected $truncateRand;
     protected $freeTimeProjectId;
     protected $freeTimeTaskId;
-    protected $vacationTimeTaskId;
+    protected $vacationTimeProjectId;
 
-    public function __construct(HarvestApp $api, $user, $password, $account, $mode, $truncate, $truncateRand, $freeTimeProjectId, $freeTimeTaskId, $vacationTimeTaskId)
+    public function __construct(HarvestApp $api, $user, $password, $account, $mode, $truncate, $truncateRand, $freeTimeProjectId, $freeTimeTaskId, $vacationTimeProjectId)
     {
         $this->api = $api->getApi();
         $this->user = $user;
@@ -41,7 +41,7 @@ class HarvestService
         $this->truncateRand = floatval($truncateRand);
         $this->freeTimeProjectId = $freeTimeProjectId;
         $this->freeTimeTaskId = $freeTimeTaskId;
-        $this->vacationTimeTaskId = $vacationTimeTaskId;
+        $this->vacationTimeProjectId = $vacationTimeProjectId;
     }
 
     public function getMyUserId()
@@ -159,25 +159,25 @@ class HarvestService
             $min = $this->truncate - $this->truncateRand;
             $max = $this->truncate + $this->truncateRand;
 
-            $taskIds = array();
+            $projectIds = array();
             foreach ($days as $day) {
                 if ($day->get('hours') > 0) {
-                    $taskIds[$day->get('task_id')] = $day;
+                    $projectIds[$day->get('project_id')] = $day;
                 }
             }
 
-            //only one task in the day then truncate it at 70%
-            /** @var DayEntry[] $taskIds */
-            if (count($taskIds) == 1) {
-                $day = current($taskIds);
+            //only one project in the day then truncate it at 70%
+            /** @var DayEntry[] $projectIds */
+            if (count($projectIds) == 1) {
+                $day = current($projectIds);
                 $day->set("hours", min($this->truncate * 0.7, $day->get('hours')));
                 $this->api->updateEntry($day);
             }
 
             //special case if we are in vacation : then make it the whole day
-            if (isset($taskIds[$this->vacationTimeTaskId])) {
+            if (isset($projectIds[$this->vacationTimeProjectId])) {
                 foreach ($days as $day) {
-                    if($day->get('task_id') == $this->vacationTimeTaskId) {
+                    if($day->get('project_id') == $this->vacationTimeProjectId) {
                         $day->set("hours", $this->truncate);
                         $this->api->updateEntry($day);
                     } else {
