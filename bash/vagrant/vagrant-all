@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-for vm in $(vagrant global-status | grep default | awk ' { print $1 } '); do
+for vm in $(vagrant global-status | grep virtualbox | awk ' { print $1 } '); do
   vagrant $@ $vm
 done
