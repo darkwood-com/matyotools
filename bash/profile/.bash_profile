@@ -23,9 +23,42 @@ GIT_MERGE_AUTOEDIT=no
 alias gs='git status'
 alias gd='git diff'
 alias gc='git commit -a -m'
-alias gpull='git pull'
-alias gpush='git push'
 alias gup='git up'
+
+# git pull to branch
+function gitPullToBranch() {
+	if [ -z "$1" ]; then
+		git pull
+	else
+		current_branch="$(git branch | grep '* ' | tr -d '* ')"
+		git checkout $1
+		git pull
+		git checkout $current_branch
+	fi
+}
+alias gpull='gitPullToBranch'
+
+# git push to branch
+function gitPushToBranch() {
+	if [ -z "$1" ]; then
+		git push
+	else
+		current_branch="$(git branch | grep '* ' | tr -d '* ')"
+		git checkout $1
+		git push
+		git checkout $current_branch
+	fi
+}
+alias gpush='gitPushToBranch'
+
+# git merge current branch to another
+function gitMergeToBranch() {
+	current_branch="$(git branch | grep '* ' | tr -d '* ')"
+	git checkout $1
+	git merge $current_branch
+	git checkout $current_branch
+}
+alias gm='gitMergeToBranch'
 
 # git emoji
 function gitCommitEmotion() {
@@ -100,6 +133,7 @@ function gitCommitEmotion() {
 
     git commit -a -m "$message"
 }
+
 alias ge='gitCommitEmotion'
 alias gel='gitCommitEmotion list'
 alias gec='gitCommitEmotion comments'
