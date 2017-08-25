@@ -51,7 +51,7 @@ function gitPushToBranch() {
 }
 alias gpush='gitPushToBranch'
 
-# git merge current branch to another
+# git merge to branch
 function gitMergeToBranch() {
 	current_branch="$(git branch | grep '* ' | tr -d '* ')"
 	git checkout $1
@@ -59,6 +59,15 @@ function gitMergeToBranch() {
 	git checkout $current_branch
 }
 alias gm='gitMergeToBranch'
+
+# git execute to branch
+function gitExecuteToBranch() {
+	current_branch="$(git branch | grep '* ' | tr -d '* ')"
+	git checkout $1
+	eval $2
+	git checkout $current_branch
+}
+alias gx='gitExecuteToBranch'
 
 # git emoji
 function gitCommitEmotion() {
