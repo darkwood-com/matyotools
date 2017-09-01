@@ -31,8 +31,11 @@ function gitPullToBranch() {
 		git pull
 	else
 		current_branch="$(git branch | grep '* ' | tr -d '* ')"
-		git checkout $1
-		git pull
+		for var in "$@"
+		do
+			git checkout $var
+			git pull
+		done
 		git checkout $current_branch
 	fi
 }
@@ -44,8 +47,11 @@ function gitPushToBranch() {
 		git push
 	else
 		current_branch="$(git branch | grep '* ' | tr -d '* ')"
-		git checkout $1
-		git push
+		for var in "$@"
+		do
+			git checkout $var
+			git push
+		done
 		git checkout $current_branch
 	fi
 }
@@ -54,8 +60,11 @@ alias gpush='gitPushToBranch'
 # git merge to branch
 function gitMergeToBranch() {
 	current_branch="$(git branch | grep '* ' | tr -d '* ')"
-	git checkout $1
-	git merge $current_branch
+	for var in "$@"
+	do
+		git checkout $var
+		git merge $current_branch
+	done
 	git checkout $current_branch
 }
 alias gm='gitMergeToBranch'
