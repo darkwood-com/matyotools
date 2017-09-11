@@ -24,6 +24,7 @@ alias gs='git status'
 alias gd='git diff'
 alias gc='git commit -a -m'
 alias gup='git up'
+alias gprune='git branch -vv | grep 'origin/.*: gone]' | awk '{print $1}' | xargs git branch -d'
 
 # git pull to branch
 function gitPullToBranch() {
