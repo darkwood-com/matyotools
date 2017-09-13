@@ -166,11 +166,11 @@ class HarvestService
                 }
             }
 
-            //only one project in the day then truncate it at 70%
+            //only one project in the day then truncate it at 80%
             /** @var DayEntry[] $projectIds */
             if (count($projectIds) == 1) {
                 $day = current($projectIds);
-                $day->set("hours", min($this->truncate * 0.7, $day->get('hours')));
+                $day->set("hours", min($this->truncate * 0.8, $day->get('hours')));
                 $this->api->updateEntry($day);
             }
 
