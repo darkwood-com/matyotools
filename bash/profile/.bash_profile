@@ -11,6 +11,13 @@ alias ls='ls -GFh'
 # SSH Bash completion
 complete -o default -o nospace -W "$(/usr/bin/env ruby -ne 'puts $_.split(/[,\s]+/)[1..-1].reject{|host| host.match(/\*|\?/)} if $_.match(/^\s*Host\s+/);' < $HOME/.ssh/config)" scp sftp ssh
 
+# Google Traduction
+# $ wget git.io/trans
+# $ mv trans /usr/local/bin/trans
+# $ chmod a+x /usr/local/bin/trans
+# $ brew install gawk
+# $ trans :fr "hello"
+
 # git
 GIT_AUTHOR_NAME="Mathieu Ledru"
 GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
