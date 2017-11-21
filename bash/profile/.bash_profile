@@ -1,3 +1,6 @@
+# php
+export PATH="$(brew --prefix homebrew/php/php71)/bin:$PATH"
+
 # bash color
 parse_git_branch() {
     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
@@ -181,3 +184,33 @@ alias gew='gitCommitEmotion work'
 # vagrant
 alias vu='vagrant up'
 alias vs='vagrant ssh'
+
+# docker
+function dockerUp() {
+	sudo ifconfig lo0 alias 10.254.254.254 255.255.255.0
+    export DOCKER_XDEBUG_HOST=10.254.254.254
+    cd /Users/math/Sites/bigyouth/by-docker-env
+	docker volume create --name=by-sync
+	docker-sync start
+	docker-compose -f docker-compose.yml up -d
+}
+function dockerHalt() {
+    cd /Users/math/Sites/bigyouth/by-docker-env
+	docker-compose stop
+	docker-sync stop
+}
+function dockerBuild() {
+    cd /Users/math/Sites/bigyouth/by-docker-env
+	docker-compose build
+}
+function dockerSsh() {
+	docker exec -ti $1 zsh
+}
+alias du='dockerUp'
+alias dh='dockerHalt'
+alias db='dockerBuild'
+alias ds='dockerSsh'
+
+# scripts
+alias harvest_coffee='/Users/math/Sites/darkwood/matyotools/php/Harvest/app/console harvest:coffee'
+alias slack='/Users/math/Sites/darkwood/matyotools/php/Botman/bin/console'
