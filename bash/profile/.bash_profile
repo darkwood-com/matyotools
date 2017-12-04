@@ -206,10 +206,15 @@ function dockerBuild() {
 function dockerSsh() {
 	docker exec -ti $1 zsh
 }
+function dockerSync() {
+    cd /Users/math/Sites/bigyouth/by-docker-env
+	docker-sync $@
+}
 alias du='dockerUp'
 alias dh='dockerHalt'
 alias db='dockerBuild'
 alias ds='dockerSsh'
+alias dsync='dockerSync'
 
 # scripts
 alias harvest_coffee='/Users/math/Sites/darkwood/matyotools/php/Harvest/app/console harvest:coffee'
