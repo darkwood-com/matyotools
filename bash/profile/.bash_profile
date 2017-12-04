@@ -187,28 +187,24 @@ alias vs='vagrant ssh'
 
 # docker
 function dockerUp() {
-	sudo ifconfig lo0 alias 10.254.254.254 255.255.255.0
+    sudo ifconfig lo0 alias 10.254.254.254 255.255.255.0
     export DOCKER_XDEBUG_HOST=10.254.254.254
-    cd /Users/math/Sites/bigyouth/by-docker-env
-	docker volume create --name=by-sync
-	docker-sync start
-	docker-compose -f docker-compose.yml up -d
+    (cd /Users/math/Sites/bigyouth/by-docker-env;docker volume create --name=by-sync)
+    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-sync start)
+    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose -f docker-compose.yml up -d)
 }
 function dockerHalt() {
-    cd /Users/math/Sites/bigyouth/by-docker-env
-	docker-compose stop
-	docker-sync stop
+    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose stop)
+    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-sync stop)
 }
 function dockerBuild() {
-    cd /Users/math/Sites/bigyouth/by-docker-env
-	docker-compose build
+    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose build)
 }
 function dockerSsh() {
-	docker exec -ti $1 zsh
+    docker exec -ti $1 zsh
 }
 function dockerSync() {
-    cd /Users/math/Sites/bigyouth/by-docker-env
-	docker-sync $@
+    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-sync $@)
 }
 alias du='dockerUp'
 alias dh='dockerHalt'
