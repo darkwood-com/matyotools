@@ -201,7 +201,7 @@ function dockerBuild() {
     (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose build)
 }
 function dockerSsh() {
-    docker exec -ti $1 zsh
+    docker exec -ti $1 ${2:-zsh}
 }
 function dockerSync() {
     (cd /Users/math/Sites/bigyouth/by-docker-env;docker-sync $@)
