@@ -42,6 +42,8 @@ php/Harvest/build/
 php/Harvest/vendor/
 php/Harvest/domino/reports
 php/Harvest/domino/tests/*.gen.js
+php/Harvest/harvest.log
+php/Harvest/harvest_err.log
 
 # Hipchat
 php/Hipchat/web/bundles/

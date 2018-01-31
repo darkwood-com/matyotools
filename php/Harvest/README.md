@@ -40,6 +40,10 @@ into ~/Library/LaunchAgents/fr.darkwood.harvest.plist
     		<key>Minute</key>
     		<integer>30</integer>
     	</dict>
+        <key>StandardErrorPath</key>
+        <string>/Users/math/Sites/darkwood/matyotools/php/Harvest/harvest_err.log</string>
+        <key>StandardOutPath</key>
+        <string>/Users/math/Sites/darkwood/matyotools/php/Harvest/harvest.log</string>
     	<key>RunAtLoad</key>
     	<false/>
     </dict>
