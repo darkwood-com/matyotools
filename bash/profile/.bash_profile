@@ -200,6 +200,11 @@ function dockerHalt() {
 function dockerBuild() {
     (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose build)
 }
+function dockerBuildRestart() {
+    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose build)
+    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose stop)
+    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose start)
+}
 function dockerSsh() {
     docker exec -ti $1 ${2:-zsh}
 }
@@ -209,6 +214,7 @@ function dockerSync() {
 alias du='dockerUp'
 alias dh='dockerHalt'
 alias db='dockerBuild'
+alias dbr='dockerBuildRestart'
 alias ds='dockerSsh'
 alias dsync='dockerSync'
 
