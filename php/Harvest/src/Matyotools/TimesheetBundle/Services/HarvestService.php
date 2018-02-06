@@ -166,12 +166,22 @@ class HarvestService
                 }
             }
 
-            //only one project in the day then truncate it at 80%
+            // truncate projects at 80% of the day
             /** @var DayEntry[] $projectIds */
-            if (count($projectIds) == 1) {
-                $day = current($projectIds);
-                $day->set("hours", min($this->truncate * 0.8, $day->get('hours')));
-                $this->api->updateEntry($day);
+
+            // calculate total time
+            $totalHours = array_reduce($projectIds, function ($carry, $day) {
+                /** @var DayEntry $day */
+                return $carry + $day->get('hours');
+            }, 0);
+            if ($totalHours > $max * 0.8) {
+                $realTruncateHours = $min + ($max - $min) * lcg_value();
+                $totalTruncateHours = min($realTruncateHours * 0.8, $totalHours);
+                $totalHoursRatio = $totalTruncateHours / $totalHours;
+                foreach ($projectIds as $day) {
+                    $day->set("hours", $day->get('hours') * $totalHoursRatio);
+                    $this->api->updateEntry($day);
+                }
             }
 
             //special case if we are in vacation : then make it the whole day
