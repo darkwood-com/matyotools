@@ -202,7 +202,9 @@ function dockerBuild() {
 }
 function dockerBuildRestart() {
     (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose build)
-    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose restart)
+    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose stop)
+    export DOCKER_XDEBUG_HOST=10.254.254.254
+    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose start)
 }
 function dockerSsh() {
     docker exec -ti $1 ${2:-zsh}
