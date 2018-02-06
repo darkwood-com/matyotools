@@ -202,8 +202,7 @@ function dockerBuild() {
 }
 function dockerBuildRestart() {
     (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose build)
-    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose stop)
-    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose start)
+    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose restart)
 }
 function dockerSsh() {
     docker exec -ti $1 ${2:-zsh}
