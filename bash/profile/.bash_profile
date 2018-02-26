@@ -80,6 +80,24 @@ function gitMergeToBranch() {
 }
 alias gm='gitMergeToBranch'
 
+# git push to current branch and merge and push to anoter one
+function gitPushToBranchAndMerge() {
+	if [ -z "$1" ]; then
+		git push
+	else
+	    git push
+		current_branch="$(git branch | grep '* ' | tr -d '* ')"
+		for var in "$@"
+		do
+			git checkout $var
+			git merge $current_branch
+			git push
+		done
+		git checkout $current_branch
+	fi
+}
+alias gpushm='gitPushToBranchAndMerge'
+
 # git execute to branch
 function gitExecuteToBranch() {
 	current_branch="$(git branch | grep '* ' | tr -d '* ')"
@@ -138,6 +156,7 @@ function gitCommitEmotion() {
         localisation)  emojis=( globe_with_meridians ) ;;
         new)           emojis=( sparkles ) ;;
         merge)         emojis=( book ) ;;
+        init)          emojis=( tada ) ;;
         optimisation)  emojis=( racehorse ) ;;
         package)       emojis=( package ) ;;
         refactor)      emojis=( lipstick ) ;;
@@ -171,6 +190,7 @@ alias geb='gitCommitEmotion build'
 alias ged='gitCommitEmotion deprecated'
 alias gef='gitCommitEmotion fix'
 alias gelo='gitCommitEmotion localisation'
+alias gei='gitCommitEmotion init'
 alias gen='gitCommitEmotion new'
 alias gem='gitCommitEmotion merge'
 alias geo='gitCommitEmotion optimisation'
