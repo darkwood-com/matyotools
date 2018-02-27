@@ -172,12 +172,14 @@ function gitCommitEmotion() {
     emojisLength=${#emojis[*]}
     emoji=":${emojis[$((RANDOM%emojisLength))]}:"
     message="$emoji $message"
-    for item in "${emojisList[@]}"
-    do
-        key=${item%%:*}
-        value=${item#*:}
-        message=$(echo $message | sed -e "s/:$key:/$value/g")
-    done
+    
+    # temporary not replace emoji
+    # for item in "${emojisList[@]}"
+    # do
+    #     key=${item%%:*}
+    #     value=${item#*:}
+    #     message=$(echo $message | sed -e "s/:$key:/$value/g")
+    # done
 
     git commit -a -m "$message"
 }
@@ -206,12 +208,14 @@ alias vu='vagrant up'
 alias vs='vagrant ssh'
 
 # docker
+function dockerCleanBigyouth() {
+    docker rm by_apache by_php-fpm
+}
 function dockerUp() {
     sudo ifconfig lo0 alias 10.254.254.254 255.255.255.0
     export DOCKER_XDEBUG_HOST=10.254.254.254
     (cd /Users/math/Sites/bigyouth/by-docker-env;docker volume create --name=by-sync)
-    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-sync start)
-    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose -f docker-compose.yml up -d)
+    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose up -d)
 }
 function dockerHalt() {
     (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose stop)
@@ -221,10 +225,11 @@ function dockerBuild() {
     (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose build)
 }
 function dockerBuildRestart() {
-    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose build)
     (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose stop)
+    dockerBuild
+    dockerCleanBigyouth
     export DOCKER_XDEBUG_HOST=10.254.254.254
-    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose start)
+    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose up -d)
 }
 function dockerSsh() {
     docker exec -ti $1 ${2:-zsh}
