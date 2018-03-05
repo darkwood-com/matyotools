@@ -232,6 +232,7 @@ function dockerUp() {
     sudo ifconfig lo0 alias 10.254.254.254 255.255.255.0
     export DOCKER_XDEBUG_HOST=10.254.254.254
     (cd /Users/math/Sites/bigyouth/by-docker-env;docker volume create --name=by-sync)
+    (cd /Users/math/Sites/bigyouth/by-docker-env;docker-sync start)
     (cd /Users/math/Sites/bigyouth/by-docker-env;docker-compose up -d)
 }
 function dockerHalt() {
