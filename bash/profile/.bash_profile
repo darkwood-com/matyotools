@@ -68,6 +68,23 @@ function gitPushToBranch() {
 }
 alias gpush='gitPushToBranch'
 
+# git push to up-stream branch
+function gitPushToUpStreamBranch() {
+	if [ -z "$1" ]; then
+		current_branch="$(git branch | grep '* ' | tr -d '* ')"
+		git push --set-upstream origin $current_branch
+	else
+		current_branch="$(git branch | grep '* ' | tr -d '* ')"
+		for var in "$@"
+		do
+			git checkout $var
+			git push --set-upstream origin $var
+		done
+		git checkout $current_branch
+	fi
+}
+alias gpushu='gitPushToUpStreamBranch'
+
 # git merge to branch
 function gitMergeToBranch() {
 	current_branch="$(git branch | grep '* ' | tr -d '* ')"
