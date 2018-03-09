@@ -125,66 +125,135 @@ function gitExecuteToBranch() {
 alias gx='gitExecuteToBranch'
 
 # git emoji
+emojiMap=(
+	"" "all" "All" "smile simple_smile smirk blush wink sunglasses"
+	"addingADependency" "addingADependency" "Adding a dependency" "heavy_plus_sign"
+	"addingATest" "addingATest" "Adding a test" "white_check_mark"
+	"addingCiBuildSystem" "addingCiBuildSystem" "Adding CI build system" "construction_worker"
+	"analyticsOrTrackingCode" "analyticsOrTrackingCode" "Analytics or tracking code" "chart_with_upwards_trend"
+	"b" "build" "Build" "hammer"
+	"c" "comments" "Comments" "books"
+	"configurationFiles" "configurationFiles" "Configuration files" "wrench"
+	"continuousIntegration" "continuousIntegration" "Continuous Integration" "green_heart"
+	"criticalHotfix" "criticalHotfix" "Critical hotfix" "ambulance"
+	"d" "done" "Done" "beers confetti_ball crown tada"
+	"de" "deprecated" "Deprecated" "poop"
+	"deployingStuff" "deployingStuff" "Deploying stuff" "rocket"
+	"docker" "docker" "Docker" "whale"
+	"documentation" "documentation" "Documentation" "books"
+	"documentingSourceCode" "documentingSourceCode" "Documenting source code" "bulb"
+	"downgradingDependencies" "downgradingDependencies" "Downgrading dependencies" "arrow_down"
+	"f" "fix" "Fix" "bug zap ambulance"
+	"fixingOnLinux" "fixingOnLinux" "Fixing on Linux" "penguin"
+	"fixingOnMacos" "fixingOnMacos" "Fixing on MacOS" "apple"
+	"fixingOnWindows" "fixingOnWindows" "Fixing on Windows" "checkered_flag"
+	"generalUpdate" "generalUpdate" "General update" "zap"
+	"i" "init" "Initial commit" "tada"
+	"improveFormatStructure" "improveFormatStructure" "Improve formatStructure" "art"
+	"lint" "lint" "Lint" "shirt"
+	"lo" "localisation" "Localisation" "globe_with_meridians"
+	"m" "merge" "Merging branches" "book"
+	"metadata" "metadata" "Metadata" "card_index"
+	"n" "new" "New feature" "sparkles"
+	"o" "optimisation" "Optimisation" "racehorse"
+	"p" "package" "Package" "package"
+	"r" "refactorCode" "Refactor code" "hammer"
+	"refactor" "refactor" "Refactor" "lipstick"
+	"removingADependency" "removingADependency" "Removing a dependency" "heavy_minus_sign"
+	"removingCodeFiles" "removingCodeFiles" "Removing codeFiles" "fire"
+	"security" "security" "Security" "lock"
+	"t" "ticket" "Ticket" "pencil"
+	"tag" "tag" "Version tag" "bookmark"
+	"text" "text" "Text" "pencil"
+	"tt" "testing" "Testing" "rotating_light"
+	"upgradingDependencies" "upgradingDependencies" "Upgrading dependencies" "arrow_up"
+	"w" "work" "Work in progress" "construction"
+)
+
 function gitCommitEmotion() {
     # http://emoji-cheat-sheet.com/
     emojisList=(
         "ambulance:"$'\xF0\x9F\x9A\x91'
+        "apple:"$'\xF0\x9F\x8D\x8F'
+        "arrow_down:"$'\xE2\xAC\x87'
+        "arrow_up:"$'\xE2\xAC\x86'
+        "art:"$'\xF0\x9F\x8E\xA8'
         "beers:"$'\xF0\x9F\x8D\xBB'
+        "blush:"$'\xF0\x9F\x98\x8A'
         "book:"$'\xF0\x9F\x93\x96'
         "bookmark:"$'\xF0\x9F\x94\x96'
         "books:"$'\xF0\x9F\x93\x9A'
         "bug:"$'\xF0\x9F\x90\x9B'
+        "bulb:"$'\xF0\x9F\x92\xA1'
+        "card_index:"$'\xF0\x9F\x93\x87'
+        "chart_with_upwards_trend:"$'\xF0\x9F\x93\x88'
+        "checkered_flag:"$'\xF0\x9F\x8F\x81'
         "confetti_ball:"$'\xF0\x9F\x8E\x8A'
         "construction:"$'\xF0\x9F\x91\xB7'
+        "construction_worker:"$'\xF0\x9F\x91\xB7'
         "crown:"$'\xF0\x9F\x91\x91'
-        "blush:"$'\xF0\x9F\x98\x8A'
+        "fire:"$'\xF0\x9F\x9A\x92'
         "globe_with_meridians:"$'\xF0\x9F\x8C\x90'
+        "green_heart:"$'\xF0\x9F\x92\x9A'
         "hammer:"$'\xF0\x9F\x94\xA8'
+        "heavy_minus_sign:"$'\xE2\x9E\x96'
+        "heavy_plus_sign:"$'\xE2\x9E\x95'
         "lipstick:"$'\xF0\x9F\x92\x84'
+        "lock:"$'\xF0\x9F\x94\x93'
         "package:"$'\xF0\x9F\x93\xA6'
         "pencil:"$'\xF0\x9F\x93\x9D'
+        "penguin:"$'\xF0\x9F\x90\xA7'
         "poop:"$'\xF0\x9F\x92\xA9'
         "racehorse:"$'\xF0\x9F\x8F\x87'
+        "rocket:"$'\xF0\x9F\x9A\x80'
         "rotating_light:"$'\xF0\x9F\x9A\xA8'
+        "shirt:"$'\xF0\x9F\x8E\xBD'
         "simple_smile:"$'\xF0\x9F\x99\x82'
         "smile:"$'\xF0\x9F\x98\x80'
         "smirk:"$'\xF0\x9F\x98\x8F'
         "sparkles:"$'\xE2\x9C\xA8'
         "sunglasses:"$'\xF0\x9F\x98\x8E'
         "tada:"$'\xF0\x9F\x8E\x89'
+        "whale:"$'\xF0\x9F\x90\xB3'
+        "white_check_mark:"$'\xE2\x9C\x85'
         "wink:"$'\xF0\x9F\x98\x89'
+        "wrench:"$'\xF0\x9F\x94\xA7'
         "zap:"$'\xE2\x9A\xA1\xEF\xB8\x8F'
     )
     message=$2
 
-    case "$1" in
-        list)
-            for item in "${emojisList[@]}"
-            do
-                echo ":${item%%:*}: ${item#*:}"
-            done
-            return 0
-            ;;
-        comments)      emojis=( books ) ;;
-        done)          emojis=( beers confetti_ball crown tada ) ;;
-        build)         emojis=( hammer ) ;;
-        deprecated)    emojis=( poop ) ;;
-        fix)           emojis=( bug zap ambulance ) ;;
-        localisation)  emojis=( globe_with_meridians ) ;;
-        new)           emojis=( sparkles ) ;;
-        merge)         emojis=( book ) ;;
-        init)          emojis=( tada ) ;;
-        optimisation)  emojis=( racehorse ) ;;
-        package)       emojis=( package ) ;;
-        refactor)      emojis=( lipstick ) ;;
-        tag)           emojis=( bookmark ) ;;
-        testing)       emojis=( rotating_light ) ;;
-        ticket)        emojis=( pencil ) ;;
-        work)          emojis=( construction ) ;;
-        *)             emojis=( smile simple_smile smirk blush wink sunglasses )
-            message=$1
-            ;;
-    esac
+	if [ "$1" == "list" ]
+	then
+		message=""
+		for (( i=0; i<=$(( ${#emojiMap[*]}-1 )); i+=4 ))
+		do
+			emojiMapList=( ${emojiMap[$i+3]} )
+			emoji=$(printf ":%s:" "${emojiMapList[@]}")
+			message="$message${emoji} : ge${emojiMap[$i]} => ${emojiMap[$i+2]} (gitCommitEmotion ${emojiMap[$i+1]})"
+			if [ $(( $i+3 )) != $(( ${#emojiMap[*]}-1 )) ]
+			then
+			message="$message\\n"
+			fi
+		done
+		
+		for item in "${emojisList[@]}"
+		do
+			key=${item%%:*}
+			value=${item#*:}
+			message=$(echo $message | sed -e "s/:$key:/$value/g")
+		done
+		
+		echo -e "$message"
+		return 0
+	fi
+	
+	for (( i=0; i<=$(( ${#emojiMap[*]}-1 )); i+=4 ))
+	do
+		if [ "$1" == "${emojiMap[$i+1]}" ]
+		then
+			emojis=( ${emojiMap[$i+3]} )
+		fi
+	done
 
     emojisLength=${#emojis[*]}
     emoji=":${emojis[$((RANDOM%emojisLength))]}:"
@@ -201,24 +270,11 @@ function gitCommitEmotion() {
     git commit -a -m "$message"
 }
 
-alias ge='gitCommitEmotion'
 alias gel='gitCommitEmotion list'
-alias gec='gitCommitEmotion comments'
-alias ged='gitCommitEmotion done'
-alias geb='gitCommitEmotion build'
-alias ged='gitCommitEmotion deprecated'
-alias gef='gitCommitEmotion fix'
-alias gelo='gitCommitEmotion localisation'
-alias gei='gitCommitEmotion init'
-alias gen='gitCommitEmotion new'
-alias gem='gitCommitEmotion merge'
-alias geo='gitCommitEmotion optimisation'
-alias gep='gitCommitEmotion package'
-alias ger='gitCommitEmotion refactor'
-alias getag='gitCommitEmotion tag'
-alias gett='gitCommitEmotion testing'
-alias get='gitCommitEmotion ticket'
-alias gew='gitCommitEmotion work'
+for (( i=0; i<=$(( ${#emojiMap[*]} -1 )); i+=4 ))
+do
+alias ge${emojiMap[$i]}="gitCommitEmotion ${emojiMap[$i+1]}"
+done
 
 # vagrant
 alias vu='vagrant up'
