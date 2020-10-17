@@ -4,9 +4,9 @@ MatyoTools
 About me...
 -----------
 
-My website [http://www.darkwood.fr/](http://www.darkwood.fr/)
+My website [http://darkwood.fr](http://darkwood.fr)
 
-More of my personnal projects can be found at [http://apps.darkwood.fr/](http://apps.darkwood.fr/)
+More of my personnal projects can be found at [http://apps.darkwood.fr/](http://apps.darkwood.fr)
 
 Tools for programming
 ---------------------
